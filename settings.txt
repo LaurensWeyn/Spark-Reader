@@ -1,0 +1,52 @@
+#colours#
+#Format: R,G,B,A (Red, Green, Blue, Alpha (transparency))
+
+#Text colours#
+furiCol = 0, 255, 255, 255
+textCol = 255, 255, 255, 255
+defCol = 255, 255, 0, 255
+defReadingCol = 0, 255, 255, 255
+defKanjiCol = 255, 255, 255, 255
+defTagCol = 255, 255, 255, 255
+
+#Seperator colours#
+noMarkerCol = 0, 0, 0, 100
+markerCol = 255, 255, 0, 200
+
+#background colours#
+textBackCol = 0, 0, 0, 200
+knownTextBackCol = 0, 0, 100, 200
+furiBackCol = 0, 0, 0, 128
+defBackCol = 0, 0, 0, 128
+
+#fonts#
+#format: font name, tags, size
+#'tags' is a list of characters that can contain:
+#B for bold text, I for italics, A for Antialiasing (looks nicer, lowers contrast)
+
+textFont = Meiryo, A, 30
+defFont = Meiryo,, 15
+furiFont = Meiryo, , 10
+
+#dictionary file paths#
+#files can be relative or absolute
+
+edictPath = edict2.txt
+customDictPath = customDict.txt
+#see importing guide for getting Kanji files
+kanjiPath = kanji.csv
+ankiExportPath = forAnki.csv
+
+#window sizes#
+#sizes in pixels
+windowWidth = 1280
+maxHeight = 720
+defWidth = 250
+
+#other options#
+showFurigana = true
+
+#if false, all text lines are put on one line
+#if true, all lines are added seperately and last line is shown
+#(scroll through history [furigana bar] to see the other lines)
+splitLines = false
