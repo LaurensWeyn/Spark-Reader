@@ -181,7 +181,7 @@ public class WordScanner
     public static void main(String[] args)
     {
         System.out.println();
-        for(ValidWord vw: new WordScanner("飛んだ").getMatches())
+        for(ValidWord vw: new WordScanner("絞られて").getMatches())
         {
             System.out.println(vw.toString() + " " + vw.getNeededTags());
         }

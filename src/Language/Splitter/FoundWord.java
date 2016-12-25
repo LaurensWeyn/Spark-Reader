@@ -18,11 +18,8 @@ package Language.Splitter;
 
 import Language.Dictionary.Japanese;
 import UI.UI;
-import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.util.ArrayList;
-import javafx.collections.transformation.SortedList;
 
 /**
  * Holds a word from the text and definitions that match it
