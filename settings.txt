@@ -34,7 +34,7 @@ furiFont = Meiryo, , 10
 edictPath = edict2.txt
 customDictPath = customDict.txt
 #see importing guide for getting Kanji files
-kanjiPath = kanji.csv
+kanjiPath = kanji.txt
 ankiExportPath = forAnki.csv
 
 #window sizes#
@@ -44,10 +44,13 @@ maxHeight = 720
 defWidth = 250
 
 #other options#
+#if false, furigana will not be shown, even on unknown words
 showFurigana = true
 
 #if false, all text lines are put on one line
 #if true, all lines are added seperately and last line is shown
 #(scroll through history [furigana bar] to see the other lines)
 splitLines = false
+
+#if true, auto-unhides the UI when a new line of Japanese text is detected in the clipboard
 showOnNewLine = true

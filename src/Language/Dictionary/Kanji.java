@@ -47,7 +47,7 @@ public class Kanji
         while(line != null)
         {
             String bits[] = line.split("\t");
-            kanjiDefs.put(bits[6].charAt(0), bits[0] + ": " + bits[5]);//Kanji = ####: meaning
+            kanjiDefs.put(bits[4].charAt(0), bits[0] + ": " + bits[3]);//Kanji = ####: meaning
             line = br.readLine();
         }
     }

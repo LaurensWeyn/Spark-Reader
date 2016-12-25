@@ -196,28 +196,13 @@ public class MenuPopup extends JPopupMenu
         if(fileChooser.showDialog(parent, "Import") == JFileChooser.APPROVE_OPTION)
         {
             File chosen = fileChooser.getSelectedFile();
-            if(chosen.getName().endsWith(".csv"))
+            try
             {
-                //int col = Integer.parseInt(JOptionPane.showInputDialog(parent, "Please enter the column number containing the words"));
-                try
-                {
-                    UI.known.importCsv(chosen, "\t");
-                    JOptionPane.showMessageDialog(parent, "Import successful!");
-                }catch(Exception e)
-                {
-                    JOptionPane.showMessageDialog(parent, "Error while importing: " + e);
-                }
-            }
-            else
+                UI.known.importCsv(chosen, "\t");
+                JOptionPane.showMessageDialog(parent, "Import successful!");
+            }catch(Exception e)
             {
-                try
-                {
-                    UI.known.importTxt(chosen);
-                    JOptionPane.showMessageDialog(parent, "Import successful!");
-                }catch(Exception e)
-                {
-                    JOptionPane.showMessageDialog(parent, "Error while importing: " + e);
-                }
+                JOptionPane.showMessageDialog(parent, "Error while importing: " + e);
             }
         }
         
