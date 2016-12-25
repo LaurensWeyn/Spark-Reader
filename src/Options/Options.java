@@ -88,6 +88,7 @@ public class Options
         
         options.put("splitLines", "false");
         options.put("showFurigana", "true");
+        options.put("showOnNewLine", "true");
     }
     public Options(File file)throws IOException
     {

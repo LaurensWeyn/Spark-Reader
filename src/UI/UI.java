@@ -118,6 +118,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     
     public static boolean splitLines = true;
     public static boolean showFurigana = true;
+    public static boolean showOnNewLine = true;
     public void loadOptions(Options o)
     {
         textFont = o.getFont("textFont");
@@ -146,6 +147,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         
         splitLines = o.getOptionBool("splitLines");
         showFurigana = o.getOptionBool("showFurigana");
+        showFurigana = o.getOptionBool("showOnNewLine");
         //TODO override height too
         totalWidth = windowWidth + defWidth;
         //totalWidth = textWidth;
@@ -297,6 +299,12 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             if(clip != null)
             {
                 //if we're here, we have a new line of text
+                
+                if(showOnNewLine)
+                {
+                    hidden = false;//force visiblility on new line if needed
+                }
+                
                 if(splitLines)
                 {
                     String lines[] = clip.replace("\r", "").split("\n");

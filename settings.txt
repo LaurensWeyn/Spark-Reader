@@ -50,3 +50,4 @@ showFurigana = true
 #if true, all lines are added seperately and last line is shown
 #(scroll through history [furigana bar] to see the other lines)
 splitLines = false
+showOnNewLine = true
