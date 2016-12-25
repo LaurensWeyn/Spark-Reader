@@ -148,7 +148,7 @@ public class WordPopup extends JPopupMenu
         
         if(newFile)
         {
-            fr.append("Word\tReading\tDefinition\tTags\tContext\n");
+            //fr.append("Word\tReading\tDefinition\tTags\tContext\n");//Anki ignores this, no point in adding it
         }
 
         FoundDef def = word.getCurrentDef();
