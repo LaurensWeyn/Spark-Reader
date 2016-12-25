@@ -31,7 +31,7 @@ furiFont = Meiryo, , 10
 #dictionary file paths#
 #files can be relative or absolute
 
-edictPath = edict2.txt
+edictPath = edict2
 customDictPath = customDict.txt
 #see importing guide for getting Kanji files
 kanjiPath = kanji.txt
