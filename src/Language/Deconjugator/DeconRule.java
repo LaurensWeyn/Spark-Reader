@@ -41,6 +41,10 @@ public class DeconRule
     
     public ValidWord process(ValidWord word)
     {
+        if(word.getProcess().contains(change))
+        {
+            return null;//don't stack the same conjugation onto itself
+        }
         //ending matches:
         if(word.getWord().endsWith(ending))
         {
