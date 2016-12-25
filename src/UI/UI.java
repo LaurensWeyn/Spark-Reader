@@ -218,7 +218,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             if(text.equals(""))
             {
                 g.setColor(furiCol);
-                g.drawString("Spark Reader Beta, by Laurens Weyn. Waiting for text...", 0, g.getFontMetrics().getAscent());
+                g.drawString("Spark Reader Beta 0.1, by Laurens Weyn. Waiting for text...", 0, g.getFontMetrics().getAscent());
             }
 
 
