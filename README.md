@@ -14,6 +14,7 @@ somewhoat sorted in order  of importance:
 - EPWING support
 - Support for the special case verbs in the deconjugator
 - Support for more conjugations in the deconjugator
+- a built-in text hooker or some sort, probably using JNA
 - Multiplayer testing/repair (code is there, but it's horribly broken right now)
 - More JUnit tests
 - UI for settings and such (I was planning to use the NetBeans GUI editor for this, but that might not work out for other IDEs
