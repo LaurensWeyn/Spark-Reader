@@ -86,7 +86,7 @@ public class Definition
                 word = readingClasses[0].trim().split(";");//Kanji readings
                 if(readingClasses.length == 2)//kana readings exist
                 {
-                    reading = readingClasses[1].replace("] ", "").split(";");
+                    reading = readingClasses[1].replace("] ", "").replace("]", "").split(";");
                 }else reading = new String[0];
             }else meaningArr[i - 1] = defLine.trim();
             
