@@ -165,7 +165,12 @@ public class FoundWord
         if(definitions == null)return;
         currentDef = Math.max(currentDef - 1, 0);
     }
-
+    
+    public void resetScroll()
+    {
+        currentDef = 0;
+    }
+    
     public ArrayList<FoundDef> getFoundDefs()
     {
         return definitions;

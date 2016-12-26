@@ -105,6 +105,8 @@ public class WordPopup extends JPopupMenu
             {
                 UI.prefDef.setPreferred(word.getCurrentDef());
                 word.sortDefs();
+                word.resetScroll();
+                ui.render();
             }
         });
         markKnown = new JCheckBoxMenuItem(new AbstractAction("I know this word")
