@@ -198,7 +198,7 @@ public class MenuPopup extends JPopupMenu
             File chosen = fileChooser.getSelectedFile();
             try
             {
-                UI.known.importCsv(chosen, "\t");
+                UI.known.importCsv(chosen.getAbsoluteFile(), "\t");
                 JOptionPane.showMessageDialog(parent, "Import successful!");
             }catch(Exception e)
             {

@@ -56,7 +56,7 @@ public class Known
     }
     public void importTxt(File input)throws IOException
     {
-        FileInputStream is = new FileInputStream(file);
+        FileInputStream is = new FileInputStream(input);
         InputStreamReader isr = new InputStreamReader(is, Charset.forName("UTF-8"));
         BufferedReader br = new BufferedReader(isr);
         String line = br.readLine();
@@ -70,7 +70,7 @@ public class Known
     }
     public void importCsv(File input, String sep)throws IOException
     {
-        FileInputStream is = new FileInputStream(file);
+        FileInputStream is = new FileInputStream(input);
         InputStreamReader isr = new InputStreamReader(is, Charset.forName("UTF-8"));
         BufferedReader br = new BufferedReader(isr);
         String line = br.readLine();
@@ -97,7 +97,11 @@ public class Known
         {
             for(String match:defs.get(0).getSpellings())
             {
-                if(match.equals(word))table.add(word);//the things I do to save RAM...
+                if(match.equals(word))
+                {
+                    table.add(word);//the things I do to save RAM...
+                    dueChanges++;
+                }
             }
         }
     }
