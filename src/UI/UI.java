@@ -119,6 +119,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     public static boolean splitLines = true;
     public static boolean showFurigana = true;
     public static boolean showOnNewLine = true;
+    public static boolean useNaitiveUI = false;
     public void loadOptions(Options o)
     {
         textFont = o.getFont("textFont");
@@ -286,7 +287,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     {
         try
         {
-            javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
+            if(useNaitiveUI)javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
         }catch(Exception e)
         {
             //fall back to default if this fails
@@ -424,7 +425,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             {
                 new MenuPopup(this).show();
             }
-            else if(!hidden)//word
+            else if(!hidden && (e.getY() >= textStartY && e.getY() <= defStartY))//word
             {
                 WordPopup popup = null;
                 for(FoundWord word:words)
@@ -462,14 +463,15 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     @Override
     public void mouseReleased(MouseEvent e)
     {
-        lMouseState = false;
 
         double dist = dragReference.distanceSq(e.getPoint());
-        if(dist != 0 && dist < 100)//only moved a little
+        if((dist != 0 || lMouseState) && dist < 100)//only moved a little
         {
             if(e.getButton() == 1)lMouseClick = true;
+            lMouseState = false;
             mouseClicked(e);//pass this over as a click
         }
+        lMouseState = false;
     }
 
     @Override
