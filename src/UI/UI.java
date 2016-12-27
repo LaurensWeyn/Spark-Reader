@@ -284,6 +284,13 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     }
     public static void main(String[] args)throws Exception
     {
+        try
+        {
+            javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
+        }catch(Exception e)
+        {
+            //fall back to default if this fails
+        }
         UI ui = new UI();
         instance = ui;
         ui.registerListeners();
