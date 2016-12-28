@@ -99,7 +99,8 @@ public class WordScanner
         test(new DeconRule("み", "む", "i stem", DefTag.v5m));
         test(new DeconRule("り", "る", "i stem", DefTag.v5r));
         
-        //no conjugation for adjectives
+        //no stem for adjectives, but -sou sort-of uses a stem
+        test(new DeconRule("そう", "い", "-sou", DefTag.adj_i));
         test(new DeconRule("", "る", "i stem", DefTag.v1));
         
         //potential (can do verb)
@@ -131,12 +132,70 @@ public class WordScanner
         //not for adjectives
         test(new DeconRule("られる", "る", "passive", DefTag.v1));
         
-        //TODO add all these
+        
         //causative
+        
         //causative passive (colloquial version, add polite later?)
+        
+        
         //-eba form (provisional conditional)
-        //past conditional (ra) (+ba for formal)
+        test(new DeconRule("えば", "う", "provisional-conditional", DefTag.v5u));
+        test(new DeconRule("けば", "く", "provisional-conditional", DefTag.v5k));
+        test(new DeconRule("げば", "ぐ", "provisional-conditional", DefTag.v5g));
+        test(new DeconRule("せば", "す", "provisional-conditional", DefTag.v5s));
+        test(new DeconRule("てば", "つ", "provisional-conditional", DefTag.v5t));
+        test(new DeconRule("べば", "ぶ", "provisional-conditional", DefTag.v5b));
+        test(new DeconRule("ねば", "ぬ", "provisional-conditional", DefTag.v5n));
+        test(new DeconRule("めば", "む", "provisional-conditional", DefTag.v5m));
+        test(new DeconRule("れば", "る", "provisional-conditional", DefTag.v5r));
+        test(new DeconRule("れば", "る", "provisional-conditional", DefTag.v5r_i));
+        
+        test(new DeconRule("くない", "い", "provisional-conditional", DefTag.adj_i));
+        test(new DeconRule("なければ", "ない", "provisional-conditional", DefTag.aux_adj));
+        test(new DeconRule("れば", "る", "provisional-conditional", DefTag.v1));
+        
+        //conditional/past conditional (ra) (+ba for formal) (adds on to past)
+        test(new DeconRule("ったら", "った", "conditional", DefTag.v5u));
+        test(new DeconRule("ったらば", "った", "conditional-formal", DefTag.v5u));
+        test(new DeconRule("いたら", "いた", "conditional", DefTag.v5k));
+        test(new DeconRule("いたらば", "いた", "conditional-formal", DefTag.v5k));
+        test(new DeconRule("いだら", "いだ", "conditional", DefTag.v5g));
+        test(new DeconRule("いだらば", "いだ", "conditional-formal", DefTag.v5g));
+        test(new DeconRule("したら", "した", "conditional", DefTag.v5s));
+        test(new DeconRule("したらば", "した", "conditional-formal", DefTag.v5s));
+        test(new DeconRule("ったら", "った", "conditional", DefTag.v5t));
+        test(new DeconRule("ったらば", "った", "conditional-formal", DefTag.v5t));
+        test(new DeconRule("んだら", "んだ", "conditional", DefTag.v5b));
+        test(new DeconRule("んだらば", "んだ", "conditional-formal", DefTag.v5b));
+        test(new DeconRule("んだら", "んだ", "conditional", DefTag.v5n));
+        test(new DeconRule("んだらば", "んだ", "conditional-formal", DefTag.v5n));
+        test(new DeconRule("んだら", "んだ", "conditional", DefTag.v5m));
+        test(new DeconRule("んだらば", "んだ", "conditional-formal", DefTag.v5m));
+        test(new DeconRule("ったら", "った", "conditional", DefTag.v5r));
+        test(new DeconRule("ったらば", "った", "conditional-formal", DefTag.v5r));
+        
+        test(new DeconRule("かったら", "かった", "conditional", DefTag.adj_i));//TODO does this work with i adjectives?
+        test(new DeconRule("かったらば", "かった", "conditional-formal", DefTag.adj_i));//TODO does this work with i adjectives?
+        test(new DeconRule("たら", "た", "conditional", DefTag.v1));
+        test(new DeconRule("たらば", "た", "conditional-formal", DefTag.v1));
+        
         //imperative (for orders)
+        test(new DeconRule("え", "う", "imperative", DefTag.v5u));
+        test(new DeconRule("け", "く", "imperative", DefTag.v5k));
+        test(new DeconRule("げ", "ぐ", "imperative", DefTag.v5g));
+        test(new DeconRule("せ", "す", "imperative", DefTag.v5s));
+        test(new DeconRule("て", "つ", "imperative", DefTag.v5t));
+        test(new DeconRule("べ", "ぶ", "imperative", DefTag.v5b));
+        test(new DeconRule("ね", "ぬ", "imperative", DefTag.v5n));
+        test(new DeconRule("め", "む", "imperative", DefTag.v5m));
+        test(new DeconRule("れ", "る", "imperative", DefTag.v5r));
+        test(new DeconRule("れ", "る", "imperative", DefTag.v5r_i));
+        
+        //not for i-adj, 4 exist for v1
+        test(new DeconRule("いろ", "いる", "imperative", DefTag.v1));
+        test(new DeconRule("いよ", "いる", "imperative", DefTag.v1));
+        test(new DeconRule("えろ", "える", "imperative", DefTag.v1));
+        test(new DeconRule("えよ", "える", "imperative", DefTag.v1));
         
         //volitional (let's)
         test(new DeconRule("おう", "う", "volitional", DefTag.v5u));
