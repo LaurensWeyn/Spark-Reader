@@ -55,7 +55,7 @@ public class Overlay
         
         //frame.getContentPane().add(new JTextField("text field south"), java.awt.BorderLayout.SOUTH);
         frame.setSize(width, height);
-        frame.setFocusableWindowState(false);//don't bring to focus when made visible
+        frame.setFocusableWindowState(UI.takeFocus);//set the focus mode
         //frame.pack();
         frame.setVisible(true);
         frame.setFocusable(false);

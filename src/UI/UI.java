@@ -120,6 +120,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     public static boolean showFurigana = true;
     public static boolean showOnNewLine = true;
     public static boolean useNaitiveUI = false;
+    public static boolean takeFocus = true;
     public void loadOptions(Options o)
     {
         textFont = o.getFont("textFont");
@@ -149,6 +150,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         splitLines = o.getOptionBool("splitLines");
         showFurigana = o.getOptionBool("showFurigana");
         showFurigana = o.getOptionBool("showOnNewLine");
+        takeFocus = o.getOptionBool("takeFocus");
         //TODO override height too
         totalWidth = windowWidth + defWidth;
         //totalWidth = textWidth;
