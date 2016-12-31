@@ -24,6 +24,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -44,6 +48,13 @@ public class Overlay
         frame.setUndecorated(true);
         frame.setBackground(new Color(0, 0, 0, 0));
         frame.setAlwaysOnTop(true);
+        try
+        {
+            frame.setIconImage(ImageIO.read(getClass().getResourceAsStream("/UI/icon.gif")));
+        } catch (IOException ex)
+        {
+            System.out.println("error loading icon: " + ex);
+        }
         // Without this, the window is draggable from any non transparent
         // point, including points  inside textboxes.
         frame.getRootPane().putClientProperty("apple.awt.draggableWindowBackground", false);

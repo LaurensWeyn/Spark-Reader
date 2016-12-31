@@ -56,6 +56,5 @@ splitLines = false
 showOnNewLine = true
 
 #If true, focus is stolen from other windows when clicked.
-#Needs to be true for some games or clicks on the UI will also click on the game
-#Many games will work fine with this set to false though, in which case keeping it off may be less annoying.
-takeFocus = true
+#If clicks are going through the window, try setting this to true
+takeFocus = false

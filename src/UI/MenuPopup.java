@@ -131,12 +131,13 @@ public class MenuPopup extends JPopupMenu
                 System.exit(0);
             }
         });
-        minimise = new JCheckBoxMenuItem(new AbstractAction("Minimise")
+        minimise = new JMenuItem(new AbstractAction("Minimise to tray")
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                UI.hidden = minimise.isSelected();
+                UI.hidden = true;
+                ui.tray.showTray();
                 ui.render();
             }
         });

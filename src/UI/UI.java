@@ -63,6 +63,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     
     
     Overlay disp;
+    Tray tray;
     
     SortedSet<Integer> markers;
     ArrayList<FoundWord> words;
@@ -206,10 +207,13 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         disp.getFrame().addMouseListener(this);
         disp.getFrame().addMouseMotionListener(this);
         disp.getFrame().addMouseWheelListener(this);
+        
+        tray = new Tray(this);//manages tray icon
     }
     public void render()
     {
         Graphics2D g = disp.getGraphics();
+        disp.getFrame().setVisible(!hidden);
         if(!hidden)
         {
             //render furigana/window bar
@@ -221,7 +225,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             if(text.equals(""))
             {
                 g.setColor(furiCol);
-                g.drawString("Spark Reader Beta 0.1, by Laurens Weyn. Waiting for text...", 0, g.getFontMetrics().getAscent());
+                g.drawString("Spark Reader Beta 0.2, by Laurens Weyn. Waiting for text...", 0, g.getFontMetrics().getAscent());
             }
 
 
@@ -262,22 +266,15 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
                 g.drawString(mpText, 0, defStartY + g.getFontMetrics().getAscent());
 
             }
+            
+            //render settings icon
+            g.setFont(furiFont);
+            options.getFontAA(g, "furiFont");
+            String cog = "三";//TODO use an icon for this, not a character
+            g.setColor(Color.white);//TODO don't hardcode
+            buttonStartX = windowWidth - optionsButtonWidth;
+            g.drawString(cog, buttonStartX, g.getFontMetrics().getAscent());
         }
-        else//hidden
-        {
-            //render background for settings icon (assume all parameters have been calculated)
-            g.setColor(furiBackCol);
-            g.fillRect(windowWidth - optionsButtonWidth, 0, optionsButtonWidth, textStartY - furiganaStartY);
-        }
-        //render settings icon
-        g.setFont(furiFont);
-        options.getFontAA(g, "furiFont");
-        String cog = "三";//TODO use an icon for this, not a character
-        g.setColor(Color.white);//TODO don't hardcode
-        buttonStartX = windowWidth - optionsButtonWidth;
-        g.drawString(cog, buttonStartX, g.getFontMetrics().getAscent());
-        
-        
         disp.refresh();
     }
     public void updateText(String newText)
