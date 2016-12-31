@@ -39,6 +39,32 @@ public class WordScanner
         matches.add(new ValidWord(word, ""));//dictionary form
         String hiragana = Japanese.toHiragana(word, false);
         if(word.equals(hiragana) == false)matches.add(new ValidWord(hiragana, "hiragana"));
+        
+        //conditional/past conditional (ra) (+ba for formal) (adds on to past, must come before)
+        test(new DeconRule("ったら", "った", "conditional", DefTag.v5u));
+        test(new DeconRule("ったらば", "った", "conditional-formal", DefTag.v5u));
+        test(new DeconRule("いたら", "いた", "conditional", DefTag.v5k));
+        test(new DeconRule("いたらば", "いた", "conditional-formal", DefTag.v5k));
+        test(new DeconRule("いだら", "いだ", "conditional", DefTag.v5g));
+        test(new DeconRule("いだらば", "いだ", "conditional-formal", DefTag.v5g));
+        test(new DeconRule("したら", "した", "conditional", DefTag.v5s));
+        test(new DeconRule("したらば", "した", "conditional-formal", DefTag.v5s));
+        test(new DeconRule("ったら", "った", "conditional", DefTag.v5t));
+        test(new DeconRule("ったらば", "った", "conditional-formal", DefTag.v5t));
+        test(new DeconRule("んだら", "んだ", "conditional", DefTag.v5b));
+        test(new DeconRule("んだらば", "んだ", "conditional-formal", DefTag.v5b));
+        test(new DeconRule("んだら", "んだ", "conditional", DefTag.v5n));
+        test(new DeconRule("んだらば", "んだ", "conditional-formal", DefTag.v5n));
+        test(new DeconRule("んだら", "んだ", "conditional", DefTag.v5m));
+        test(new DeconRule("んだらば", "んだ", "conditional-formal", DefTag.v5m));
+        test(new DeconRule("ったら", "った", "conditional", DefTag.v5r));
+        test(new DeconRule("ったらば", "った", "conditional-formal", DefTag.v5r));
+        
+        test(new DeconRule("かったら", "かった", "conditional", DefTag.adj_i));//TODO does this work with i adjectives?
+        test(new DeconRule("かったらば", "かった", "conditional-formal", DefTag.adj_i));//TODO does this work with i adjectives?
+        test(new DeconRule("たら", "た", "conditional", DefTag.v1));
+        test(new DeconRule("たらば", "た", "conditional-formal", DefTag.v1));
+        
         //past->dict
         //*
         test(new DeconRule("った", "う", "past", DefTag.v5u));
@@ -154,30 +180,6 @@ public class WordScanner
         test(new DeconRule("なければ", "ない", "provisional-conditional", DefTag.aux_adj));
         test(new DeconRule("れば", "る", "provisional-conditional", DefTag.v1));
         
-        //conditional/past conditional (ra) (+ba for formal) (adds on to past)
-        test(new DeconRule("ったら", "った", "conditional", DefTag.v5u));
-        test(new DeconRule("ったらば", "った", "conditional-formal", DefTag.v5u));
-        test(new DeconRule("いたら", "いた", "conditional", DefTag.v5k));
-        test(new DeconRule("いたらば", "いた", "conditional-formal", DefTag.v5k));
-        test(new DeconRule("いだら", "いだ", "conditional", DefTag.v5g));
-        test(new DeconRule("いだらば", "いだ", "conditional-formal", DefTag.v5g));
-        test(new DeconRule("したら", "した", "conditional", DefTag.v5s));
-        test(new DeconRule("したらば", "した", "conditional-formal", DefTag.v5s));
-        test(new DeconRule("ったら", "った", "conditional", DefTag.v5t));
-        test(new DeconRule("ったらば", "った", "conditional-formal", DefTag.v5t));
-        test(new DeconRule("んだら", "んだ", "conditional", DefTag.v5b));
-        test(new DeconRule("んだらば", "んだ", "conditional-formal", DefTag.v5b));
-        test(new DeconRule("んだら", "んだ", "conditional", DefTag.v5n));
-        test(new DeconRule("んだらば", "んだ", "conditional-formal", DefTag.v5n));
-        test(new DeconRule("んだら", "んだ", "conditional", DefTag.v5m));
-        test(new DeconRule("んだらば", "んだ", "conditional-formal", DefTag.v5m));
-        test(new DeconRule("ったら", "った", "conditional", DefTag.v5r));
-        test(new DeconRule("ったらば", "った", "conditional-formal", DefTag.v5r));
-        
-        test(new DeconRule("かったら", "かった", "conditional", DefTag.adj_i));//TODO does this work with i adjectives?
-        test(new DeconRule("かったらば", "かった", "conditional-formal", DefTag.adj_i));//TODO does this work with i adjectives?
-        test(new DeconRule("たら", "た", "conditional", DefTag.v1));
-        test(new DeconRule("たらば", "た", "conditional-formal", DefTag.v1));
         
         //imperative (for orders)
         test(new DeconRule("え", "う", "imperative", DefTag.v5u));
@@ -240,7 +242,7 @@ public class WordScanner
     public static void main(String[] args)
     {
         System.out.println();
-        for(ValidWord vw: new WordScanner("絞られて").getMatches())
+        for(ValidWord vw: new WordScanner("育てたら").getMatches())
         {
             System.out.println(vw.toString() + " " + vw.getNeededTags());
         }
