@@ -310,6 +310,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
                 if(showOnNewLine)
                 {
                     hidden = false;//force visiblility on new line if needed
+                    ui.tray.hideTray();
                 }
                 
                 if(splitLines)
