@@ -68,6 +68,7 @@ public class Options
 
         options.put("textBackCol", "0, 0, 255, 128");
         options.put("knownTextBackCol", "0, 0, 255, 200");
+        options.put("clickedTextBackCol", "0, 100, 0, 200");
         options.put("textCol", "255, 0, 0, 255");
 
         options.put("defReadingCol", "0, 255, 255, 255");

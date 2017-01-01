@@ -85,8 +85,8 @@ public class FoundWord
         int startPos = g.getFontMetrics().charWidth('べ') * startX + xOffset;
         int width = g.getFontMetrics().charWidth('べ') * text.length();
         boolean known = isKnown();
-        
-        g.setColor(known? UI.knownTextBackCol:UI.textBackCol);
+        //TODO make colour setting text more readable
+        g.setColor(showDef? UI.clickedTextBackCol : (known? UI.knownTextBackCol:UI.textBackCol));
         g.fillRect(startPos + 1, UI.textStartY, width - 2, g.getFontMetrics().getHeight());
         g.setColor(UI.textCol);
         g.drawString(text, startPos, UI.textStartY + g.getFontMetrics().getMaxAscent());

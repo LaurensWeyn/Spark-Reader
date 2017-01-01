@@ -16,6 +16,7 @@ markerCol = 255, 255, 0, 200
 #background colours#
 textBackCol = 0, 0, 0, 200
 knownTextBackCol = 0, 0, 100, 200
+clickedTextBackCol = 0, 100, 0, 200
 furiBackCol = 0, 0, 0, 128
 defBackCol = 0, 0, 0, 128
 

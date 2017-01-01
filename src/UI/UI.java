@@ -91,6 +91,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     
     public static Color textBackCol = new Color(0, 0, 255, 128);
     public static Color knownTextBackCol = new Color(0, 0, 255, 128);
+    public static Color clickedTextBackCol = new Color(0, 100, 0, 128);
     public static Color textCol = new Color(255, 0, 0, 255);
     
     public static Color defReadingCol = new Color(0, 255, 255);
@@ -135,6 +136,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         
         textBackCol = o.getColor("textBackCol");
         knownTextBackCol = o.getColor("knownTextBackCol");
+        clickedTextBackCol = o.getColor("clickedTextBackCol");
         textCol = o.getColor("textCol");
         
         defReadingCol = o.getColor("defReadingCol");
