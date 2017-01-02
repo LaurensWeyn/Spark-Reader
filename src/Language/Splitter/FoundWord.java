@@ -77,20 +77,21 @@ public class FoundWord
         return definitions.size();
     }
     
-    public void render(Graphics2D g, int xOffset)
+    public void render(Graphics2D g, int xOff, int yOff)
     {
         UI.options.getFontAA(g, "textFont");
         g.setClip(0, 0, UI.windowWidth, UI.maxHeight);//render only over window
         g.setFont(UI.textFont);
-        int startPos = g.getFontMetrics().charWidth('べ') * startX + xOffset;
+        int startPos = g.getFontMetrics().charWidth('べ') * startX + xOff;
         int width = g.getFontMetrics().charWidth('べ') * text.length();
         boolean known = isKnown();
         //TODO make colour setting text more readable
         g.setColor(showDef? UI.clickedTextBackCol : (known? UI.knownTextBackCol:UI.textBackCol));
-        g.fillRect(startPos + 1, UI.textStartY, width - 2, g.getFontMetrics().getHeight());
+        g.fillRect(startPos + 1,yOff + UI.textStartY, width - 2, g.getFontMetrics().getHeight());
         g.setColor(UI.textCol);
-        g.drawString(text, startPos, UI.textStartY + g.getFontMetrics().getMaxAscent());
+        g.drawString(text, startPos, yOff + UI.textStartY + g.getFontMetrics().getMaxAscent());
         
+        //find furigana
         if(definitions == null)return;//don't bother rendering furigana/defs if we don't know it
         String furiText = "";
         if(showDef)
@@ -101,12 +102,15 @@ public class FoundWord
         {
             furiText = definitions.get(currentDef).getFurigana();
         }
+        //render furigana
         g.setFont(UI.furiFont);
         UI.options.getFontAA(g, "furiFont");
         g.setColor(UI.furiCol);
+        //not effected by Y offset
         int furiX = startPos + width/2 - g.getFontMetrics().stringWidth(furiText)/2;
         g.drawString(furiText, furiX, UI.furiganaStartY + g.getFontMetrics().getAscent());
         
+        //not effected by Y offset
         if(showDef)
         {
             g.setClip(null);//render this anywhere

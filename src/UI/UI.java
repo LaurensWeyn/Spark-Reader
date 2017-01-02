@@ -40,6 +40,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -65,8 +66,8 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     Overlay disp;
     Tray tray;
     
-    SortedSet<Integer> markers;
-    ArrayList<FoundWord> words;
+    ArrayList<Line> lines;
+    
     public static int mainFontSize = 0;
     int xOffset = 0;
     boolean lMouseClick = false;
@@ -176,7 +177,8 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     }
     public UI()
     {
-        markers = new TreeSet<>();
+        lines = new ArrayList<>();
+        lines.add(new Line());
         
         try
         {
@@ -229,32 +231,15 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
                 g.setColor(furiCol);
                 g.drawString("Spark Reader Beta 0.2, by Laurens Weyn. Waiting for text...", 0, g.getFontMetrics().getAscent());
             }
+            
 
-
-            //render markers
-            Set<Integer> splitPoints = new HashSet<>();
-            for(FoundWord word:words)
+            int yJump = g.getFontMetrics(textFont).getHeight();
+            int yOff = 0;
+            //render lines
+            for(Line line:lines)
             {
-                splitPoints.add(word.startX());
-            }
-            g.setClip(0, 0, UI.windowWidth, UI.maxHeight);//render only over window
-            for (int i = 0; i < text.length(); i++)
-            {
-                if(markers.contains(i) || splitPoints.contains(i))//only draw on actual points
-                {
-                    g.setColor(markers.contains(i)?markerCol:noMarkerCol);
-                    g.fillRect(xOffset + i * mainFontSize - 1, textStartY, 2, defStartY - textStartY);//TODO make markers variable size
-                }
-            }
-
-            //render words
-            g.setFont(textFont);
-            mainFontSize = g.getFontMetrics().charWidth('べ');
-            defStartY = g.getFontMetrics().getHeight() + textStartY;
-            for(FoundWord word:words)
-            {
-                word.render(g, xOffset);
-                splitPoints.add(word.startX());
+                line.render(g, xOffset, yOff);
+                yOff += yJump;
             }
 
             //render MP text (if running, there's text and no def's open
@@ -282,7 +267,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     public void updateText(String newText)
     {
         text = newText;
-        words = splitter.split(text, markers);
+        lines.get(0).setWords(splitter.split(text, lines.get(0).getMarkers()));//TODO split this text properly across line objects
     }
     public static void main(String[] args)throws Exception
     {
@@ -324,7 +309,10 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
                         log.addLine(line);
                         lastLine = line;
                     }
-                    ui.markers.clear();//clear markers
+                    for(Line line:ui.lines)
+                    {
+                        line.getMarkers().clear();//clear all markers
+                    }
                     ui.updateText(lastLine);//show last line by default
                     ui.xOffset = 0;//scroll back to front
                     ui.render();
@@ -332,7 +320,10 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
                 else
                 {
                     clip = clip.replace("\n", "").replace("\r", "");
-                    ui.markers.clear();//clear markers
+                    for(Line line:ui.lines)
+                    {
+                        line.getMarkers().clear();//clear all markers
+                    }
                     ui.updateText(clip);//reflow text on defaults
                     log.addLine(clip);//add line to log
                     ui.xOffset = 0;//scroll back to front
@@ -402,8 +393,9 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             if(e.getY() >= textStartY && e.getY() <= defStartY)
             {
                 int pos = toCharPos(e.getX());
-                selectedWord = null;//recalulate
-                for(FoundWord word:words)
+                int lineIndex = getLineIndex(e.getPoint());
+                selectedWord = null;//to recalulate
+                for(FoundWord word:lines.get(lineIndex).getWords())
                 {
                     word.toggleWindow(pos);
                     if(word.isShowingDef())selectedWord = word;
@@ -414,7 +406,9 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         }else if(e.getY() > textStartY && e.getY() < defStartY && e.getButton() == 2)//middle click: place marker
         {
             int pos = toCharPos(e.getX() + mainFontSize/2);
-            //change markers
+            int lineIndex = getLineIndex(e.getPoint());
+            Set<Integer> markers = lines.get(lineIndex).getMarkers();
+            //toggle markers
             if(markers.contains(pos))markers.remove(pos);
             else markers.add(pos);
             
@@ -430,7 +424,8 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             else if(!hidden && (e.getY() >= textStartY && e.getY() <= defStartY))//word
             {
                 WordPopup popup = null;
-                for(FoundWord word:words)
+                int lineIndex = getLineIndex(e.getPoint());
+                for(FoundWord word:lines.get(lineIndex).getWords())
                 {
                     int pos = toCharPos(e.getX());
                     if(word.inBounds(pos))
@@ -557,7 +552,10 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
                 historyLine = log.forward();
             }
             System.out.println("loading line " + historyLine);
-            markers.clear();//clear markers (not relevant for this text)
+            for(Line line:lines)
+            {
+                line.getMarkers().clear();//clear markers (not relevant for this text)
+            }
             updateText(historyLine);//flow new text
             xOffset = 0;//scroll back to front
             render();//update
@@ -571,5 +569,8 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         int maxX = (text.length() - maxChars) * mainFontSize;
         if(-xOffset > maxX)xOffset = Math.min(-maxX, 0);
     }
-    
+    public int getLineIndex(Point pos)
+    {
+        return 0;//TODO calculate line number
+    }
 }
