@@ -50,7 +50,9 @@ public class FoundDef implements Comparable<FoundDef>
     
     public void render(Graphics g, int xPos, int maxWidth, int y)
     {
-        y++;//1 pixel space
+        g.setColor(new Color(0,0,0,1));
+        g.fillRect(xPos, y, maxWidth, 1);//let mouse move thorugh 1 pixel space
+        y++;//slight spacer
         
         defLines = 0;//will be recounted
         

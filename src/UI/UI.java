@@ -28,9 +28,11 @@ import Options.Known;
 import Options.Options;
 import Options.PrefDef;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -351,6 +353,11 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         ui.registerListeners();
         //random sample text to copy for testing
         System.out.println("ひかり「暁斗たちと遊んでて夕飯のギョーザを食べ損ねて、\n悔しかったから、星座にしてやったんだよね」");
+        
+        //center window
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        ui.disp.getFrame().setLocation(screenSize.width / 2 - windowWidth / 2, screenSize.height / 2 - maxHeight / 2);
+        
         ui.render();//TODO make this not need 2 render calls to properly align stuff
         ui.render();
         System.gc();//cleanup after loading in dictionaries and such
