@@ -53,6 +53,7 @@ public class Options
     {
         options = new HashMap<>();
         file = null;
+        
         ///////////////////////////////////////
         //all default settings hardcoded here//
         ///////////////////////////////////////
@@ -65,6 +66,7 @@ public class Options
         options.put("noMarkerCol", "255, 255, 0, 1");
         options.put("furiCol", "0, 255, 255, 255");
         options.put("furiBackCol", "0, 0, 0, 128");
+        options.put("windowBackCol", "0, 0, 0, 100");
 
         options.put("textBackCol", "0, 0, 255, 128");
         options.put("knownTextBackCol", "0, 0, 255, 200");
@@ -191,8 +193,8 @@ public class Options
     }
     public void getFontAA(Graphics2D g, String tag)
     {
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-          getFontAA(tag)?RenderingHints.VALUE_ANTIALIAS_ON:RenderingHints.VALUE_ANTIALIAS_OFF);
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+          getFontAA(tag)?RenderingHints.VALUE_TEXT_ANTIALIAS_ON:RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
     }
     public void setOption(String tag, String value)
     {
