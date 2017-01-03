@@ -50,6 +50,8 @@ import javax.swing.JOptionPane;
  */
 public class UI implements MouseListener, MouseMotionListener, MouseWheelListener
 {
+    public static final String VERSION = "Beta 0.3";
+    
     public static UI instance;
     
     
@@ -263,7 +265,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             if(text.equals(""))
             {
                 g.setColor(furiCol);
-                g.drawString("Spark Reader Beta 0.2, by Laurens Weyn. Waiting for text...", 0, g.getFontMetrics().getAscent());
+                g.drawString("Spark Reader " + VERSION + ", by Laurens Weyn. Waiting for text...", 0, g.getFontMetrics().getAscent());
             }
             
 
