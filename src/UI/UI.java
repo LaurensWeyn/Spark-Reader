@@ -331,9 +331,9 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             i++;
         }
         //clear all leftover lines (TODO more efficiently?)
-        while(i > lines.size())
+        while(i < lines.size())
         {
-            lines.remove(i - 1);
+            lines.remove(i);
         }
         //bits.get(0).setWords(splitter.split(text, bits.get(0).getMarkers()));//TODO split this text properly across line objects
     }
@@ -626,7 +626,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     {
         if(xOffset > 0)xOffset = 0;
         int maxChars = (windowWidth - defWidth) / mainFontSize;
-        int maxX = (text.length() - maxChars) * mainFontSize;
+        int maxX = (longestLine - maxChars) * mainFontSize;
         if(-xOffset > maxX)xOffset = Math.min(-maxX, 0);
     }
     public int getLineIndex(Point pos)
