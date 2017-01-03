@@ -39,11 +39,7 @@ import java.awt.event.MouseWheelListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import javax.swing.JOptionPane;
 
 /**
@@ -67,6 +63,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     Tray tray;
     
     ArrayList<Line> lines;
+    int longestLine = 0;
     
     public static int mainFontSize = 0;
     int xOffset = 0;
@@ -78,17 +75,25 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     
     public static int furiganaStartY = 0;
     public static int textStartY = 20;
-    public static int defStartY = 60;//now auto-recalculated in render
+    public static int defStartY = 0;//now auto-recalculated in render
+    
+    public static int lineHeight = 0;//now auto-recalculated in render
+    public static int textHeight = 0;//now auto-recalculated in render
+    public static int furiHeight = 0;//now auto-recalculated in render
+    
     public static int buttonStartX;
     
     public static Font textFont = new Font("Meiryo", Font.PLAIN, 30);
     public static Font furiFont = new Font("Meiryo", 0, 15);
     public static Font defFont = new Font("Meiryo", 0, 15);
     
+    public static final Color CLEAR = new Color(0, 0, 0, 0);
+    
     public static Color markerCol = new Color(255, 255, 0, 200);
     public static Color noMarkerCol = new Color(255, 255, 0, 1);
     public static Color furiCol = new Color(0, 255, 255);
     public static Color furiBackCol = new Color(0, 0, 0, 128);
+    public static Color windowBackCol = new Color(0, 0, 0, 100);
     
     public static Color textBackCol = new Color(0, 0, 255, 128);
     public static Color knownTextBackCol = new Color(0, 0, 255, 128);
@@ -124,6 +129,8 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     public static boolean showOnNewLine = true;
     public static boolean useNaitiveUI = false;
     public static boolean takeFocus = true;
+    
+    public static boolean renderBackground = true;
     public void loadOptions(Options o)
     {
         textFont = o.getFont("textFont");
@@ -134,6 +141,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         noMarkerCol = o.getColor("noMarkerCol");
         furiCol = o.getColor("furiCol");
         furiBackCol = o.getColor("furiBackCol");
+        windowBackCol = o.getColor("windowBackCol");
         
         textBackCol = o.getColor("textBackCol");
         knownTextBackCol = o.getColor("knownTextBackCol");
@@ -217,15 +225,39 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     public void render()
     {
         Graphics2D g = disp.getGraphics();
+        g.setBackground(CLEAR);
         disp.getFrame().setVisible(!hidden);
+        
+        textHeight = g.getFontMetrics(textFont).getHeight();
+        furiHeight = g.getFontMetrics(furiFont).getHeight();
+        lineHeight = textHeight + furiHeight;
+        
+        g.setFont(textFont);
+        mainFontSize = g.getFontMetrics().charWidth('べ');
+        defStartY = lineHeight * lines.size();
+        
         if(!hidden)
         {
+            //render background
+            if(renderBackground)
+            {
+                g.setColor(textBackCol);
+                g.fillRect(0, textStartY - 1, windowWidth, lines.size() * lineHeight - furiHeight + 1);
+                g.setColor(windowBackCol);
+                int i = 1;
+                while(i < lines.size())
+                {
+                    g.clearRect(0, (textStartY - 1) + (i * lineHeight) - furiHeight + 1, windowWidth, furiHeight - 1);
+                    g.fillRect (0, (textStartY - 1) + (i * lineHeight) - furiHeight + 1, windowWidth, furiHeight - 1);
+                    i++;
+                }
+            }
             //render furigana/window bar
             g.setFont(furiFont);
             options.getFontAA(g, "furiFont");
             textStartY = g.getFontMetrics().getHeight();
             g.setColor(furiBackCol);
-            g.fillRect(0, 0, windowWidth, textStartY - furiganaStartY);
+            g.fillRect(0, 0, windowWidth, textStartY - furiganaStartY - 1);
             if(text.equals(""))
             {
                 g.setColor(furiCol);
@@ -233,13 +265,26 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             }
             
 
-            int yJump = g.getFontMetrics(textFont).getHeight();
+            
             int yOff = 0;
             //render lines
             for(Line line:lines)
             {
-                line.render(g, xOffset, yOff);
-                yOff += yJump;
+                //g.setRenderingHint(, instance);
+                /*if(renderBackground && yOff != 0)
+                {
+                    g.setColor(textBackCol);
+                    g.fillRect(0, yOff, windowWidth, furiHeight);
+                }*/
+                
+                int lastX = line.render(g, xOffset, yOff);
+                
+                /*if(lastX < windowWidth && renderBackground)
+                {
+                    g.setColor(textBackCol);
+                    g.fillRect(lastX - 1, yOff + furiHeight, windowWidth - lastX, textHeight + 1);//TODO use variable sized marker size
+                }*/
+                yOff += lineHeight;
             }
 
             //render MP text (if running, there's text and no def's open
@@ -267,7 +312,30 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     public void updateText(String newText)
     {
         text = newText;
-        lines.get(0).setWords(splitter.split(text, lines.get(0).getMarkers()));//TODO split this text properly across line objects
+        //TODO allow for reflow to fit in text box (after splitting)
+        String bits[] = newText.split("\n");
+        longestLine = 0;
+        int i = 0;
+        for(String bit:bits)
+        {
+            if(bit.length() > longestLine)longestLine = bit.length();
+            
+            if(i == lines.size())
+            {
+                lines.add(new Line(splitter.split(bit)));
+            }
+            else
+            {
+                lines.get(i).setWords(splitter.split(bit, lines.get(i).getMarkers()));
+            }
+            i++;
+        }
+        //clear all leftover lines (TODO more efficiently?)
+        while(i > lines.size())
+        {
+            lines.remove(i - 1);
+        }
+        //bits.get(0).setWords(splitter.split(text, bits.get(0).getMarkers()));//TODO split this text properly across line objects
     }
     public static void main(String[] args)throws Exception
     {
@@ -283,6 +351,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         ui.registerListeners();
         //random sample text to copy for testing
         System.out.println("ひかり「暁斗たちと遊んでて夕飯のギョーザを食べ損ねて、\n悔しかったから、星座にしてやったんだよね」");
+        ui.render();//TODO make this not need 2 render calls to properly align stuff
         ui.render();
         System.gc();//cleanup after loading in dictionaries and such
         //update loop
@@ -300,35 +369,18 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
                     ui.tray.hideTray();
                 }
                 
-                if(splitLines)
+                
+                clip = clip.replace("\r", "");
+                if(!splitLines)clip = clip.replace("\n", "");//all on one line if not splitting
+                for(Line line:ui.lines)
                 {
-                    String lines[] = clip.replace("\r", "").split("\n");
-                    String lastLine = "";
-                    for(String line:lines)
-                    {
-                        log.addLine(line);
-                        lastLine = line;
-                    }
-                    for(Line line:ui.lines)
-                    {
-                        line.getMarkers().clear();//clear all markers
-                    }
-                    ui.updateText(lastLine);//show last line by default
-                    ui.xOffset = 0;//scroll back to front
-                    ui.render();
+                    line.getMarkers().clear();//clear all markers
                 }
-                else
-                {
-                    clip = clip.replace("\n", "").replace("\r", "");
-                    for(Line line:ui.lines)
-                    {
-                        line.getMarkers().clear();//clear all markers
-                    }
-                    ui.updateText(clip);//reflow text on defaults
-                    log.addLine(clip);//add line to log
-                    ui.xOffset = 0;//scroll back to front
-                    ui.render();
-                }
+                ui.updateText(clip);//reflow text on defaults
+                log.addLine(clip);//add line to log
+                ui.xOffset = 0;//scroll back to front
+                ui.render();
+                
             }
             //check MP systems
             if(clientMode != null)
@@ -388,13 +440,21 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             {
                 new MenuPopup(this).show();
             }
-                
-            //within word area (TODO: support multiple lines?)
+            
             if(e.getY() >= textStartY && e.getY() <= defStartY)
             {
                 int pos = toCharPos(e.getX());
                 int lineIndex = getLineIndex(e.getPoint());
                 selectedWord = null;//to recalulate
+                
+                //reset selection on all unselected lines:
+                int i = 0;
+                for(Line line:lines)
+                {
+                    if(i != lineIndex)line.resetSelection();
+                    i++;
+                }
+                //toggle on selected line:
                 for(FoundWord word:lines.get(lineIndex).getWords())
                 {
                     word.toggleWindow(pos);
@@ -571,6 +631,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     }
     public int getLineIndex(Point pos)
     {
-        return 0;//TODO calculate line number
+        int index = (pos.y - textStartY)/ lineHeight;
+        return index;
     }
 }

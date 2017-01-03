@@ -18,6 +18,7 @@ textBackCol = 0, 0, 0, 200
 knownTextBackCol = 0, 0, 100, 200
 clickedTextBackCol = 0, 100, 0, 200
 furiBackCol = 0, 0, 0, 128
+windowBackCol = 0, 0, 0, 175
 defBackCol = 0, 0, 0, 128
 
 #fonts#
@@ -49,9 +50,8 @@ defWidth = 250
 showFurigana = true
 
 #if false, all text lines are put on one line
-#if true, all lines are added seperately and last line is shown
-#(scroll through history [furigana bar] to see the other lines)
-splitLines = false
+#if true, multiple lines are shown seperately
+splitLines = true
 
 #if true, auto-unhides the UI when a new line of Japanese text is detected in the clipboard
 showOnNewLine = true

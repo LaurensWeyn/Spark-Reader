@@ -87,7 +87,8 @@ public class FoundWord
         boolean known = isKnown();
         //TODO make colour setting text more readable
         g.setColor(showDef? UI.clickedTextBackCol : (known? UI.knownTextBackCol:UI.textBackCol));
-        g.fillRect(startPos + 1,yOff + UI.textStartY, width - 2, g.getFontMetrics().getHeight());
+        g.clearRect(startPos + 1,yOff + UI.textStartY, width - 2, g.getFontMetrics().getHeight());//remove background
+        g.fillRect (startPos + 1,yOff + UI.textStartY, width - 2, g.getFontMetrics().getHeight());//set to new color
         g.setColor(UI.textCol);
         g.drawString(text, startPos, yOff + UI.textStartY + g.getFontMetrics().getMaxAscent());
         
@@ -106,9 +107,8 @@ public class FoundWord
         g.setFont(UI.furiFont);
         UI.options.getFontAA(g, "furiFont");
         g.setColor(UI.furiCol);
-        //not effected by Y offset
         int furiX = startPos + width/2 - g.getFontMetrics().stringWidth(furiText)/2;
-        g.drawString(furiText, furiX, UI.furiganaStartY + g.getFontMetrics().getAscent());
+        g.drawString(furiText, furiX, UI.furiganaStartY + g.getFontMetrics().getAscent() + yOff);
         
         //not effected by Y offset
         if(showDef)

@@ -50,6 +50,8 @@ public class FoundDef implements Comparable<FoundDef>
     
     public void render(Graphics g, int xPos, int maxWidth, int y)
     {
+        y++;//1 pixel space
+        
         defLines = 0;//will be recounted
         
         //output original form if processed

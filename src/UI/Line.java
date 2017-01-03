@@ -24,6 +24,7 @@ import static UI.UI.noMarkerCol;
 import static UI.UI.text;
 import static UI.UI.textFont;
 import static UI.UI.textStartY;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -45,14 +46,24 @@ public class Line
         this.markers = markers;
         this.words = words;
     }
-
+    public Line(ArrayList<FoundWord> words)
+    {
+        markers = new TreeSet<>();
+        this.words = words;
+    }
     public Line()
     {
         markers = new TreeSet<>();
         words = new ArrayList<>();
     }
-    
-    public void render(Graphics2D g, int xOff, int yOff)
+    public void resetSelection()
+    {
+        for(FoundWord word:words)
+        {
+            word.showDef(false);
+        }
+    }
+    public int render(Graphics2D g, int xOff, int yOff)
     {
         //find markers
         Set<Integer> splitPoints = new HashSet<>();
@@ -67,19 +78,36 @@ public class Line
             if(markers.contains(i) || splitPoints.contains(i))//only draw on actual points
             {
                 g.setColor(markers.contains(i)?markerCol:noMarkerCol);
-                g.fillRect(xOff + i * mainFontSize - 1, yOff + textStartY, 2, defStartY - textStartY);//TODO make markers variable size
+                
+                g.clearRect(xOff + i * mainFontSize - 1, yOff + textStartY, 2, UI.textHeight);
+                g.fillRect (xOff + i * mainFontSize - 1, yOff + textStartY, 2, UI.textHeight);//TODO make markers variable size
             }
         }
 
         //render words
         g.setFont(textFont);
-        mainFontSize = g.getFontMetrics().charWidth('べ');
-        defStartY = g.getFontMetrics().getHeight() + textStartY;
+        
+        int lastX = 0;
         for(FoundWord word:words)
         {
             word.render(g, xOff, yOff);
+            lastX = word.endX() * mainFontSize + xOff;
         }
+        return lastX;
     }
+
+    @Override
+    public String toString()
+    {
+        String text = "";
+        for(FoundWord word:words)
+        {
+            text += word.getText();
+        }
+        return text;
+    }
+    
+    
 
     public SortedSet<Integer> getMarkers()
     {
