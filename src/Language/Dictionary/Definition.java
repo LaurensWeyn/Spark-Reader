@@ -160,7 +160,9 @@ public class Definition
     }
     public String getMeaningLine()
     {
-        return meaning.replace("/", ", ").replace(", (", "<br>(");
+        String result = meaning.replace("/", ", ").replace(", (", "<br>(");
+        if(result.startsWith(", "))result = result.replaceFirst(", ", "");
+        return result;
     }
     public String[] getReadings()
     {

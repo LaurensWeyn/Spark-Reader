@@ -172,9 +172,10 @@ public class WordPopup extends JPopupMenu
             String lookup = Kanji.lookup(kanji.charAt(i));
             if(lookup != null)
             {
-                if(kanjiDetails.equals("")) kanjiDetails = lookup;
-                else kanjiDetails += "<br>" + lookup;
+                if(kanjiDetails.equals("")) kanjiDetails = kanji.charAt(i) + " 【" + lookup + "】";
+                else kanjiDetails += "<br>" +  kanji.charAt(i) + " 【" + lookup + "】";
             }
+            i++;
         }
         fr.append(kanji + "\t"
                 + reading + "\t"
