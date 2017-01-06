@@ -18,6 +18,7 @@ package UI;
 
 import Hooker.ClipboardHook;
 import Language.Dictionary.DefTag;
+import Language.Dictionary.Kanji;
 import Language.Splitter.FoundDef;
 import Language.Splitter.FoundWord;
 import java.awt.event.ActionEvent;
@@ -162,7 +163,25 @@ public class WordPopup extends JPopupMenu
         {
             tagList += tag.name() + " ";
         }
-        fr.append(kanji + "\t" + reading + "\t" + definition +"\t" + tagList + "\t" + UI.text + "\n");
+        
+        
+        String kanjiDetails = "";
+        int i = 0;
+        while(i != kanji.length())
+        {
+            String lookup = Kanji.lookup(kanji.charAt(i));
+            if(lookup != null)
+            {
+                if(kanjiDetails.equals("")) kanjiDetails = lookup;
+                else kanjiDetails += "<br>" + lookup;
+            }
+        }
+        fr.append(kanji + "\t"
+                + reading + "\t"
+                + definition +"\t"
+                + tagList + "\t"
+                + UI.text.replace("\n", "<br>")
+                + "\t" + kanjiDetails + "\n");
         
         fr.close();
     }
