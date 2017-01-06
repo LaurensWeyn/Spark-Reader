@@ -74,9 +74,13 @@ public class WordSplitter
                                 {
                                     //when negative, it conjugates like an i adjective. do not reject!
                                 }
-                                if(match.getProcess().contains(" potential") && needed == DefTag.v1)
+                                else if(match.getProcess().contains(" potential") && needed == DefTag.v1)
                                 {
                                     //potential form further conjugates like v1
+                                }
+                                else if(match.getProcess().contains(" passive") && needed == DefTag.v1)
+                                {
+                                    //passive form as well?
                                 }
                                 else
                                 {

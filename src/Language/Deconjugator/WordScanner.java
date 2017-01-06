@@ -65,6 +65,17 @@ public class WordScanner
         test(new DeconRule("たら", "た", "conditional", DefTag.v1));
         test(new DeconRule("たらば", "た", "conditional-formal", DefTag.v1));
         
+        //potential (can do verb, can combine with past)
+        test(new DeconRule("える", "う", "potential", DefTag.v5u));
+        test(new DeconRule("ける", "く", "potential", DefTag.v5k));
+        test(new DeconRule("げる", "ぐ", "potential", DefTag.v5g));
+        test(new DeconRule("せる", "す", "potential", DefTag.v5s));
+        test(new DeconRule("てる", "つ", "potential", DefTag.v5t));
+        test(new DeconRule("べる", "ぶ", "potential", DefTag.v5b));
+        test(new DeconRule("ねる", "ぬ", "potential", DefTag.v5n));
+        test(new DeconRule("める", "む", "potential", DefTag.v5m));
+        test(new DeconRule("れる", "る", "potential", DefTag.v5r));
+        
         //past->dict
         //*
         test(new DeconRule("った", "う", "past", DefTag.v5u));
@@ -127,18 +138,10 @@ public class WordScanner
         
         //no stem for adjectives, but -sou sort-of uses a stem
         test(new DeconRule("そう", "い", "-sou", DefTag.adj_i));
+        test(new DeconRule("", "い", "adj 'stem'", DefTag.adj_i));//Try match stem anyways, needed for things like '頼もしげに'
         test(new DeconRule("", "る", "i stem", DefTag.v1));
         
-        //potential (can do verb)
-        test(new DeconRule("える", "う", "potential", DefTag.v5u));
-        test(new DeconRule("ける", "く", "potential", DefTag.v5k));
-        test(new DeconRule("げる", "ぐ", "potential", DefTag.v5g));
-        test(new DeconRule("せる", "す", "potential", DefTag.v5s));
-        test(new DeconRule("てる", "つ", "potential", DefTag.v5t));
-        test(new DeconRule("べる", "ぶ", "potential", DefTag.v5b));
-        test(new DeconRule("ねる", "ぬ", "potential", DefTag.v5n));
-        test(new DeconRule("める", "む", "potential", DefTag.v5m));
-        test(new DeconRule("れる", "る", "potential", DefTag.v5r));
+        //potential was here
         
         //not for adjectives
         test(new DeconRule("られる", "る", "potential", DefTag.v1));//normal
@@ -148,7 +151,7 @@ public class WordScanner
         test(new DeconRule("われる", "う", "passive", DefTag.v5u));
         test(new DeconRule("かれる", "く", "passive", DefTag.v5k));
         test(new DeconRule("がれる", "ぐ", "passive", DefTag.v5g));
-        test(new DeconRule("させる", "す", "passive", DefTag.v5s));
+        test(new DeconRule("される", "す", "passive", DefTag.v5s));
         test(new DeconRule("たてる", "つ", "passive", DefTag.v5t));
         test(new DeconRule("ばれる", "ぶ", "passive", DefTag.v5b));
         test(new DeconRule("なれる", "ぬ", "passive", DefTag.v5n));
@@ -242,7 +245,7 @@ public class WordScanner
     public static void main(String[] args)
     {
         System.out.println();
-        for(ValidWord vw: new WordScanner("育てたら").getMatches())
+        for(ValidWord vw: new WordScanner("聞かされた").getMatches())
         {
             System.out.println(vw.toString() + " " + vw.getNeededTags());
         }
