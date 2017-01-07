@@ -161,7 +161,7 @@ public class Definition
     public String getMeaningLine()
     {
         String result = meaning.replace("/", ", ").replace(", (", "<br>(");
-        if(result.startsWith(", "))result = result.replaceFirst(", ", "");
+        if(result.startsWith("<br>"))result = result.replaceFirst("<br>", "");
         return result;
     }
     public String[] getReadings()
