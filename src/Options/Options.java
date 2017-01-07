@@ -89,7 +89,7 @@ public class Options
         options.put("maxHeight", "720");
         options.put("defWidth", "250");
         
-        options.put("splitLines", "false");
+        options.put("splitLines", "true");
         options.put("showFurigana", "true");
         options.put("showOnNewLine", "true");
         options.put("takeFocus", "true");

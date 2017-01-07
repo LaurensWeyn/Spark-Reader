@@ -177,12 +177,17 @@ public class WordPopup extends JPopupMenu
             }
             i++;
         }
+        
+        String note = JOptionPane.showInputDialog(ui.disp.getFrame(), "Enter comment\n(You may also leave this blank)");
+        if(note == null)note = "";
+        
         fr.append(kanji + "\t"
                 + reading + "\t"
                 + definition +"\t"
                 + tagList + "\t"
-                + UI.text.replace("\n", "<br>")
-                + "\t" + kanjiDetails + "\n");
+                + UI.text.replace("\n", "<br>") + "\t"
+                + kanjiDetails + "\t"
+                + note + "\n");
         
         fr.close();
     }

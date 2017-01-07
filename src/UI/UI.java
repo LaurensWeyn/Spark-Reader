@@ -81,11 +81,13 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     public static int textStartY = 20;
     public static int defStartY = 0;//now auto-recalculated in render
     
-    public static int lineHeight = 0;//now auto-recalculated in render
-    public static int textHeight = 0;//now auto-recalculated in render
-    public static int furiHeight = 0;//now auto-recalculated in render
+    public static int lineHeight = 0;
+    public static int textHeight = 0;
+    public static int furiHeight = 0;
     
     public static int buttonStartX;
+    
+    //TODO clean up this mess!
     
     public static Font textFont = new Font("Meiryo", Font.PLAIN, 30);
     public static Font furiFont = new Font("Meiryo", 0, 15);
@@ -135,6 +137,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     public static boolean takeFocus = true;
     
     public static boolean renderBackground = true;
+    
     public void loadOptions(Options o)
     {
         textFont = o.getFont("textFont");
@@ -194,7 +197,6 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         
         try
         {
-            //dict.loadDefs(new File("C:\\Users\\laure\\Downloads\\edict2"), "EUC-JP");
             //load config
             options = new Options(new File("settings.txt"));
             known = new Known(new File("knownWords"));
@@ -209,7 +211,6 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             
             
             textFont = new Font("Meiryo", Font.PLAIN, 30);
-            //textFont = new Font("HanaMinA Regular", Font.PLAIN, 30);
             
         }catch(Exception e)
         {
@@ -268,30 +269,15 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
                 g.drawString("Spark Reader " + VERSION + ", by Laurens Weyn. Waiting for text...", 0, g.getFontMetrics().getAscent());
             }
             
-
-            
             int yOff = 0;
             //render lines
             for(Line line:lines)
             {
-                //g.setRenderingHint(, instance);
-                /*if(renderBackground && yOff != 0)
-                {
-                    g.setColor(textBackCol);
-                    g.fillRect(0, yOff, windowWidth, furiHeight);
-                }*/
-                
-                int lastX = line.render(g, xOffset, yOff);
-                
-                /*if(lastX < windowWidth && renderBackground)
-                {
-                    g.setColor(textBackCol);
-                    g.fillRect(lastX - 1, yOff + furiHeight, windowWidth - lastX, textHeight + 1);//TODO use variable sized marker size
-                }*/
+                line.render(g, xOffset, yOff);
                 yOff += lineHeight;
             }
 
-            //render MP text (if running, there's text and no def's open
+            //render MP text (if running, there's text and no def's open)
             if(mpThread != null && mpText != null && selectedWord == null)
             {
                 g.setFont(furiFont);
@@ -339,10 +325,11 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         {
             lines.remove(i);
         }
-        //bits.get(0).setWords(splitter.split(text, bits.get(0).getMarkers()));//TODO split this text properly across line objects
     }
     public static void main(String[] args)throws Exception
     {
+        System.out.println(VERSION);
+        
         try
         {
             if(useNaitiveUI)javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
@@ -350,6 +337,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         {
             //fall back to default if this fails
         }
+        
         UI ui = new UI();
         instance = ui;
         ui.registerListeners();
