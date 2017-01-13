@@ -136,10 +136,15 @@ public class WordScanner
         test(new DeconRule("み", "む", "i stem", DefTag.v5m));
         test(new DeconRule("り", "る", "i stem", DefTag.v5r));
         
+        test(new DeconRule("", "る", "i stem", DefTag.v1));
         //no stem for adjectives, but -sou sort-of uses a stem
         test(new DeconRule("そう", "い", "-sou", DefTag.adj_i));
         test(new DeconRule("", "い", "adj 'stem'", DefTag.adj_i));//Try match stem anyways, needed for things like '頼もしげに'
-        test(new DeconRule("", "る", "i stem", DefTag.v1));
+        
+        //adjective conjugations
+        test(new DeconRule("く", "い", "adverb", DefTag.adj_i));
+        test(new DeconRule("な", "", "adjective", DefTag.adj_na));
+        test(new DeconRule("の", "", "adjective", DefTag.adj_no));
         
         //potential was here
         
