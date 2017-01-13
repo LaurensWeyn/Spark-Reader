@@ -178,8 +178,9 @@ public class WordPopup extends JPopupMenu
             i++;
         }
         
-        String note = JOptionPane.showInputDialog(ui.disp.getFrame(), "Enter comment\n(You may also leave this blank)");
-        if(note == null)note = "";
+        String note = JOptionPane.showInputDialog(ui.disp.getFrame(), "Enter comment\n(You may also leave this blank)", "Adding " + kanji, JOptionPane.PLAIN_MESSAGE);
+        
+        if(note == null)return;//cancel export on pressing cancel
         
         fr.append(kanji + "\t"
                 + reading + "\t"

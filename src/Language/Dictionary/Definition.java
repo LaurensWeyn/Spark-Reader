@@ -162,6 +162,7 @@ public class Definition
     {
         String result = meaning.replace("/", ", ").replace(", (", "<br>(");
         if(result.startsWith("<br>"))result = result.replaceFirst("<br>", "");
+        if(result.startsWith(", "))result = result.replaceFirst(", ", "");//TODO clean this up
         return result;
     }
     public String[] getReadings()
