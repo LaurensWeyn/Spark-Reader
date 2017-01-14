@@ -20,6 +20,7 @@ import Language.Dictionary.Japanese;
 import UI.UI;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import static UI.UI.options;
 
 /**
  * Holds a word from the text and definitions that match it
@@ -79,17 +80,16 @@ public class FoundWord
     
     public void render(Graphics2D g, int xOff, int yOff)
     {
-        UI.options.getFontAA(g, "textFont");
-        g.setClip(0, 0, UI.windowWidth, UI.maxHeight);//render only over window
-        g.setFont(UI.textFont);
+        g.setClip(0, 0, options.getOptionInt("windowWidth"), options.getOptionInt("maxHeight"));//render only over window
+        options.getFont(g, "textFont");
         int startPos = g.getFontMetrics().charWidth('べ') * startX + xOff;
         int width = g.getFontMetrics().charWidth('べ') * text.length();
         boolean known = isKnown();
         //TODO make colour setting text more readable
-        g.setColor(showDef? UI.clickedTextBackCol : (known? UI.knownTextBackCol:UI.textBackCol));
+        g.setColor(showDef? options.getColor("clickedTextBackCol") : (known? options.getColor("knownTextBackCol"):options.getColor("textBackCol")));
         g.clearRect(startPos + 1,yOff + UI.textStartY, width - 2, g.getFontMetrics().getHeight());//remove background
         g.fillRect (startPos + 1,yOff + UI.textStartY, width - 2, g.getFontMetrics().getHeight());//set to new color
-        g.setColor(UI.textCol);
+        g.setColor(options.getColor("textCol"));
         g.drawString(text, startPos, yOff + UI.textStartY + g.getFontMetrics().getMaxAscent());
         
         //find furigana
@@ -99,14 +99,14 @@ public class FoundWord
         {
             furiText = (currentDef + 1) + "/" + definitions.size();
         }
-        else if(UI.showFurigana && Japanese.hasKanji(text) && !known)
+        else if(options.getOptionBool("showFurigana") && Japanese.hasKanji(text) && !known)
         {
             furiText = definitions.get(currentDef).getFurigana();
         }
         //render furigana
-        g.setFont(UI.furiFont);
-        UI.options.getFontAA(g, "furiFont");
-        g.setColor(UI.furiCol);
+
+        options.getFont(g, "furiFont");
+        g.setColor(options.getColor("furiCol"));
         int furiX = startPos + width/2 - g.getFontMetrics().stringWidth(furiText)/2;
         g.drawString(furiText, furiX, UI.furiganaStartY + g.getFontMetrics().getAscent() + yOff);
         
@@ -114,10 +114,9 @@ public class FoundWord
         if(showDef)
         {
             g.setClip(null);//render this anywhere
-            g.setFont(UI.defFont);
-            UI.options.getFontAA(g, "defFont");
+            UI.options.getFont(g, "defFont");
             int y = UI.defStartY + g.getFontMetrics().getAscent();
-            definitions.get(currentDef).render(g, startPos, Math.max(width, UI.defWidth), y);
+            definitions.get(currentDef).render(g, startPos, Math.max(width, options.getOptionInt("defWidth")), y);
         }
     }
     public void toggleWindow(int pos)

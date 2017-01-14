@@ -18,6 +18,7 @@ package UI;
 
 import Multiplayer.Client;
 import Multiplayer.Host;
+import static UI.UI.hidden;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
@@ -159,7 +160,6 @@ public class MenuPopup extends JPopupMenu
                 try
                 {
                     UI.options.load();
-                    ui.loadOptions(UI.options);
                     ui.render();//reload
                 }catch(IOException err)
                 {

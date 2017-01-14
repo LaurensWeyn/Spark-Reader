@@ -23,6 +23,7 @@ import Language.Dictionary.Japanese;
 import Language.Dictionary.Kanji;
 import UI.TextStream;
 import UI.UI;
+import static UI.UI.options;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -57,7 +58,7 @@ public class FoundDef implements Comparable<FoundDef>
         defLines = 0;//will be recounted
         
         //output original form if processed
-        if(!foundForm.getProcess().equals(""))y = renderText(g, UI.defReadingCol, UI.defBackCol, xPos, y, foundForm.toString(), maxWidth);
+        if(!foundForm.getProcess().equals(""))y = renderText(g, options.getColor("defReadingCol"), options.getColor("defBackCol"), xPos, y, foundForm.toString(), maxWidth);
         
         //output tags
         String tagList = "";
@@ -65,12 +66,12 @@ public class FoundDef implements Comparable<FoundDef>
         {
             tagList += tag.name() + " ";
         }
-        y = renderText(g, UI.defTagCol, UI.defBackCol, xPos, y, tagList.trim(), maxWidth);
+        y = renderText(g, options.getColor("defTagCol"), options.getColor("defBackCol"), xPos, y, tagList.trim(), maxWidth);
         
         for(String reading:foundDef.getReadings())
         {
             //output readings if not in this form already
-            if(!reading.equals(foundForm.getWord()))y = renderText(g, UI.defReadingCol, UI.defBackCol, xPos, y, reading, maxWidth);
+            if(!reading.equals(foundForm.getWord()))y = renderText(g, options.getColor("defReadingCol"), options.getColor("defBackCol"), xPos, y, reading, maxWidth);
         }
         for (int i = 0; i < foundForm.getWord().length(); i++)
         {
@@ -79,13 +80,13 @@ public class FoundDef implements Comparable<FoundDef>
             String lookup = Kanji.lookup(c);
             if(lookup != null)
             {
-                y = renderText(g, UI.defKanjiCol, UI.defBackCol, xPos, y, c + "【" + lookup + "】", maxWidth);
+                y = renderText(g, options.getColor("defKanjiCol"), options.getColor("defBackCol"), xPos, y, c + "【" + lookup + "】", maxWidth);
             }
         }
         for(String def:foundDef.getMeaning())
         {
             //output non-empty definitions
-            if(!def.equals("") && !def.equals("(P)"))y = renderText(g, UI.defCol, UI.defBackCol, xPos, y, def, maxWidth);
+            if(!def.equals("") && !def.equals("(P)"))y = renderText(g, options.getColor("defCol"), options.getColor("defBackCol"), xPos, y, def, maxWidth);
         }
         
     }

@@ -16,9 +16,6 @@
  */
 package Options;
 
-import static UI.UI.maxHeight;
-import static UI.UI.splitLines;
-import static UI.UI.windowWidth;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -27,8 +24,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -36,15 +31,13 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map.Entry;
 import java.util.Set;
-import static UI.UI.defWidth;
 
 /**
  *
  * @author Laurens Weyn
  */
-public class Options
+public class Options implements Cloneable
 {
     private HashMap<String, String> options;
     private File file;
@@ -145,6 +138,7 @@ public class Options
     public String getOption(String tag)
     {
         //find, or return default option if it doesn't exist
+        if(defaults.options.containsKey(tag) == false)throw new IllegalArgumentException("Unknown option tag '" + tag + "'");
         return options.getOrDefault(tag, defaults.options.get(tag));
     }
     public boolean getOptionBool(String tag)
@@ -169,6 +163,7 @@ public class Options
     {
         //font format: name, tags, size
         String bits[] = getOption(tag).split(",");
+        System.out.println("font loaded as " + getOption(tag));
         int mods = 0;
         bits[1] = bits[1].trim().toUpperCase();
         for (int i = 0; i < bits[1].length(); i++)
@@ -196,6 +191,11 @@ public class Options
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
           getFontAA(tag)?RenderingHints.VALUE_TEXT_ANTIALIAS_ON:RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
     }
+    public void getFont(Graphics2D g, String tag)
+    {
+        g.setFont(getFont(tag));
+        getFontAA(g, tag);
+    }
     public void setOption(String tag, String value)
     {
         options.put(tag, value);
@@ -218,6 +218,16 @@ public class Options
             line = br.readLine();
         }
         br.close();
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException
+    {
+        super.clone();
+        Options c = new Options();
+        c.options = (HashMap<String, String>)options.clone();
+        c.file = file;
+        return c;
     }
     
 }

@@ -87,31 +87,8 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     
     public static int buttonStartX;
     
-    //TODO clean up this mess!
-    
-    public static Font textFont = new Font("Meiryo", Font.PLAIN, 30);
-    public static Font furiFont = new Font("Meiryo", 0, 15);
-    public static Font defFont = new Font("Meiryo", 0, 15);
-    
     public static final Color CLEAR = new Color(0, 0, 0, 0);
-    
-    public static Color markerCol = new Color(255, 255, 0, 200);
-    public static Color noMarkerCol = new Color(255, 255, 0, 1);
-    public static Color furiCol = new Color(0, 255, 255);
-    public static Color furiBackCol = new Color(0, 0, 0, 128);
-    public static Color windowBackCol = new Color(0, 0, 0, 100);
-    
-    public static Color textBackCol = new Color(0, 0, 255, 128);
-    public static Color knownTextBackCol = new Color(0, 0, 255, 128);
-    public static Color clickedTextBackCol = new Color(0, 100, 0, 128);
-    public static Color textCol = new Color(255, 0, 0, 255);
-    
-    public static Color defReadingCol = new Color(0, 255, 255);
-    public static Color defKanjiCol = new Color(255, 255, 255);
-    public static Color defTagCol = new Color(255, 255, 255);
-    public static Color defCol = new Color(255, 255, 0);
-    public static Color defBackCol = new Color(0, 0, 0, 128);
-    
+
     public static String text;
     public static Log log;
     public static ClipboardHook hook = new ClipboardHook();
@@ -123,59 +100,12 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     public static PrefDef prefDef;
     public static Options options;
     
-    public static int windowWidth = 1280;
-    public static int totalWidth = 1600;
-    public static int maxHeight = 720;
-    
-    public static int defWidth = 250;
     public static int optionsButtonWidth = 10;
     
-    public static boolean splitLines = true;
-    public static boolean showFurigana = true;
-    public static boolean showOnNewLine = true;
-    public static boolean useNaitiveUI = false;
-    public static boolean takeFocus = true;
+
     
     public static boolean renderBackground = true;
     
-    public void loadOptions(Options o)
-    {
-        textFont = o.getFont("textFont");
-        furiFont = o.getFont("furiFont");
-        defFont = o.getFont("defFont");
-        
-        markerCol = o.getColor("markerCol");
-        noMarkerCol = o.getColor("noMarkerCol");
-        furiCol = o.getColor("furiCol");
-        furiBackCol = o.getColor("furiBackCol");
-        windowBackCol = o.getColor("windowBackCol");
-        
-        textBackCol = o.getColor("textBackCol");
-        knownTextBackCol = o.getColor("knownTextBackCol");
-        clickedTextBackCol = o.getColor("clickedTextBackCol");
-        textCol = o.getColor("textCol");
-        
-        defReadingCol = o.getColor("defReadingCol");
-        defKanjiCol = o.getColor("defKanjiCol");
-        defTagCol = o.getColor("defTagCol");
-        defCol = o.getColor("defCol");
-        defBackCol = o.getColor("defBackCol");
-        
-        //other options
-        windowWidth = o.getOptionInt("windowWidth");
-        maxHeight = o.getOptionInt("maxHeight");
-        defWidth = o.getOptionInt("defWidth");
-        
-        splitLines = o.getOptionBool("splitLines");
-        showFurigana = o.getOptionBool("showFurigana");
-        showFurigana = o.getOptionBool("showOnNewLine");
-        takeFocus = o.getOptionBool("takeFocus");
-        //TODO override height too
-        totalWidth = windowWidth + defWidth;
-        //totalWidth = textWidth;
-        
-        hidden = false;//needed to recalc most font-specific parameters in rendering
-    }
     public void loadDictionaries()
     {
         try
@@ -201,16 +131,15 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             options = new Options(new File("settings.txt"));
             known = new Known(new File("knownWords"));
             prefDef = new PrefDef(new File("preferredDefs"));
-            loadOptions(options);
             options.save();
-            disp = new Overlay(totalWidth, maxHeight);
+            disp = new Overlay(options.getOptionInt("windowWidth") + options.getOptionInt("defWidth"), options.getOptionInt("maxHeight"));
             log = new Log(50);//TODO let user override this
             
             loadDictionaries();
             splitter = new WordSplitter(dict);
             
             
-            textFont = new Font("Meiryo", Font.PLAIN, 30);
+            //textFont = new Font("Meiryo", Font.PLAIN, 30);
             
         }catch(Exception e)
         {
@@ -233,11 +162,11 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         g.setBackground(CLEAR);
         disp.getFrame().setVisible(!hidden);
         
-        textHeight = g.getFontMetrics(textFont).getHeight();
-        furiHeight = g.getFontMetrics(furiFont).getHeight();
+        textHeight = g.getFontMetrics(options.getFont("textFont")).getHeight();
+        furiHeight = g.getFontMetrics(options.getFont("furiFont")).getHeight();
         lineHeight = textHeight + furiHeight;
         
-        g.setFont(textFont);
+        options.getFont(g, "textFont");
         mainFontSize = g.getFontMetrics().charWidth('べ');
         defStartY = lineHeight * lines.size();
         
@@ -246,26 +175,25 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             //render background
             if(renderBackground)
             {
-                g.setColor(textBackCol);
-                g.fillRect(0, textStartY - 1, windowWidth, lines.size() * lineHeight - furiHeight + 1);
-                g.setColor(windowBackCol);
+                g.setColor(options.getColor("textBackCol"));
+                g.fillRect(0, textStartY - 1, options.getOptionInt("windowWidth"), lines.size() * lineHeight - furiHeight + 1);
+                g.setColor(options.getColor("windowBackCol"));
                 int i = 1;
                 while(i < lines.size())
                 {
-                    g.clearRect(0, (textStartY - 1) + (i * lineHeight) - furiHeight + 1, windowWidth, furiHeight - 1);
-                    g.fillRect (0, (textStartY - 1) + (i * lineHeight) - furiHeight + 1, windowWidth, furiHeight - 1);
+                    g.clearRect(0, (textStartY - 1) + (i * lineHeight) - furiHeight + 1, options.getOptionInt("windowWidth"), furiHeight - 1);
+                    g.fillRect (0, (textStartY - 1) + (i * lineHeight) - furiHeight + 1, options.getOptionInt("windowWidth"), furiHeight - 1);
                     i++;
                 }
             }
             //render furigana/window bar
-            g.setFont(furiFont);
-            options.getFontAA(g, "furiFont");
+            options.getFont(g, "furiFont");
             textStartY = g.getFontMetrics().getHeight();
-            g.setColor(furiBackCol);
-            g.fillRect(0, 0, windowWidth, textStartY - furiganaStartY - 1);
+            g.setColor(options.getColor("furiBackCol"));
+            g.fillRect(0, 0, options.getOptionInt("windowWidth"), textStartY - furiganaStartY - 1);
             if(text.equals(""))
             {
-                g.setColor(furiCol);
+                g.setColor(options.getColor("furiCol"));
                 g.drawString("Spark Reader " + VERSION + ", by Laurens Weyn. Waiting for text...", 0, g.getFontMetrics().getAscent());
             }
             
@@ -280,21 +208,19 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             //render MP text (if running, there's text and no def's open)
             if(mpThread != null && mpText != null && selectedWord == null)
             {
-                g.setFont(furiFont);
-                options.getFontAA(g, "furiFont");
-                g.setColor(furiBackCol);
+                options.getFont(g, "furiFont");
+                g.setColor(options.getColor("furiBackCol"));
                 g.fillRect(0, defStartY, g.getFontMetrics().stringWidth(mpText), g.getFontMetrics().getHeight());
-                g.setColor(furiCol);
+                g.setColor(options.getColor("furiCol"));
                 g.drawString(mpText, 0, defStartY + g.getFontMetrics().getAscent());
 
             }
             
             //render settings icon
-            g.setFont(furiFont);
-            options.getFontAA(g, "furiFont");
+            options.getFont(g, "furiFont");
             String cog = "三";//TODO use an icon for this, not a character
             g.setColor(Color.white);//TODO don't hardcode
-            buttonStartX = windowWidth - optionsButtonWidth;
+            buttonStartX = options.getOptionInt("windowWidth") - optionsButtonWidth;
             g.drawString(cog, buttonStartX, g.getFontMetrics().getAscent());
         }
         disp.refresh();
@@ -332,7 +258,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         
         try
         {
-            if(useNaitiveUI)javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
+            if(options.getOptionBool("useNaitiveUI"))javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
         }catch(Exception e)
         {
             //fall back to default if this fails
@@ -346,7 +272,8 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         
         //center window
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        ui.disp.getFrame().setLocation(screenSize.width / 2 - windowWidth / 2, screenSize.height / 2 - maxHeight / 2);
+        ui.disp.getFrame().setLocation(screenSize.width / 2 - options.getOptionInt("windowWidth") / 2,
+                screenSize.height / 2 - (options.getOptionInt("maxHeight")) / 2);
         
         ui.render();//TODO make this not need 2 render calls to properly align stuff
         ui.render();
@@ -360,7 +287,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             {
                 //if we're here, we have a new line of text
                 
-                if(showOnNewLine)
+                if(options.getOptionBool("showOnNewLine"))
                 {
                     hidden = false;//force visiblility on new line if needed
                     ui.tray.hideTray();
@@ -368,7 +295,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
                 
                 
                 clip = clip.replace("\r", "");
-                if(!splitLines)clip = clip.replace("\n", "");//all on one line if not splitting
+                if(!options.getOptionBool("splitLines"))clip = clip.replace("\n", "");//all on one line if not splitting
                 for(Line line:ui.lines)
                 {
                     line.getMarkers().clear();//clear all markers
@@ -622,7 +549,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     public void boundXOff()
     {
         if(xOffset > 0)xOffset = 0;
-        int maxChars = (windowWidth - defWidth) / mainFontSize;
+        int maxChars = (options.getOptionInt("windowWidth") - options.getOptionInt("defWidth")) / mainFontSize;
         int maxX = (longestLine - maxChars) * mainFontSize;
         if(-xOffset > maxX)xOffset = Math.min(-maxX, 0);
     }

@@ -17,14 +17,10 @@
 package UI;
 
 import Language.Splitter.FoundWord;
-import static UI.UI.defStartY;
 import static UI.UI.mainFontSize;
-import static UI.UI.markerCol;
-import static UI.UI.noMarkerCol;
+import static UI.UI.options;
 import static UI.UI.text;
-import static UI.UI.textFont;
 import static UI.UI.textStartY;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -71,13 +67,13 @@ public class Line
         {
             splitPoints.add(word.startX());
         }
-        g.setClip(0, 0, UI.windowWidth, UI.maxHeight);//render only over window
+        g.setClip(0, 0, UI.options.getOptionInt("windowWidth"), UI.options.getOptionInt("maxHeight"));//render only over window
         //render markers
         for (int i = 0; i < text.length(); i++)
         {
             if(markers.contains(i) || splitPoints.contains(i))//only draw on actual points
             {
-                g.setColor(markers.contains(i)?markerCol:noMarkerCol);
+                g.setColor(markers.contains(i)?options.getColor("markerCol"):options.getColor("noMarkerCol"));
                 
                 g.clearRect(xOff + i * mainFontSize - 1, yOff + textStartY, 2, UI.textHeight);
                 g.fillRect (xOff + i * mainFontSize - 1, yOff + textStartY, 2, UI.textHeight);//TODO make markers variable size
@@ -85,7 +81,7 @@ public class Line
         }
 
         //render words
-        g.setFont(textFont);
+        options.getFont("textFont");
         
         int lastX = 0;
         for(FoundWord word:words)
