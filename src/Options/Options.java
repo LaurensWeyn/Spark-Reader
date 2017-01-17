@@ -163,7 +163,6 @@ public class Options implements Cloneable
     {
         //font format: name, tags, size
         String bits[] = getOption(tag).split(",");
-        System.out.println("font loaded as " + getOption(tag));
         int mods = 0;
         bits[1] = bits[1].trim().toUpperCase();
         for (int i = 0; i < bits[1].length(); i++)
@@ -228,6 +227,11 @@ public class Options implements Cloneable
         c.options = (HashMap<String, String>)options.clone();
         c.file = file;
         return c;
+    }
+
+    public File getFile()
+    {
+        return file;
     }
     
 }

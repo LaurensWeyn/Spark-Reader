@@ -18,6 +18,7 @@ package UI;
 
 import Multiplayer.Client;
 import Multiplayer.Host;
+import Options.OptionsUI;
 import static UI.UI.hidden;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -43,7 +44,7 @@ public class MenuPopup extends JPopupMenu
 {
     UI ui;
     
-    JMenuItem exit, imprt, reloadCfg, reloadDict, minimise;
+    JMenuItem exit, imprt, settings, reloadDict, minimise;
     JMenu mp;
     JMenuItem mpHost, mpJoin, mpDisconnect;
     public MenuPopup(UI ui)
@@ -152,18 +153,17 @@ public class MenuPopup extends JPopupMenu
                 importPrompt();
             }
         });
-        reloadCfg = new JMenuItem(new AbstractAction("Reload configuration file")
+        settings = new JMenuItem(new AbstractAction("Edit settings")
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
                 try
                 {
-                    UI.options.load();
-                    ui.render();//reload
+                    OptionsUI.showOptions(UI.options);
                 }catch(IOException err)
                 {
-                    JOptionPane.showMessageDialog(ui.disp.getFrame(), "Error loading configuration: " + e);
+                    JOptionPane.showMessageDialog(ui.disp.getFrame(), "Error editing configuration: " + e);
                 }
             }
         });
@@ -177,7 +177,7 @@ public class MenuPopup extends JPopupMenu
                 ui.render();//render new text                
             }
         });
-        add(reloadCfg);
+        add(settings);
         add(reloadDict);
         add(imprt);
         add(mp);
