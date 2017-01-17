@@ -47,6 +47,7 @@ public class WordPopup extends JPopupMenu
     JMenuItem addBreak;
     JMenuItem copy;
     JMenuItem append;
+    JMenuItem copyFull;
     JCheckBoxMenuItem markKnown;
     JMenuItem anki;
     JMenuItem setDef;
@@ -87,6 +88,15 @@ public class WordPopup extends JPopupMenu
             public void actionPerformed(ActionEvent e)
             {
                 ClipboardHook.setClipboard(clipboard + word.getText());
+            }
+        });
+        copyFull = new JMenuItem(new AbstractAction("Copy whole line")
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                //TODO move this elsewhere when possible
+                ClipboardHook.setClipboard(UI.text);
             }
         });
         addBreak = new JMenuItem(new AbstractAction("Toggle break here (middle click)")
@@ -133,6 +143,7 @@ public class WordPopup extends JPopupMenu
         add(setDef);
         add(copy);
         if(UI.text.contains(clipboard + word.getText()))add(append);
+        else add(copyFull);
         add(anki);
     }
     public void show(int x, int y)
