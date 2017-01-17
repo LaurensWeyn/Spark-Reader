@@ -86,6 +86,12 @@ public class Options implements Cloneable
         options.put("showFurigana", "true");
         options.put("showOnNewLine", "true");
         options.put("takeFocus", "true");
+        
+        
+        options.put("commentOnExport", "true");
+        options.put("exportMarksKnown", "false");
+        options.put("showAllKanji", "false");
+        options.put("reduceSave", "true");
     }
     public Options(File file)throws IOException
     {

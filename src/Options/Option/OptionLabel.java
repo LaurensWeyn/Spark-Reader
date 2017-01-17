@@ -33,7 +33,7 @@ public class OptionLabel extends UIOption
     public OptionLabel(String name, String tip)
     {
         super("", name, tip);
-        label = new JLabel(name);
+        label = new JLabel("<html><br><h3>" + name);
         label.setToolTipText(tip);
     }
 

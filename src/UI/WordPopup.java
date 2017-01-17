@@ -189,7 +189,12 @@ public class WordPopup extends JPopupMenu
             i++;
         }
         
-        String note = JOptionPane.showInputDialog(ui.disp.getFrame(), "Enter comment\n(You may also leave this blank)", "Adding " + kanji, JOptionPane.PLAIN_MESSAGE);
+        String note = "";
+        
+        if(UI.options.getOptionBool("commentOnExport"))
+        {
+            note = JOptionPane.showInputDialog(ui.disp.getFrame(), "Enter comment\n(You may also leave this blank)", "Adding " + kanji, JOptionPane.PLAIN_MESSAGE);
+        }
         
         if(note == null)return;//cancel export on pressing cancel
         
@@ -202,6 +207,12 @@ public class WordPopup extends JPopupMenu
                 + note + "\n");
         
         fr.close();
+        
+        if(UI.options.getOptionBool("exportMarksKnown"))
+        {
+            UI.known.setKnown(word);
+            UI.instance.render();//show change
+        }
     }
     
 }

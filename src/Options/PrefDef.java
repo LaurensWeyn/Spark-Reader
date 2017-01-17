@@ -18,6 +18,7 @@ package Options;
 
 import Language.Dictionary.Definition;
 import Language.Splitter.FoundDef;
+import UI.UI;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -84,7 +85,7 @@ public class PrefDef
         table.put(spelling, def.getDefinition().getID());
         dueChanges++;
         
-        if(dueChanges > saveThreshold)
+        if(dueChanges > saveThreshold || UI.options.getOptionBool("reduceSave") == false)
         {
             try
             {

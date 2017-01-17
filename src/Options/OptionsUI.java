@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -63,22 +64,26 @@ public class OptionsUI extends JFrame
         super("Spark Reader Options");
         root = new PageGroup("Root", "");
         
-        OptionPage display = new OptionPage("Window");
+        OptionPage display = new OptionPage("General");
+            display.add(new OptionLabel("Window properties:", null));
             display.add(new NumberOption("windowWidth", "Window width", "I recommend setting this to the width of the window you plan to overlay this on"));
             display.add(new NumberOption("maxHeight", "Maximum height", "<html>Definitions will not be longer than this.<br>I recommend setting this to the height of the window you plan to overlay this on"));        root.add(display);
             display.add(new ToggleOption("takeFocus", "Take focus when clicked", "If the game under the overlay is still receiving clicks, try turning this on"));
             display.add(new ToggleOption("showOnNewLine", "Restore window on new text", "If on, the window will automatically reappear if new Japanese text is detected."));
-            display.add(new ToggleOption("splitLines", "Put all text on one line", "If enabled, all text is shown on one line, making the UI more compact", true));
-        
+            display.add(new OptionLabel("Other:", null));
+            display.add(new ToggleOption("reduceSave", "Reduce file I/O", "<html>If ticked, writing to files is avoided until the program is closed or a lot of changes have been made.<br>Turning this on will improve performance, but if the program crashes some progress may be lost"));
         PageGroup window = new PageGroup("Overlay", "Graphical settings related to the on-screen overlay window");
             
             OptionPage mainUI = new OptionPage("Main text");
+            mainUI.add(new ToggleOption("splitLines", "Put all text on one line", "If enabled, all text is shown on one line, making the UI more compact", true));
+            mainUI.add(new OptionLabel("Theme:", null));
             mainUI.add(new ColourOption("textCol", "Main text colour", "the colour used for the main font"));
             mainUI.add(new FontOption("textFont", "Main text font", "The font used for the captured Japanese text"));
             window.add(mainUI);
             
             OptionPage backs = new OptionPage("Background colours");
             
+            backs.add(new OptionLabel("Theme:", null));
             backs.add(new ColourOption("textBackCol", "Main text background colour", "the colour used for normal words"));
             backs.add(new ColourOption("knownTextBackCol", "known word colour", "Colour used for words marked as known"));
             backs.add(new ColourOption("clickedTextBackCol", "selected word colour", "Colour used for words while their definition is visible"));
@@ -86,6 +91,7 @@ public class OptionsUI extends JFrame
             
             OptionPage furigana = new OptionPage("Furigana bar/text");
             furigana.add(new ToggleOption("showFurigana", "Show furigana", "If unticked, furigana is hidden for all words"));
+            furigana.add(new OptionLabel("Theme:", null));
             furigana.add(new FontOption("furiFont", "Furigana font", "Also decides the size of the furigana bar"));
             furigana.add(new ColourOption("furiCol", "Main text colour", "the colour used for the furigana text"));
             furigana.add(new ColourOption("furiBackCol", "Main bar colour", "the colour used for the main window bar/first furigana bar"));
@@ -94,6 +100,7 @@ public class OptionsUI extends JFrame
         
         root.add(window);
         OptionPage splitter = new OptionPage("Text splitter");
+            splitter.add(new OptionLabel("Theme:", null));
             splitter.add(new ColourOption("markerCol", "Manual seperator colour", "These are the word spacers you place when you middle click on text"));
             splitter.add(new ColourOption("noMarkerCol", "Auto seperator colour", "These are spaces assumed by the word splitter"));
         root.add(splitter);
@@ -101,10 +108,13 @@ public class OptionsUI extends JFrame
         PageGroup defs = new PageGroup("Definitions", "Settings related to displaying and storing definitions");
             OptionPage defWindow = new OptionPage("popup window");
             defWindow.add(new NumberOption("defWidth", "Definition popup width", "Determines how wide the definition popup window is"));
+            defWindow.add(new OptionLabel("Theme:", null));
             defWindow.add(new ColourOption("defBackCol", "Background colour", "colour for overlay background"));
             defs.add(defWindow);
             
             OptionPage defText = new OptionPage("Popup text");
+            defText.add(new ToggleOption("showAllKanji", "Show all possible Kanji for a word", "If unticked, only kana readings are shown"));
+            defText.add(new OptionLabel("Theme:", null));
             defText.add(new FontOption("defFont", "Font", "used for definition popup text"));
             defText.add(new ColourOption("defCol", "Definition colour", "Colour of text defining the word"));
             defText.add(new ColourOption("defTagCol", "Tag colour", "Word tag color (e.g. godan, noun, etc)"));
@@ -112,6 +122,12 @@ public class OptionsUI extends JFrame
             defText.add(new ColourOption("defKanjiCol", "Kanji colour", "(Heisig mode) for Kanji reference in popup"));
             defs.add(defText);
         root.add(defs);
+        OptionPage xport = new OptionPage("Import and Export");
+            xport.add(new OptionLabel("Export:", null));
+            xport.add(new ToggleOption("commentOnExport", "Ask for comment when exporting", "<html>If ticked, you will be prompted for extra information when exporting a word."
+                                                   + "<br>If unticked, this field is always left blank"));
+            xport.add(new ToggleOption("exportMarksKnown", "Automatically mark exported words as known", "If ticked, exported words are also added to the known word list"));
+        root.add(xport);
 
         leftMenu = new JTree(new OptionTree(root));
         
@@ -174,6 +190,7 @@ public class OptionsUI extends JFrame
     public void initComponents()
     {
         setSize(720, 480);
+        
         setLayout(new BorderLayout(SPACING, SPACING));
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         rightOptions.setLayout(new BoxLayout(rightOptions, BoxLayout.Y_AXIS));
@@ -208,10 +225,12 @@ public class OptionsUI extends JFrame
     Options changedOptions;
     public static void showOptions(Options options) throws IOException
     {
+        Options ops = new Options(options.getFile());
+        UIOption.setTable(ops);
         OptionsUI o = new OptionsUI();
-        o.changedOptions = new Options(options.getFile());
-        UIOption.setTable(o.changedOptions);
+        o.changedOptions = ops;
         o.initComponents();
+        o.setIconImage(ImageIO.read(o.getClass().getResourceAsStream("/UI/icon.gif")));
         o.setVisible(true);
     }
     public static void main(String[] args)throws Exception

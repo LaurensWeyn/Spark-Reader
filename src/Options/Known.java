@@ -52,9 +52,9 @@ public class Known
         this.file = file;
         if(file.exists() == false)return;
         
-        importTxt(file);
+        loadFile(file);
     }
-    public void importTxt(File input)throws IOException
+    private void loadFile(File input)throws IOException
     {
         FileInputStream is = new FileInputStream(input);
         InputStreamReader isr = new InputStreamReader(is, Charset.forName("UTF-8"));
@@ -66,7 +66,6 @@ public class Known
             line = br.readLine();
         }
         br.close();
-        save();
     }
     public void importCsv(File input, String sep)throws IOException
     {
@@ -124,7 +123,7 @@ public class Known
             if(!table.contains(def.getDictForm()))dueChanges++;
             table.add(def.getDictForm());            
         }
-        if(dueChanges > saveThreshold)
+        if(dueChanges > saveThreshold || UI.options.getOptionBool("reduceSave") == false)
         {
             try
             {
@@ -142,7 +141,7 @@ public class Known
             if(table.contains(def.getDictForm()))dueChanges++;
             table.remove(def.getDictForm());            
         }
-        if(dueChanges > saveThreshold)
+        if(dueChanges > saveThreshold || UI.options.getOptionBool("reduceSave") == false)
         {
             try
             {
