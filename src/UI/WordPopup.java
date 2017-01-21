@@ -58,22 +58,7 @@ public class WordPopup extends JPopupMenu
         this.word = word;
         this.ui = ui;
         String clipboard = ClipboardHook.getClipboard();
-        //TODO set markKnown as selected depending on if the word is known or not
-        //TODO set actions for all buttons
-        anki = new JMenuItem(new AbstractAction("Add as flashcard")
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                try
-                {
-                    ankiExport(word);
-                }catch(IOException err)
-                {
-                    JOptionPane.showMessageDialog(ui.disp.getFrame(), "Error exporting word: " + err, "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
+        
         copy = new JMenuItem(new AbstractAction("Copy to clipboard")
         {
             @Override
@@ -109,17 +94,7 @@ public class WordPopup extends JPopupMenu
                 ui.mouseClicked(new MouseEvent(ui.disp.getFrame(), -1, System.currentTimeMillis(), 0, x, y, 1, true, 2));
             }
         });
-        setDef = new JMenuItem(new AbstractAction("Set definition as default")
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                UI.prefDef.setPreferred(word.getCurrentDef());
-                word.sortDefs();
-                word.resetScroll();
-                ui.render();
-            }
-        });
+        
         markKnown = new JCheckBoxMenuItem(new AbstractAction("I know this word")
         {
             @Override
@@ -140,11 +115,11 @@ public class WordPopup extends JPopupMenu
         
         add(addBreak);
         add(markKnown);
-        add(setDef);
         add(copy);
-        if(UI.text.contains(clipboard + word.getText()))add(append);
-        else add(copyFull);
-        add(anki);
+        if(UI.text.contains(clipboard) && UI.text.contains(clipboard + word.getText()))add(append);
+        add(copyFull);
+        
+        addPopupMenuListener(new IgnoreExitListener());
     }
     public void show(int x, int y)
     {
@@ -152,67 +127,4 @@ public class WordPopup extends JPopupMenu
         this.y = y;
         show(ui.disp.getFrame(), x, y);
     }
-    
-    
-    public void ankiExport(FoundWord word)throws IOException
-    {
-        File file = new File(UI.options.getOption("ankiExportPath"));
-        boolean newFile = !file.exists();
-        Writer fr = new OutputStreamWriter(new FileOutputStream(file, true), Charset.forName("UTF-8"));
-        
-        if(newFile)
-        {
-            //fr.append("Word\tReading\tDefinition\tTags\tContext\n");//Anki ignores this, no point in adding it
-        }
-
-        FoundDef def = word.getCurrentDef();
-        String kanji = def.getDictForm();
-        String reading = def.getFurigana();
-        String definition = def.getDefinition().getMeaningLine();
-        String tagList = "";
-        for(DefTag tag:def.getDefinition().getTags())
-        {
-            tagList += tag.name() + " ";
-        }
-        
-        
-        String kanjiDetails = "";
-        int i = 0;
-        while(i != kanji.length())
-        {
-            String lookup = Kanji.lookup(kanji.charAt(i));
-            if(lookup != null)
-            {
-                if(kanjiDetails.equals("")) kanjiDetails = kanji.charAt(i) + " 【" + lookup + "】";
-                else kanjiDetails += "<br>" +  kanji.charAt(i) + " 【" + lookup + "】";
-            }
-            i++;
-        }
-        
-        String note = "";
-        
-        if(UI.options.getOptionBool("commentOnExport"))
-        {
-            note = JOptionPane.showInputDialog(ui.disp.getFrame(), "Enter comment\n(You may also leave this blank)", "Adding " + kanji, JOptionPane.PLAIN_MESSAGE);
-        }
-        
-        if(note == null)return;//cancel export on pressing cancel
-        
-        fr.append(kanji + "\t"
-                + reading + "\t"
-                + definition +"\t"
-                + tagList + "\t"
-                + UI.text.replace("\n", "<br>") + "\t"
-                + kanjiDetails + "\t"
-                + note + "\n");
-        
-        fr.close();
-        
-        if(UI.options.getOptionBool("exportMarksKnown"))
-        {
-            UI.known.setKnown(word);
-            UI.instance.render();//show change
-        }
-    }
-    
 }

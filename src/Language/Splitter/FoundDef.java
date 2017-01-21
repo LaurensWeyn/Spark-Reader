@@ -91,11 +91,30 @@ public class FoundDef implements Comparable<FoundDef>
             if(!def.equals("") && !def.equals("(P)"))y = renderText(g, options.getColor("defCol"), options.getColor("defBackCol"), xPos, y, def, maxWidth);
         }
         
+        capturePoint = 0;//disable for next iteration
     }
+    
+    private int capturePoint = 0;
+    private String capture = "";
+    /**
+     * 0=disable, -1=all, y=line
+     * @param pos 
+     */
+    public void setCapturePoint(int pos)
+    {
+        capturePoint = pos;
+        capture = "";
+    }
+    public String getCapture()
+    {
+        return capture;
+    }
+    
     private int renderText(Graphics g, Color fore, Color back, int x, int y, String text, int width)
     {
         defLines++;
         if(startLine > defLines)return y;//don't render here yet
+        int startY = y;
         FontMetrics font = g.getFontMetrics();
         TextStream stream = new TextStream(text);
         String line = "";
@@ -124,6 +143,22 @@ public class FoundDef implements Comparable<FoundDef>
         g.setColor(fore);
         g.drawString(line, x, y);
         y += font.getHeight();
+        
+        //capture if in this
+        if(capturePoint == -1 || (capturePoint > startY - font.getHeight() + font.getDescent()
+            && capturePoint <= y - font.getHeight() + font.getDescent()))
+        {
+            //TODO allow export with HTML color info perhaps?
+            if(capture.equals(""))
+            {
+                capture = text;
+            }
+            else
+            {
+                capture += "\n" + text;
+            }
+        }
+        
         return y;
     }
     public void scrollDown()

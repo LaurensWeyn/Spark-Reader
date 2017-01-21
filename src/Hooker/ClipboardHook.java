@@ -29,7 +29,8 @@ import java.io.IOException;
  */
 public class ClipboardHook
 {
-    String lastClip = "";
+    private static String lastClip = "";
+    private static boolean ignoreNextLine = false;
 
     public ClipboardHook()
     {
@@ -42,10 +43,11 @@ public class ClipboardHook
         {
             lastClip = clip;
             System.out.println("clipboard updated to " + clip);
-            if(Japanese.isJapanese(clip))
+            if(Japanese.isJapanese(clip) && !ignoreNextLine)
             {
                 return clip;
             }
+            ignoreNextLine = false;//line passed
         }
         return null;//nothing new
     }
@@ -77,6 +79,11 @@ public class ClipboardHook
     }
     public static void setClipboard(String text)
     {
+        if(!lastClip.contains(text))
+        {
+            ignoreNextLine = true;//don't include this change or else we'll trigger
+        }
+        
         try
         {
             StringSelection selection = new StringSelection(text);

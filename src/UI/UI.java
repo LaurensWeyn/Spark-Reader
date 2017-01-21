@@ -106,6 +106,8 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     
     public static boolean renderBackground = true;
     
+    public static boolean tempIgnoreMouseExit = false;
+    
     public void loadDictionaries()
     {
         try
@@ -405,7 +407,8 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             {
                 new MenuPopup(this).show();
             }
-            else if(!hidden && (e.getY() >= textStartY && e.getY() <= defStartY))//word
+            //word
+            else if(e.getY() >= textStartY && e.getY() <= defStartY)
             {
                 WordPopup popup = null;
                 int lineIndex = getLineIndex(e.getPoint());
@@ -423,6 +426,12 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
                 {
                     popup.show(e.getX(), e.getY());
                 }
+            }
+            //definition
+            else if(e.getY() > defStartY)
+            {
+                DefPopup popup = new DefPopup(selectedWord, this, e.getY());
+                popup.show(e.getX(), e.getY());
             }
         }
     }
@@ -458,12 +467,16 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     @Override
     public void mouseEntered(MouseEvent e)
     {
-        
     }
 
     @Override
     public void mouseExited(MouseEvent e)
     {
+        //temporary ignore loose focus
+        if(tempIgnoreMouseExit)
+        {
+            return;
+        }
         //collapse definitions
         if(selectedWord != null)
         {
