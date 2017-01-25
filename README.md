@@ -6,7 +6,7 @@ Also my first project on Github
 EDICT2 file included for convenience, see this page for more information and licence: http://www.edrdg.org/jmdict/edict.html  All other code is released under the included licence
 
 ## Build requirements
-- Compiled using NetBeans and Java 8.
+- Compiled using IntelliJ and Java 8.
 - Uses JUnit and Hamcrest for tests (yes, all 2 of them)
 
 ## Stuff that still needs doing

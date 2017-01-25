@@ -42,6 +42,8 @@ public class Options implements Cloneable
     private HashMap<String, String> options;
     private File file;
     private static Options defaults = new Options();
+
+    public static final File SETTINGS_FILE = new File("preferences/settings.txt");
     public Options()
     {
         options = new HashMap<>();
@@ -73,10 +75,13 @@ public class Options implements Cloneable
         options.put("defBackCol", "0, 0, 0, 128");
         
         
-        options.put("edictPath", "edict2");
-        options.put("customDictPath", "custom.txt");
-        options.put("kanjiPath", "kanji.csv");
+        options.put("edictPath", "dictionaries/edict2");
+        options.put("customDictPath", "dictionaries/customDict.txt");
+        options.put("kanjiPath", "dictionaries/kanji.txt");
         options.put("ankiExportPath", "forAnki.csv");
+
+        options.put("knownWordsPath", "preferences/knownWords");
+        options.put("preferredDefsPath", "preferences/preferredDefs");
         
         options.put("windowWidth", "1280");
         options.put("maxHeight", "720");
@@ -201,6 +206,10 @@ public class Options implements Cloneable
         g.setFont(getFont(tag));
         getFontAA(g, tag);
     }
+    public File getFile(String tag)
+    {
+        return new File(getOption(tag));
+    }
     public void setOption(String tag, String value)
     {
         options.put(tag, value);
@@ -235,6 +244,10 @@ public class Options implements Cloneable
         return c;
     }
 
+    /**
+     * Get the file storing this configuration
+     * @return
+     */
     public File getFile()
     {
         return file;

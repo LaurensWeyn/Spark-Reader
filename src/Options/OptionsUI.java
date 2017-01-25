@@ -225,7 +225,7 @@ public class OptionsUI extends JFrame
     Options changedOptions;
     public static void showOptions(Options options) throws IOException
     {
-        Options ops = new Options(options.getFile());
+        Options ops = new Options(Options.SETTINGS_FILE);
         UIOption.setTable(ops);
         OptionsUI o = new OptionsUI();
         o.changedOptions = ops;
@@ -235,7 +235,7 @@ public class OptionsUI extends JFrame
     }
     public static void main(String[] args)throws Exception
     {
-        showOptions(new Options(new File("settings.txt")));
+        showOptions(new Options(Options.SETTINGS_FILE));
         
         System.out.println("done");
         while(true)

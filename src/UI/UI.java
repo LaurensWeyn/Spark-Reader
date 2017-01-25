@@ -130,9 +130,9 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         try
         {
             //load config
-            options = new Options(new File("settings.txt"));
-            known = new Known(new File("knownWords"));
-            prefDef = new PrefDef(new File("preferredDefs"));
+            options = new Options(Options.SETTINGS_FILE);
+            known = new Known(options.getFile("knownWordsPath"));
+            prefDef = new PrefDef(options.getFile("preferredDefsPath"));
             options.save();
             disp = new Overlay(options.getOptionInt("windowWidth") + options.getOptionInt("defWidth"), options.getOptionInt("maxHeight"));
             log = new Log(50);//TODO let user override this

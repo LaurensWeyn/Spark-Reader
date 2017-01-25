@@ -27,17 +27,20 @@ defBackCol = 0, 0, 0, 128
 #B for bold text, I for italics, A for Antialiasing (looks nicer, lowers contrast)
 
 textFont = Meiryo, A, 30
-defFont = Meiryo,, 15
+defFont = Meiryo, , 15
 furiFont = Meiryo, , 10
 
 #dictionary file paths#
 #files can be relative or absolute
 
-edictPath = edict2
-customDictPath = customDict.txt
+edictPath = dictionaries/edict2
+customDictPath = dictionaries/customDict.txt
 #see importing guide for getting Kanji files
-kanjiPath = kanji.txt
+kanjiPath = dictionaries/kanji.txt
 ankiExportPath = forAnki.csv
+
+knownWordsPath = preferences/knownWords
+preferredDefsPath = preferences/preferredDefs
 
 #window sizes#
 #sizes in pixels
@@ -59,3 +62,9 @@ showOnNewLine = true
 #If true, focus is stolen from other windows when clicked.
 #If clicks are going through the window, try setting this to true
 takeFocus = false
+
+
+commentOnExport = true
+showAllKanji = false
+exportMarksKnown = false
+reduceSave = false
