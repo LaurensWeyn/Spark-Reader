@@ -102,7 +102,7 @@ public class PrefDef
     }
     public boolean isPreferred(Definition def)
     {
-        for(String spelling:def.getWord())
+        for(String spelling:def.getSpellings())
         {
             if(table.containsKey(spelling) && table.get(spelling) == def.getID())return true;
         }

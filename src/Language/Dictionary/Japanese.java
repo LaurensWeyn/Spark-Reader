@@ -16,6 +16,9 @@
  */
 package Language.Dictionary;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * Contains various methods for dealing with Japanese text and characters
  * @author Laurens Weyn
@@ -40,9 +43,23 @@ public class Japanese
         //none found
         return false;
     }
+    public static boolean isJapaneseWriting(String text)
+    {
+        //search for any Japanese characters
+        for (int i = 0; i < text.length(); i++)
+        {
+            if(isJapaneseWriting(text.charAt(i)))return true;
+        }
+        //none found
+        return false;
+    }
     public static boolean isJapanese(char c)
     {
         return (0x3000 <= c && c <= 0x30ff) || isKanji(c);
+    }
+    public static boolean isJapaneseWriting(char c)
+    {
+        return isKana(c) || isKanji(c);
     }
     public static boolean hasKanji(String text)
     {
@@ -93,5 +110,26 @@ public class Japanese
             else if(stripOthers == false)output += c;//Kanji and others intentionally removed from output (for reading extraction)
         }
         return output;
+    }
+    
+    public static String[] splitJapaneseWriting(String text)
+    {
+        ArrayList<String> strings = new ArrayList<>();
+        int start = 0;
+        int pos = 0;
+        while(pos != text.length())
+        {
+            if(isJapaneseWriting(text.charAt(pos)))
+            {
+                pos++;
+            }
+            else
+            {
+                if(start != pos)strings.add(text.substring(start, pos));
+                pos++;
+                start = pos;
+            }
+        }
+        return strings.toArray(new String[strings.size()]);
     }
 }

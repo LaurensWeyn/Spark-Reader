@@ -50,7 +50,7 @@ public class Dictionary
         while(line != null)
         {
             //generate definition
-            Definition def = new Definition(line, sourceNum);
+            Definition def = new EDICTDefinition(line, sourceNum);
             for(String spelling:def.getSpellings())//for each possible spelling...
             {
                 ArrayList<Definition> meanings = lookup.get(spelling);

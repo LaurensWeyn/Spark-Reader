@@ -68,10 +68,10 @@ public class FoundDef implements Comparable<FoundDef>
         }
         y = renderText(g, options.getColor("defTagCol"), options.getColor("defBackCol"), xPos, y, tagList.trim(), maxWidth);
         
-        String[] readings = foundDef.getReadings();
-        if(options.getOptionBool("showAllKanji"))readings = foundDef.getSpellings();
+        String[] readings = foundDef.getSpellings();
         for(String reading:readings)
         {
+            if(Japanese.hasKanji(reading) && !options.getOptionBool("showAllKanji"))continue;
             //output readings if not in this form already
             if(!reading.equals(foundForm.getWord()))y = renderText(g, options.getColor("defReadingCol"), options.getColor("defBackCol"), xPos, y, reading, maxWidth);
         }
