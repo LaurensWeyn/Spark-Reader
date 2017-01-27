@@ -65,8 +65,9 @@ public class WordSplitter
                     {
                         //System.out.println("found def " + def);
                         //check if it meets the tag requirements of this conjugation:
-                        boolean pass = true;
-                        for(DefTag needed:match.getNeededTags())
+                        boolean pass = def.getTags() != null;//stop nullpointer exception
+                        if(match.getNeededTags().isEmpty())pass = true;//still except if no tags needed
+                        if(pass)for(DefTag needed:match.getNeededTags())
                         {
                             if(def.getTags().contains(needed) == false)
                             {

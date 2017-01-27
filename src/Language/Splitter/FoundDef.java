@@ -16,11 +16,8 @@
  */
 package Language.Splitter;
 
-import Language.Dictionary.DefTag;
-import Language.Dictionary.Definition;
+import Language.Dictionary.*;
 import Language.Deconjugator.ValidWord;
-import Language.Dictionary.Japanese;
-import Language.Dictionary.Kanji;
 import UI.TextStream;
 import UI.UI;
 import static UI.UI.options;
@@ -61,12 +58,8 @@ public class FoundDef implements Comparable<FoundDef>
         if(!foundForm.getProcess().equals(""))y = renderText(g, options.getColor("defReadingCol"), options.getColor("defBackCol"), xPos, y, foundForm.toString(), maxWidth);
         
         //output tags
-        String tagList = "";
-        for(DefTag tag:foundDef.getTags())
-        {
-            tagList += tag.name() + " ";
-        }
-        y = renderText(g, options.getColor("defTagCol"), options.getColor("defBackCol"), xPos, y, tagList.trim(), maxWidth);
+
+        y = renderText(g, options.getColor("defTagCol"), options.getColor("defBackCol"), xPos, y, foundDef.getTagLine(), maxWidth);
         
         String[] readings = foundDef.getSpellings();
         for(String reading:readings)
@@ -75,14 +68,17 @@ public class FoundDef implements Comparable<FoundDef>
             //output readings if not in this form already
             if(!reading.equals(foundForm.getWord()))y = renderText(g, options.getColor("defReadingCol"), options.getColor("defBackCol"), xPos, y, reading, maxWidth);
         }
-        for (int i = 0; i < foundForm.getWord().length(); i++)
+        if(!(foundDef instanceof KanjiDefinition))
         {
-            //output Kanji if known
-            char c = foundForm.getWord().charAt(i);
-            String lookup = Kanji.lookup(c);
-            if(lookup != null)
+            for (int i = 0; i < foundForm.getWord().length(); i++)
             {
-                y = renderText(g, options.getColor("defKanjiCol"), options.getColor("defBackCol"), xPos, y, c + "【" + lookup + "】", maxWidth);
+                //output Kanji if known
+                char c = foundForm.getWord().charAt(i);
+                String lookup = Kanji.lookup(c);
+                if (lookup != null)
+                {
+                    y = renderText(g, options.getColor("defKanjiCol"), options.getColor("defBackCol"), xPos, y, c + "【" + lookup + "】", maxWidth);
+                }
             }
         }
         for(String def:foundDef.getMeaning())
@@ -112,6 +108,7 @@ public class FoundDef implements Comparable<FoundDef>
     
     private int renderText(Graphics g, Color fore, Color back, int x, int y, String text, int width)
     {
+        if(text == null)return y;//don't render null text
         defLines++;
         if(startLine > defLines)return y;//don't render here yet
         int startY = y;
@@ -188,25 +185,30 @@ public class FoundDef implements Comparable<FoundDef>
         return foundDef;
     }
     
-    public int getScore()
-    {
+    public int getScore() {
         int score = 0;
-        
-        if(foundDef.getSourceNum() == 1)score += 100;//prefer user added defs
-        if(UI.prefDef.isPreferred(foundDef))score += 1000;//HIGHLY favour definitions the user preferred
-        
+
+        if (foundDef.getSourceNum() == 1) score += 100;//prefer user added defs
+        if (UI.prefDef.isPreferred(foundDef)) score += 1000;//HIGHLY favour definitions the user preferred
+
         Set<DefTag> tags = foundDef.getTags();
-        if(tags.contains(DefTag.obs) || tags.contains(DefTag.obsc) || tags.contains(DefTag.rare) ||tags.contains(DefTag.arch))score -= 50;//obscure penalty
-        
-        if(tags.contains(DefTag.uk) && !Japanese.isKana(foundForm.getWord()))score -= 10;//usually kana without kana
-        if(tags.contains(DefTag.uK) && Japanese.isKana(foundForm.getWord()))score -= 10;//usually Kanji, only kana
-        
-        if(foundForm.getProcess().equals(""))score += 5;//prefer words/phrases instead of deviations
-        if(tags.contains(DefTag.suf) || tags.contains(DefTag.pref))score -= 3;//suf/prefixes _usually_ caught with the whole word
+        if (tags != null)
+        {
+            if (tags.contains(DefTag.obs) || tags.contains(DefTag.obsc) || tags.contains(DefTag.rare) || tags.contains(DefTag.arch))
+                score -= 50;//obscure penalty
+
+            if (tags.contains(DefTag.uk) && !Japanese.isKana(foundForm.getWord())) score -= 10;//usually kana without kana
+            if (tags.contains(DefTag.uK) && Japanese.isKana(foundForm.getWord())) score -= 10;//usually Kanji, only kana
+
+            if (tags.contains(DefTag.suf) || tags.contains(DefTag.pref))
+                score -= 3;//suf/prefixes _usually_ caught with the whole word
+            //TODO: only disfavour counters not attached to numbers!
+            if (tags.contains(DefTag.ctr)) score -= 10;
+        }
         score -= foundDef.getSpellings().length;//-1 for every spelling; more likely it's coincidence
-        
-        //TODO: only disfavour counters not attached to numbers!
-        if(tags.contains(DefTag.ctr))score -= 10;
+        if (foundForm.getProcess().equals("")) score += 5;//prefer words/phrases instead of deviations
+
+
         //TODO: join numbers and counter words!
         //System.out.println("score for " + foundDef + " is " + score);
         return score;

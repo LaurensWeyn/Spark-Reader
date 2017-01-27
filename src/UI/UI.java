@@ -118,7 +118,14 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             dict = new Dictionary();//clear old defs if needed
             dict.loadEdict(new File(options.getOption("customDictPath")), "UTF-8", 1);
             dict.loadEdict(new File(options.getOption("edictPath")), "EUC-JP", 2);
-            Kanji.load(new File(options.getOption("kanjiPath")));
+            if(options.getOptionBool("addKanjiAsDef"))
+            {
+                Kanji.load(new File(options.getOption("kanjiPath")), dict);
+            }
+            else
+            {
+                Kanji.load(new File(options.getOption("kanjiPath")), null);
+            }
             System.out.println("loaded dictionaries");
         }catch(IOException e)
         {
@@ -511,6 +518,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     {
         int pos = toCharPos(e.getX());
         int lineIndex = getLineIndex(e.getPoint());
+        if(lineIndex >= lines.size())return;
         if(lineIndex != mouseLine || (mousedWord!= null && !mousedWord.inBounds(pos)))
         {
             if(mousedWord != null)mousedWord.setMouseover(false);

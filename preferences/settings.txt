@@ -70,3 +70,4 @@ exportMarksKnown = false
 reduceSave = false
 hideOnOtherText = true
 showDefOnMouseover = false
+addKanjiAsDef = true

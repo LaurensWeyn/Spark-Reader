@@ -37,4 +37,17 @@ public abstract class Definition
     {
         return null;
     }
+
+    public String getTagLine()
+    {
+        Set<DefTag> tags = getTags();
+        if(tags == null)return null;
+
+        String tagList = "";
+        for(DefTag tag:tags)
+        {
+            tagList += tag.name() + " ";
+        }
+        return tagList.trim();
+    }
 }

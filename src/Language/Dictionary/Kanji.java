@@ -32,7 +32,7 @@ import java.util.HashMap;
 public class Kanji
 {
     static HashMap<Character, String> kanjiDefs = new HashMap<>();
-    public static void load(File file)throws IOException
+    public static void load(File file, Dictionary dict)throws IOException
     {
         if(!file.exists())return;//leave kanjiDefs empty
         
@@ -48,6 +48,7 @@ public class Kanji
         {
             String bits[] = line.split("\t");
             kanjiDefs.put(bits[4].charAt(0), bits[0] + ": " + bits[3]);//Kanji = ####: meaning
+            if(dict != null)dict.addKanji(new KanjiDefinition(line));
             line = br.readLine();
         }
     }

@@ -99,6 +99,7 @@ public class Options implements Cloneable
         options.put("reduceSave", "true");
         options.put("hideOnOtherText", "false");
         options.put("showDefOnMouseover", "false");
+        options.put("addKanjiAsDef", "true");
     }
     public Options(File file)throws IOException
     {

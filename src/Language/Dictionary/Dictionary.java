@@ -65,6 +65,17 @@ public class Dictionary
         }
         System.out.println("loaded " + lookup.keySet().size() + " entries so far");
     }
+    public void addKanji(KanjiDefinition def)
+    {
+        String kanji = def.getSpellings()[0].charAt(0) + "";
+        ArrayList<Definition> meanings = lookup.get(kanji);
+        if(meanings == null)
+        {
+            meanings = new ArrayList<>();//create if it doesn't exist
+            lookup.put(kanji, meanings);
+        }
+        meanings.add(def);//add this definition for this spelling
+    }
     public ArrayList<Definition> find(String word)
     {
         //System.out.println("looking up " + word);

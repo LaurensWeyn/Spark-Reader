@@ -73,6 +73,7 @@ public class OptionsUI extends JFrame
             display.add(new ToggleOption("hideOnOtherText", "Minimise window on new non-Japanese text", "If on, the window will automatically minimise if non-Japanese text is put into the clipboard."));
             display.add(new OptionLabel("Other:", null));
             display.add(new ToggleOption("reduceSave", "Reduce file I/O", "<html>If ticked, writing to files is avoided until the program is closed or a lot of changes have been made.<br>Turning this on will improve performance, but if the program crashes some progress may be lost"));
+            display.add(new ToggleOption("addKanjiAsDef", "Add Kanji to definitions", "<html>If you have a heisig Kanji file loaded, this will also add those individial characters as 'definitions'"));
         PageGroup window = new PageGroup("Overlay", "Graphical settings related to the on-screen overlay window");
             
             OptionPage mainUI = new OptionPage("Main text");
