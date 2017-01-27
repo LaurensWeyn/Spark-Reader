@@ -16,11 +16,15 @@
  */
 package UI;
 
+import UI.Popup.TrayPopup;
+
 import java.awt.AWTException;
 import java.awt.Image;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -54,6 +58,23 @@ public class Tray
                     hideTray();
                 }
             });
+            icon.addMouseListener(new MouseAdapter()
+            {
+                @Override
+                public void mouseClicked(MouseEvent e)
+                {
+                    if(e.getButton() == MouseEvent.BUTTON3)//right click
+                    {
+                        new TrayPopup(parent, null).show(e.getX(), e.getY());
+                    }
+                    else if(e.getButton() == MouseEvent.BUTTON1)//left click
+                    {
+                        UI.hidden = false;
+                        parent.render();
+                        hideTray();
+                    }
+                }
+            });
         }catch (IOException ex)
         {
             System.out.println("error loading icon: " + ex);
@@ -62,7 +83,7 @@ public class Tray
     
     public void showTray()
     {
-        if(showing || SystemTray.isSupported() == false)return;
+        if(showing || !SystemTray.isSupported())return;
         SystemTray tray = SystemTray.getSystemTray();
         try
         {
@@ -77,7 +98,7 @@ public class Tray
     }
     public void hideTray()
     {
-        if(!showing || SystemTray.isSupported() == false)return;
+        if(!showing || !SystemTray.isSupported())return;
         SystemTray tray = SystemTray.getSystemTray();
         
         tray.remove(icon);

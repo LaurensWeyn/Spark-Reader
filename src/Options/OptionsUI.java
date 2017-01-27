@@ -69,7 +69,8 @@ public class OptionsUI extends JFrame
             display.add(new NumberOption("windowWidth", "Window width", "I recommend setting this to the width of the window you plan to overlay this on"));
             display.add(new NumberOption("maxHeight", "Maximum height", "<html>Definitions will not be longer than this.<br>I recommend setting this to the height of the window you plan to overlay this on"));        root.add(display);
             display.add(new ToggleOption("takeFocus", "Take focus when clicked", "If the game under the overlay is still receiving clicks, try turning this on"));
-            display.add(new ToggleOption("showOnNewLine", "Restore window on new text", "If on, the window will automatically reappear if new Japanese text is detected."));
+            display.add(new ToggleOption("showOnNewLine", "Restore window on new Japanese text", "If on, the window will automatically reappear if new Japanese text is detected."));
+            display.add(new ToggleOption("hideOnOtherText", "Minimise window on new non-Japanese text", "If on, the window will automatically minimise if non-Japanese text is put into the clipboard."));
             display.add(new OptionLabel("Other:", null));
             display.add(new ToggleOption("reduceSave", "Reduce file I/O", "<html>If ticked, writing to files is avoided until the program is closed or a lot of changes have been made.<br>Turning this on will improve performance, but if the program crashes some progress may be lost"));
         PageGroup window = new PageGroup("Overlay", "Graphical settings related to the on-screen overlay window");

@@ -47,7 +47,7 @@ public class PrefDef
     {
         table = new HashMap<>();
         this.file = file;
-        if(file.exists() == false)return;
+        if(!file.exists())return;
         
         
         FileInputStream is = new FileInputStream(file);
@@ -68,7 +68,7 @@ public class PrefDef
         Writer fr = new OutputStreamWriter(new FileOutputStream(file, false), Charset.forName("UTF-8"));
         for(Entry<String, Integer> entries: table.entrySet())
         {
-            fr.append(entries.getKey() + "=" + entries.getValue() + "\n");
+            fr.append(entries.getKey()).append("=").append(String.valueOf(entries.getValue())).append("\n");
         }
         fr.close();
         dueChanges = 0;
@@ -85,7 +85,7 @@ public class PrefDef
         table.put(spelling, def.getDefinition().getID());
         dueChanges++;
         
-        if(dueChanges > saveThreshold || UI.options.getOptionBool("reduceSave") == false)
+        if(dueChanges > saveThreshold || !UI.options.getOptionBool("reduceSave"))
         {
             try
             {

@@ -35,9 +35,9 @@ public class FoundWord
     private int currentDef = 0;//current definition to render
     
     private boolean showDef = false;
-    
-    
-    
+    private boolean mouseover;
+
+
     public FoundWord(String text, ArrayList<FoundDef> definitions, int startX, int endX)
     {
         this.text = text;
@@ -99,7 +99,7 @@ public class FoundWord
         {
             furiText = (currentDef + 1) + "/" + definitions.size();
         }
-        else if(options.getOptionBool("showFurigana") && Japanese.hasKanji(text) && !known)
+        else if(showFurigana(known))
         {
             furiText = definitions.get(currentDef).getFurigana();
         }
@@ -118,6 +118,10 @@ public class FoundWord
             int y = UI.defStartY + g.getFontMetrics().getAscent();
             definitions.get(currentDef).render(g, startPos, Math.max(width, options.getOptionInt("defWidth")), y);
         }
+    }
+    private boolean showFurigana(boolean known)
+    {
+        return options.getOptionBool("showFurigana") && Japanese.hasKanji(text) && !known;
     }
     public void toggleWindow(int pos)
     {
@@ -187,5 +191,18 @@ public class FoundWord
     {
         return endX;
     }
-    
+
+    public boolean isShowingFirstDef()
+    {
+        return currentDef == 0;
+    }
+
+    public void setMouseover(boolean mouseover) {
+        this.mouseover = mouseover;
+
+        if(!isKnown() && options.getOptionBool("showDefOnMouseover"))
+        {
+            showDef = mouseover;
+        }
+    }
 }

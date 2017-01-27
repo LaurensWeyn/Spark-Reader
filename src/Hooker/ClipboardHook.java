@@ -17,6 +17,8 @@
 package Hooker;
 
 import Language.Dictionary.Japanese;
+import UI.UI;
+
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
@@ -34,6 +36,11 @@ public class ClipboardHook
 
     public ClipboardHook()
     {
+        lastClip = getClipboard();
+        if(Japanese.isJapanese(lastClip))
+        {
+            lastClip = "";//never mind, update anyway (don't immediately hide on English text)
+        }
     }
     //to call every 100ms or so
     public String check()
@@ -43,9 +50,19 @@ public class ClipboardHook
         {
             lastClip = clip;
             System.out.println("clipboard updated to " + clip);
-            if(Japanese.isJapanese(clip) && !ignoreNextLine)
+            boolean isJapanese = Japanese.isJapanese(clip);
+            if(isJapanese && !ignoreNextLine)
             {
                 return clip;
+            }
+            if(!isJapanese && UI.options.getOptionBool("hideOnOtherText"))
+            {
+                UI.hidden = true;
+                if(UI.instance != null)
+                {
+                    UI.instance.tray.showTray();
+                    UI.instance.render();
+                }
             }
             ignoreNextLine = false;//line passed
         }
@@ -83,7 +100,11 @@ public class ClipboardHook
         {
             ignoreNextLine = true;//don't include this change or else we'll trigger
         }
-        
+        setClipBoardAndUpdate(text);//update avoided
+    }
+
+    public static void setClipBoardAndUpdate(String text)
+    {
         try
         {
             StringSelection selection = new StringSelection(text);
@@ -96,8 +117,7 @@ public class ClipboardHook
             } catch (InterruptedException err)
             {
             }
-            setClipboard(text);//try again later
+            setClipBoardAndUpdate(text);//try again later
         }
-
     }
 }

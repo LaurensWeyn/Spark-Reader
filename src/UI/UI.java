@@ -27,9 +27,12 @@ import Multiplayer.Host;
 import Options.Known;
 import Options.Options;
 import Options.PrefDef;
+import UI.Popup.DefPopup;
+import UI.Popup.MenuPopup;
+import UI.Popup.WordPopup;
+
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -63,8 +66,8 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     public static boolean hidden = false;
     
     
-    Overlay disp;
-    Tray tray;
+    public Overlay disp;
+    public Tray tray;
     
     ArrayList<Line> lines;
     int longestLine = 0;
@@ -150,7 +153,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         }
         updateText("");//load in default text
     }
-    public void registerListeners()
+    private void registerListeners()
     {
         disp.getFrame().addMouseListener(this);
         disp.getFrame().addMouseMotionListener(this);
@@ -317,7 +320,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
                     mpText = newText;
                     ui.render();//refresh mp status
                 }
-                if(clientMode.running == false)
+                if(!clientMode.running)
                 {
                     clientMode = null;
                     mpThread = null;
@@ -331,7 +334,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
                     mpText = newText;
                     ui.render();//refresh mp status
                 }
-                if(hostMode.running == false)
+                if(!hostMode.running)
                 {
                     hostMode = null;
                     mpThread = null;
@@ -340,11 +343,12 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             try
             {
                 Thread.sleep(100);
-            }catch(InterruptedException e){}
+            }catch(InterruptedException ignored){}
         }
         
     }
-    public int toCharPos(int x)
+
+    private int toCharPos(int x)
     {
         x -= xOffset;
         x /= mainFontSize;
@@ -484,6 +488,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             selectedWord = null;
             render();
         }
+        mouseLine = -1;
     }
 
     @Override
@@ -498,10 +503,35 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         }
     }
 
+
+    private int mouseLine = -1;
+    private FoundWord mousedWord;
     @Override
     public void mouseMoved(MouseEvent e)
     {
-        //TODO allow for definitions to appear without clicking on them
+        int pos = toCharPos(e.getX());
+        int lineIndex = getLineIndex(e.getPoint());
+        if(lineIndex != mouseLine || (mousedWord!= null && !mousedWord.inBounds(pos)))
+        {
+            if(mousedWord != null)mousedWord.setMouseover(false);
+            mousedWord = null;//to recalulate
+            //toggle on selected line:
+            for (FoundWord word : lines.get(lineIndex).getWords())
+            {
+                if (word.inBounds(pos))
+                {
+                    mousedWord = word;
+                    break;
+                }
+            }
+            mouseLine = lineIndex;
+
+            if(mousedWord != null)
+            {
+                //System.out.println("mouseover'd word changed to " + mousedWord.getText());
+                mousedWord.setMouseover(true);
+            }
+        }
     }
     
     @Override
@@ -559,16 +589,17 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         }
         
     }
-    public void boundXOff()
+
+    private void boundXOff()
     {
         if(xOffset > 0)xOffset = 0;
         int maxChars = (options.getOptionInt("windowWidth") - options.getOptionInt("defWidth")) / mainFontSize;
         int maxX = (longestLine - maxChars) * mainFontSize;
         if(-xOffset > maxX)xOffset = Math.min(-maxX, 0);
     }
-    public int getLineIndex(Point pos)
+
+    private int getLineIndex(Point pos)
     {
-        int index = (pos.y - textStartY)/ lineHeight;
-        return index;
+        return (pos.y - textStartY)/ lineHeight;
     }
 }

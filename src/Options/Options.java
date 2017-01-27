@@ -97,6 +97,8 @@ public class Options implements Cloneable
         options.put("exportMarksKnown", "false");
         options.put("showAllKanji", "false");
         options.put("reduceSave", "true");
+        options.put("hideOnOtherText", "false");
+        options.put("showDefOnMouseover", "false");
     }
     public Options(File file)throws IOException
     {
