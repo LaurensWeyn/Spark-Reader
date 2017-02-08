@@ -23,6 +23,7 @@ import UI.UI;
 
 import static UI.UI.hidden;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
@@ -189,6 +190,10 @@ public class MenuPopup extends JPopupMenu
     public void show()
     {
         show(ui.disp.getFrame(), UI.buttonStartX, UI.textStartY);
+    }
+    public void show(MouseEvent e)
+    {
+        show(ui.disp.getFrame(), e.getX(), e.getY());
     }
     public void importPrompt()
     {

@@ -93,8 +93,9 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     public static final Color CLEAR = new Color(0, 0, 0, 0);
 
     public static String text;
+    public static String userComment;
     public static Log log;
-    public static ClipboardHook hook = new ClipboardHook();
+    public static ClipboardHook hook;
     
     public static WordSplitter splitter;
     public static Dictionary dict;
@@ -141,6 +142,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         {
             //load config
             options = new Options(Options.SETTINGS_FILE);
+            hook = new ClipboardHook();
             known = new Known(options.getFile("knownWordsPath"));
             prefDef = new PrefDef(options.getFile("preferredDefsPath"));
             options.save();
@@ -298,7 +300,8 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             if(clip != null)
             {
                 //if we're here, we have a new line of text
-                
+                userComment = null;
+
                 if(options.getOptionBool("showOnNewLine"))
                 {
                     hidden = false;//force visiblility on new line if needed
@@ -414,9 +417,9 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         }else if(e.getButton() == 3)//right click: extra option menu
         {
             //settings button
-            if(e.getY() < textStartY && e.getX() > buttonStartX)
+            if(e.getY() < textStartY)
             {
-                new MenuPopup(this).show();
+                new MenuPopup(this).show(e);//no longer requires button; right click anywhere on bar works
             }
             //word
             else if(e.getY() >= textStartY && e.getY() <= defStartY)
@@ -489,7 +492,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             return;
         }
         //collapse definitions
-        if(selectedWord != null)
+        if(selectedWord != null && options.getOptionBool("hideDefOnMouseLeave"))
         {
             selectedWord.showDef(false);
             selectedWord = null;
@@ -521,7 +524,12 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         if(lineIndex >= lines.size())return;
         if(lineIndex != mouseLine || (mousedWord!= null && !mousedWord.inBounds(pos)))
         {
-            if(mousedWord != null)mousedWord.setMouseover(false);
+            boolean reRender = false;
+            if(mousedWord != null)
+            {
+                mousedWord.setMouseover(false);
+                if(mousedWord.updateOnMouse())reRender = true;
+            }
             mousedWord = null;//to recalulate
             //toggle on selected line:
             for (FoundWord word : lines.get(lineIndex).getWords())
@@ -538,7 +546,10 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             {
                 //System.out.println("mouseover'd word changed to " + mousedWord.getText());
                 mousedWord.setMouseover(true);
+                if(mousedWord.updateOnMouse())reRender = true;
             }
+
+            if(reRender)render();
         }
     }
     

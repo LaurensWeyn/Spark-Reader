@@ -41,7 +41,6 @@ public class EDICTDefinition extends Definition
     public EDICTDefinition(String line, int sourceNum)
     {
         //parses EDICT2 definition lines
-        //TODO make a parser for EPWING (easier said than done)
         //TODO deal with that (P) thing at the end properly (currently using workarounds)
         tags = new HashSet<>();
         this.sourceNum = sourceNum;

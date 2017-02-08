@@ -87,10 +87,11 @@ public class TrayPopup extends JPopupMenu
                 }
             }
         });
-        add(close);
-        add(restore);
         add(settings);
-        
+        add(restore);
+        add(new Separator());
+        add(close);
+
         addPopupMenuListener(new IgnoreExitListener());
     }
     public void show(int x, int y)

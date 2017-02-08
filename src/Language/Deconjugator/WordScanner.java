@@ -137,9 +137,7 @@ public class WordScanner
         test(new DeconRule("り", "る", "i stem", DefTag.v5r));
         
         test(new DeconRule("", "る", "i stem", DefTag.v1));
-        //no stem for adjectives, but -sou sort-of uses a stem
-        test(new DeconRule("そう", "い", "-sou", DefTag.adj_i));
-        test(new DeconRule("", "い", "adj 'stem'", DefTag.adj_i));//Try match stem anyways, needed for things like '頼もしげに'
+        //adjective stems moved to bottom to avoid conflict with provisional-conditional
         
         //adjective conjugations
         test(new DeconRule("く", "い", "adverb", DefTag.adj_i));
@@ -220,7 +218,11 @@ public class WordScanner
         
         test(new DeconRule("かろう", "い", "volitional", DefTag.adj_i));
         test(new DeconRule("よう", "る", "volitional", DefTag.v1));
-        
+
+
+        test(new DeconRule("", "い", "adj 'stem'", DefTag.adj_i));//Try match stem anyways, needed for things like '頼もしげに'
+        //no stem for adjectives, but -sou sort-of uses a stem
+        test(new DeconRule("そう", "い", "-sou", DefTag.adj_i));
     }
     
     
@@ -250,7 +252,7 @@ public class WordScanner
     public static void main(String[] args)
     {
         System.out.println();
-        for(ValidWord vw: new WordScanner("聞かされた").getMatches())
+        for(ValidWord vw: new WordScanner("遅くな").getMatches())
         {
             System.out.println(vw.toString() + " " + vw.getNeededTags());
         }

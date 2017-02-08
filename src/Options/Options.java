@@ -88,7 +88,9 @@ public class Options implements Cloneable
         options.put("defWidth", "250");
         
         options.put("splitLines", "true");
-        options.put("showFurigana", "true");
+        options.put("knownFuriMode", "mouseover");
+        options.put("unknownFuriMode", "always");
+
         options.put("showOnNewLine", "true");
         options.put("takeFocus", "true");
         
@@ -100,6 +102,10 @@ public class Options implements Cloneable
         options.put("hideOnOtherText", "false");
         options.put("showDefOnMouseover", "false");
         options.put("addKanjiAsDef", "true");
+        options.put("startInTray", "false");
+        options.put("hideDefOnMouseLeave", "true");
+
+
     }
     public Options(File file)throws IOException
     {

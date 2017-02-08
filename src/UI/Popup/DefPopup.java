@@ -23,6 +23,7 @@ import Language.Splitter.FoundDef;
 import Language.Splitter.FoundWord;
 import UI.UI;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -164,7 +165,14 @@ public class DefPopup extends JPopupMenu
 
             if(UI.options.getOptionBool("commentOnExport"))
             {
-                note = JOptionPane.showInputDialog(UIParent, "Enter comment\n(You may also leave this blank)", "Adding " + kanji, JOptionPane.PLAIN_MESSAGE);
+                note = (String)JOptionPane.showInputDialog(UIParent,
+                                            "Enter comment\n(You may also leave this blank)",
+                                            "Adding " + kanji,
+                                            JOptionPane.PLAIN_MESSAGE,
+                                            null,
+                                            null,
+                                            UI.userComment);
+                UI.userComment = note;//update for next time
             }
 
             if(note == null)return;//cancel export on pressing cancel

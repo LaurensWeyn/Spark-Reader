@@ -41,6 +41,10 @@ public class ClipboardHook
         {
             lastClip = "";//never mind, update anyway (don't immediately hide on English text)
         }
+        if(UI.options.getOptionBool("startInTray"))
+        {
+            lastClip = "";//allow immediately hiding on English text
+        }
     }
     //to call every 100ms or so
     public String check()

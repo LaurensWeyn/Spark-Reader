@@ -59,7 +59,7 @@ public class WordPopup extends JPopupMenu
         this.ui = ui;
         String clipboard = ClipboardHook.getClipboard();
         
-        copy = new JMenuItem(new AbstractAction("Copy to clipboard")
+        copy = new JMenuItem(new AbstractAction("Copy word")
         {
             @Override
             public void actionPerformed(ActionEvent e)
@@ -67,7 +67,7 @@ public class WordPopup extends JPopupMenu
                 ClipboardHook.setClipboard(word.getText());
             }
         });
-        append = new JMenuItem(new AbstractAction("Append to clipboard")
+        append = new JMenuItem(new AbstractAction("Append word")
         {
             @Override
             public void actionPerformed(ActionEvent e)

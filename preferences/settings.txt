@@ -71,3 +71,7 @@ reduceSave = false
 hideOnOtherText = true
 showDefOnMouseover = false
 addKanjiAsDef = true
+hideDefOnMouseLeave = true
+startInTray = true
+unknownFuriMode = always
+knownFuriMode = mouseover

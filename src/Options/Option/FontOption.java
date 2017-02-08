@@ -197,7 +197,7 @@ public class FontOption extends UIOption
             String styleTags = "";
             if(AA)styleTags += "A";
             if(chkBold.isSelected())styleTags += "B";
-            if(chkItalic.isSelected())styleTags += "B";
+            if(chkItalic.isSelected())styleTags += "I";
             
             setValue(cmbFontName.getSelectedItem() + ", " + styleTags + ", " + size.getValue());
         }

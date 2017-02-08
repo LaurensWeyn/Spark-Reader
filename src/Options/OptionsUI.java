@@ -59,6 +59,9 @@ public class OptionsUI extends JFrame
     public static final int SPACING = 1;
     public static int optionWidth = 0;
     private final PageGroup root;
+
+    private final static String mouseoverConfig ="always=Always visible;mouseover=Only visible on mouseover;never=Never visible";
+
     public OptionsUI() throws HeadlessException
     {
         super("Spark Reader Options");
@@ -71,6 +74,7 @@ public class OptionsUI extends JFrame
             display.add(new ToggleOption("takeFocus", "Take focus when clicked", "If the game under the overlay is still receiving clicks, try turning this on"));
             display.add(new ToggleOption("showOnNewLine", "Restore window on new Japanese text", "If on, the window will automatically reappear if new Japanese text is detected."));
             display.add(new ToggleOption("hideOnOtherText", "Minimise window on new non-Japanese text", "If on, the window will automatically minimise if non-Japanese text is put into the clipboard."));
+            display.add(new ToggleOption("startInTray", "Start in tray if there's no Japanese text on startup", "By default, the window will be visible after startup even if there is no text to display."));
             display.add(new OptionLabel("Other:", null));
             display.add(new ToggleOption("reduceSave", "Reduce file I/O", "<html>If ticked, writing to files is avoided until the program is closed or a lot of changes have been made.<br>Turning this on will improve performance, but if the program crashes some progress may be lost"));
             display.add(new ToggleOption("addKanjiAsDef", "Add Kanji to definitions", "<html>If you have a heisig Kanji file loaded, this will also add those individial characters as 'definitions'"));
@@ -92,7 +96,8 @@ public class OptionsUI extends JFrame
             window.add(backs);
             
             OptionPage furigana = new OptionPage("Furigana bar/text");
-            furigana.add(new ToggleOption("showFurigana", "Show furigana", "If unticked, furigana is hidden for all words"));
+            furigana.add(new RadioOption("unknownFuriMode", mouseoverConfig, "Furigana mode (unknown words)", null));
+            furigana.add(new RadioOption("knownFuriMode", mouseoverConfig, "Furigana mode (known words)", null));//TODO add tips
             furigana.add(new OptionLabel("Theme:", null));
             furigana.add(new FontOption("furiFont", "Furigana font", "Also decides the size of the furigana bar"));
             furigana.add(new ColourOption("furiCol", "Main text colour", "the colour used for the furigana text"));
@@ -110,6 +115,7 @@ public class OptionsUI extends JFrame
         PageGroup defs = new PageGroup("Definitions", "Settings related to displaying and storing definitions");
             OptionPage defWindow = new OptionPage("popup window");
             defWindow.add(new NumberOption("defWidth", "Definition popup width", "Determines how wide the definition popup window is"));
+            defWindow.add(new ToggleOption("hideDefOnMouseLeave", "Hide definition when mouse leaves the screen", "If unticked, the definition popup will remain visible until you manually close it"));
             defWindow.add(new OptionLabel("Theme:", null));
             defWindow.add(new ColourOption("defBackCol", "Background colour", "colour for overlay background"));
             defs.add(defWindow);

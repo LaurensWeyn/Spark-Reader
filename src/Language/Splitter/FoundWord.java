@@ -37,10 +37,13 @@ public class FoundWord
     private boolean showDef = false;
     private boolean mouseover;
 
+    private final boolean hasKanji;
+
 
     public FoundWord(String text, ArrayList<FoundDef> definitions, int startX, int endX)
     {
         this.text = text;
+        hasKanji = Japanese.hasKanji(text);
         this.definitions = definitions;
         this.startX = startX;
         this.endX = endX;
@@ -60,6 +63,7 @@ public class FoundWord
     public FoundWord(String text, int startX, int endX)
     {
         this.text = text;
+        hasKanji = Japanese.hasKanji(text);
         definitions = new ArrayList<>();
         this.startX = startX;
         this.endX = endX;
@@ -121,7 +125,15 @@ public class FoundWord
     }
     private boolean showFurigana(boolean known)
     {
-        return options.getOptionBool("showFurigana") && Japanese.hasKanji(text) && !known;
+        if(!hasKanji)return false;
+        switch(options.getOption(known?"knownFuriMode":"unknownFuriMode"))
+        {
+            case "always":return true;
+            case "mouseover":return mouseover;
+            case "never":return false;
+
+            default:return false;
+        }
     }
     public void toggleWindow(int pos)
     {
@@ -204,5 +216,13 @@ public class FoundWord
         {
             showDef = mouseover;
         }
+    }
+
+    public boolean updateOnMouse()
+    {
+        if(!hasKanji)return false;
+
+        return ( isKnown() && options.getOption("knownFuriMode").equals("mouseover"))
+            || (!isKnown() && options.getOption("unknownFuriMode").equals("mouseover"));
     }
 }
