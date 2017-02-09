@@ -26,12 +26,16 @@ import java.util.Arrays;
 public class Japanese
 {
 
-    
+
     //reference: http://www.rikai.com/library/kanjitables/kanji_codes.unicode.shtml
-    
+
     public static boolean isDigit(char c)
     {
         return (c >= '0' && c <= '9') || (c >= '０' && c <= '９');
+    }
+    public static boolean isGrammar(char c)
+    {
+        return c == '\n' || c == '\r' || c == '\t' || c == '。' || c == '…' || c == '？' || c == '　';
     }
     public static boolean isJapanese(String text)
     {
@@ -55,7 +59,7 @@ public class Japanese
     }
     public static boolean isJapanese(char c)
     {
-        return (0x3000 <= c && c <= 0x30ff) || isKanji(c);
+        return (0x3000 <= c && c <= 0x30ff) || isKanji(c) || isGrammar(c);
     }
     public static boolean isJapaneseWriting(char c)
     {
@@ -66,6 +70,14 @@ public class Japanese
         for (int i = 0; i < text.length(); i++)
         {
             if(isKanji(text.charAt(i)))return true;
+        }
+        return false;
+    }
+    public static boolean hasKana(String text)
+    {
+        for (int i = 0; i < text.length(); i++)
+        {
+            if(isKana(text.charAt(i)))return true;
         }
         return false;
     }
@@ -111,7 +123,7 @@ public class Japanese
         }
         return output;
     }
-    
+
     public static String[] splitJapaneseWriting(String text)
     {
         ArrayList<String> strings = new ArrayList<>();

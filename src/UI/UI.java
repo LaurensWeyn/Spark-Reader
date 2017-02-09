@@ -117,20 +117,23 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         try
         {
             dict = new Dictionary();//clear old defs if needed
-            dict.loadEdict(new File(options.getOption("customDictPath")), "UTF-8", 1);
-            dict.loadEdict(new File(options.getOption("edictPath")), "EUC-JP", 2);
-            if(options.getOptionBool("addKanjiAsDef"))
-            {
-                Kanji.load(new File(options.getOption("kanjiPath")), dict);
-            }
-            else
-            {
-                Kanji.load(new File(options.getOption("kanjiPath")), null);
-            }
+            loadDictionary("customDictPath", "UTF-8", 1);
+            loadDictionary("edictPath", "EUC-JP", 2);
+            Kanji.load(new File(options.getOption("kanjiPath")), options.getOptionBool("addKanjiAsDef")?dict:null);
             System.out.println("loaded dictionaries");
         }catch(IOException e)
         {
             JOptionPane.showMessageDialog(disp.getFrame(), "Error loading dictionaries: " + e, "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    public void loadDictionary(String option, String encoding, int source)
+    {
+        try
+        {
+            dict.loadEdict(new File(options.getOption(option)), encoding, source);
+        }catch(IOException e)
+        {
+            JOptionPane.showMessageDialog(disp.getFrame(), "Error loading dictionary from " + option + ": " + e, "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
     public UI()
@@ -145,7 +148,6 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             hook = new ClipboardHook();
             known = new Known(options.getFile("knownWordsPath"));
             prefDef = new PrefDef(options.getFile("preferredDefsPath"));
-            options.save();
             disp = new Overlay(options.getOptionInt("windowWidth") + options.getOptionInt("defWidth"), options.getOptionInt("maxHeight"));
             log = new Log(50);//TODO let user override this
             
@@ -497,6 +499,13 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             selectedWord.showDef(false);
             selectedWord = null;
             render();
+        }
+        if(mousedWord != null)
+        {
+            mousedWord.setMouseover(false);
+            boolean rerender = mousedWord.updateOnMouse();
+            mousedWord = null;
+            if(rerender)render();
         }
         mouseLine = -1;
     }
