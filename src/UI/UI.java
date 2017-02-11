@@ -241,10 +241,9 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         }
         disp.refresh();
     }
-    public void updateText(String newText)
+    private void updateText(String newText)
     {
         text = newText;
-        //TODO allow for reflow to fit in text box (after splitting)
         String bits[] = newText.split("\n");
         longestLine = 0;
         int i = 0;
@@ -262,14 +261,14 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             }
             i++;
         }
-        //clear all leftover lines (TODO more efficiently?)
+        //clear all leftover lines
         while(i < lines.size())
         {
             lines.remove(i);
         }
         //reflow if needed
         int maxLineLength = options.getOptionInt("windowWidth") / mainFontSize;
-        if(longestLine > mainFontSize && options.getOptionBool("reflowToFit"))//TODO make reflow optional
+        if(longestLine > mainFontSize && options.getOptionBool("reflowToFit"))
         {
             ArrayList<Line> newLines = new ArrayList<>(lines.size());
             for(Line line:lines)
@@ -332,15 +331,15 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
                     ui.tray.hideTray();
                 }
                 
-                
+
                 clip = clip.replace("\r", "");
+                log.addLine(clip);//add line to log
                 if(!options.getOptionBool("splitLines"))clip = clip.replace("\n", "");//all on one line if not splitting
                 for(Line line:ui.lines)
                 {
                     line.getMarkers().clear();//clear all markers
                 }
                 ui.updateText(clip);//reflow text on defaults
-                log.addLine(clip);//add line to log
                 ui.xOffset = 0;//scroll back to front
                 ui.render();
                 
@@ -628,6 +627,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             {
                 historyLine = log.forward();
             }
+            if(!options.getOptionBool("splitLines"))historyLine = historyLine.replace("\n", "");//all on one line if not splitting
             System.out.println("loading line " + historyLine);
             for(Line line:lines)
             {

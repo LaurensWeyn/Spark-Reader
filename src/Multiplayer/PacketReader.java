@@ -21,17 +21,25 @@ import java.io.Reader;
 import java.nio.CharBuffer;
 
 /**
- *
+ * Reads "CSV packets". Each packet is terminated by a new line, and has tab separated parameters.
+ * The first parameter is the command code
  * @author Laurens Weyn
  */
 public class PacketReader
 {
     private Reader input;
-    private String buffer;
+    private StringBuilder buffer;
     public PacketReader(Reader input)
     {
         this.input = input;
+        buffer = new StringBuilder();
     }
+
+    /**
+     * Gets a packet from the stream
+     * @return an array of strings containing the parameters for this packet, or null if no new packet is available
+     * @throws IOException if the underling Reader fails
+     */
     public String[] getPacket()throws IOException
     {
         while(input.ready())//read all new input
@@ -39,14 +47,19 @@ public class PacketReader
             char c = (char)input.read();
             if(c == '\n')
             {
-                String output = buffer;
-                buffer = "";
+                String output = buffer.toString();
+                buffer = new StringBuilder();
                 return output.split("\t");
             }
-            else buffer += c;
+            else buffer.append(c);
         }
         return null;//no packet yet
     }
+
+    /**
+     * Closes the associated Reader
+     * @throws IOException if the Reader fails
+     */
     public void close()throws IOException
     {
         input.close();
