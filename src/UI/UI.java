@@ -93,7 +93,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     
     public static final Color CLEAR = new Color(0, 0, 0, 0);
 
-    public static String text;
+    public static String text = "";
     public static String userComment;
     public static Log log;
     public static Hook hook;
@@ -163,7 +163,6 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             System.out.println("error init UI");
             e.printStackTrace();
         }
-        updateText("");//load in default text
     }
     private void registerListeners()
     {
@@ -267,6 +266,28 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         while(i < lines.size())
         {
             lines.remove(i);
+        }
+        //reflow if needed
+        int maxLineLength = options.getOptionInt("windowWidth") / mainFontSize;
+        if(longestLine > mainFontSize && options.getOptionBool("reflowToFit"))//TODO make reflow optional
+        {
+            ArrayList<Line> newLines = new ArrayList<>(lines.size());
+            for(Line line:lines)
+            {
+                Line newLine = new Line();
+                for(FoundWord word:line.getWords())
+                {
+                    if(newLine.calcLength() + word.getLength() > maxLineLength)
+                    {
+                        newLines.add(newLine);
+                        newLine = new Line();
+                    }
+                    word.setStartX(newLine.calcLength());
+                    newLine.addWord(word);
+                }
+                if(newLine.calcLength() != 0)newLines.add(newLine);
+            }
+            lines = newLines;
         }
     }
     public static void main(String[] args)throws Exception
@@ -621,6 +642,12 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
 
     private void boundXOff()
     {
+        if(options.getOptionBool("reflowToFit"))
+        {
+            //do not allow scrolling when text always fits
+            xOffset = 0;
+            return;
+        }
         if(xOffset > 0)xOffset = 0;
         int maxChars = (options.getOptionInt("windowWidth") - options.getOptionInt("defWidth")) / mainFontSize;
         int maxX = (longestLine - maxChars) * mainFontSize;

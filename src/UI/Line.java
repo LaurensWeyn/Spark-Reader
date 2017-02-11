@@ -74,7 +74,7 @@ public class Line
             if(markers.contains(i) || splitPoints.contains(i))//only draw on actual points
             {
                 g.setColor(markers.contains(i)?options.getColor("markerCol"):options.getColor("noMarkerCol"));
-                
+
                 g.clearRect(xOff + i * mainFontSize - 1, yOff + textStartY, 2, UI.textHeight);
                 g.fillRect (xOff + i * mainFontSize - 1, yOff + textStartY, 2, UI.textHeight);//TODO make markers variable size
             }
@@ -82,7 +82,7 @@ public class Line
 
         //render words
         options.getFont("textFont");
-        
+
         int lastX = 0;
         for(FoundWord word:words)
         {
@@ -102,8 +102,16 @@ public class Line
         }
         return text;
     }
-    
-    
+
+    public int calcLength()
+    {
+        int charLength = 0;
+        for(FoundWord word:words)
+        {
+            charLength += word.getLength();
+        }
+        return charLength;
+    }
 
     public SortedSet<Integer> getMarkers()
     {
@@ -113,6 +121,11 @@ public class Line
     public ArrayList<FoundWord> getWords()
     {
         return words;
+    }
+
+    public void addWord(FoundWord word)
+    {
+        words.add(word);
     }
 
     public void setWords(ArrayList<FoundWord> words)

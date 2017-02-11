@@ -80,7 +80,8 @@ public class OptionsUI extends JFrame
             display.add(new ToggleOption("addKanjiAsDef", "Add Kanji to definitions", "<html>If you have a heisig Kanji file loaded, this will also add those individial characters as 'definitions'"));
         PageGroup window = new PageGroup("Overlay", "Graphical settings related to the on-screen overlay window");
             OptionPage mainUI = new OptionPage("Main text");
-            mainUI.add(new ToggleOption("splitLines", "Put all text on one line", "If enabled, all text is shown on one line, making the UI more compact", true));
+            mainUI.add(new ToggleOption("splitLines", "Split lines like they are in game", "If disabled, all text is shown on one line, making the UI more compact"));
+            mainUI.add(new ToggleOption("reflowToFit", "Move text to next line if it doesn't fit", "If disabled, you can scroll through the text to see the rest of the line."));
             mainUI.add(new OptionLabel("Theme:", null));
             mainUI.add(new ColourOption("textCol", "Main text colour", "the colour used for the main font"));
             mainUI.add(new FontOption("textFont", "Main text font", "The font used for the captured Japanese text"));

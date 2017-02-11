@@ -49,13 +49,13 @@ public class WordSplitter
         ArrayList<FoundWord> words = new ArrayList<>();
         int pos = 0;
         int len = 0;
-        FoundWord bestWord = new FoundWord("", null, 0, 0);
+        FoundWord bestWord = new FoundWord("", null, 0);
         while(pos < text.length())
         {
             try
             {
                 WordScanner word = new WordScanner(text.substring(pos, pos + len));//may crash (in which case, decide the winner)
-                FoundWord foundWord = new FoundWord(word.getWord(), pos + off, pos + len + off);//prototype definition
+                FoundWord foundWord = new FoundWord(word.getWord(), pos + off);//prototype definition
                 for(ValidWord match:word.getMatches())//for each possible conjugation...
                 {
                     
@@ -110,13 +110,13 @@ public class WordSplitter
                 pos += bestWord.getText().length();//skip ahead
                 if(bestWord.getText().length() == 0)//didn't find it
                 {
-                    words.add(new FoundWord(text.charAt(pos) + "", null, pos + off, pos + 1 + off));//add it as a single character "word"
+                    words.add(new FoundWord(text.charAt(pos) + "", null, pos + off));//add it as a single character "word"
                     pos++;//skip this letter, not inportant
                 }
                 else
                 {
                     words.add(bestWord);//only add actual definitions
-                    bestWord = new FoundWord("", null, 0, 0);//reset
+                    bestWord = new FoundWord("", null, 0);//reset
                 }
             }
             len++;

@@ -30,7 +30,7 @@ public class FoundWord
 {
     private final String text;//text to show
     private final ArrayList<FoundDef> definitions;//known meanings
-    private final int startX, endX;//start and end points in sentence (for rendering)
+    private int startX;//start point in sentence (for rendering)
     
     private int currentDef = 0;//current definition to render
     
@@ -40,13 +40,12 @@ public class FoundWord
     private final boolean hasKanji;
 
 
-    public FoundWord(String text, ArrayList<FoundDef> definitions, int startX, int endX)
+    public FoundWord(String text, ArrayList<FoundDef> definitions, int startX)
     {
         this.text = text;
         hasKanji = Japanese.hasKanji(text);
         this.definitions = definitions;
         this.startX = startX;
-        this.endX = endX;
         
         if(definitions != null)definitions.sort(null);
         /*int bestScore = Integer.MIN_VALUE;//take best scoreing word as the default definition
@@ -60,13 +59,12 @@ public class FoundWord
             }
         }*/
     }
-    public FoundWord(String text, int startX, int endX)
+    public FoundWord(String text, int startX)
     {
         this.text = text;
         hasKanji = Japanese.hasKanji(text);
         definitions = new ArrayList<>();
         this.startX = startX;
-        this.endX = endX;
         if(definitions != null)definitions.sort(null);
     }
     public void addDefinition(FoundDef def)
@@ -148,11 +146,15 @@ public class FoundWord
     }
     public boolean inBounds(int xPos)
     {
-        return xPos >= startX && xPos < endX;
+        return xPos >= startX && xPos < startX + getLength();
     }
     public String getText()
     {
         return text;
+    }
+    public int getLength()
+    {
+        return text.length();
     }
 
     @Override
@@ -201,7 +203,7 @@ public class FoundWord
     }
     public int endX()
     {
-        return endX;
+        return startX + getLength();
     }
 
     public boolean isShowingFirstDef()
@@ -224,5 +226,9 @@ public class FoundWord
 
         return ( isKnown() && options.getOption("knownFuriMode").equals("mouseover"))
             || (!isKnown() && options.getOption("unknownFuriMode").equals("mouseover"));
+    }
+
+    public void setStartX(int startX) {
+        this.startX = startX;
     }
 }
