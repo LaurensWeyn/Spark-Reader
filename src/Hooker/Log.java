@@ -21,16 +21,16 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 /**
- *
+ * Holds the VN backlog. Essentially an abstracted LinkedList iterator.
  * @author Laurens Weyn
  */
 public class Log
 {
-    LinkedList<String> log;
-    int maxLen;
-    ListIterator<String> pos;
-    String lastLine = "";
-    boolean lastDirBack = true;
+    private LinkedList<String> log;
+    private final int maxLen;
+    private ListIterator<String> pos;
+    private boolean lastDirBack = true;
+
     public Log(int maxLen)
     {
         this.maxLen = maxLen;
@@ -47,6 +47,7 @@ public class Log
         lastDirBack = true;
         
     }
+
     public String back()
     {
         if(!lastDirBack)
@@ -64,6 +65,7 @@ public class Log
             return pos.next();
         }
     }
+
     public String forward()
     {
         if(lastDirBack)
@@ -81,14 +83,32 @@ public class Log
             return pos.previous();
         }
     }
+
+    /**
+     * Find the position of a line in the backlog
+     * @param line The line to search for
+     * @return -1 if line not found, index in log if found
+     */
     public int linePos(String line)
     {
-        int index = log.lastIndexOf(line);//TODO is this counting from the right side?
+        int index = log.indexOf(line);//TODO is this counting from the right side? (was LastIndexOf)
+        System.out.println("Searching for line \"" + line + "\"");
+        System.out.println("Found: " + index + ", returning: " + (log.size() - index - 1));
         if(index == -1)return -1;
-        else return log.size() - index - 1;
+        else return log.size() - index - 1;//TODO why does this reverse the index again?
     }
+
     public int getSize()
     {
         return log.size();
+    }
+
+    /**
+     * Gets the most recent line in the backlog. Does not effect the current position in the log
+     * @return The most recently added line
+     */
+    public String mostRecent()
+    {
+        return log.getFirst();
     }
 }

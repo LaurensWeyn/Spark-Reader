@@ -54,7 +54,7 @@ showFurigana = true
 
 #if false, all text lines are put on one line
 #if true, multiple lines are shown seperately
-splitLines = true
+splitLines = false
 
 #if true, auto-unhides the UI when a new line of Japanese text is detected in the clipboard
 showOnNewLine = true

@@ -25,12 +25,12 @@ import java.net.Socket;
 import java.nio.charset.Charset;
 
 /**
- *
+ * Manages a client to a Spark Reader MP server
  * @author Laurens Weyn
  */
 public class Client implements Runnable
 {
-    private Socket socket;
+    private final Socket socket;
     private int position = 0;
     private final static Charset encoding = Charset.forName("UTF-8");
     private String lastText;
@@ -39,7 +39,7 @@ public class Client implements Runnable
     public Client(Socket socket)
     {
         this.socket = socket;
-        lastText = UI.text;
+        lastText = UI.log.mostRecent();
     }
 
     @Override
@@ -55,7 +55,7 @@ public class Client implements Runnable
                 if(bits != null)switch(bits[0])
                 {
                     case "U"://send C (what's your text?)
-                        out.write(("C\t" + UI.text + "\n").getBytes(encoding));
+                        out.write(("C\t" + UI.log.mostRecent() + "\n").getBytes(encoding));
                         break;
                     case "C"://text is now [arg] for me, send R
                         {
@@ -79,11 +79,14 @@ public class Client implements Runnable
                             }
                         }
                         break;
+                    case "V"://protocol version request (pseudo future proofing)
+                        out.write("v 1.0\n".getBytes(encoding));
+                        break;
                 }
                 
                 //check for updates on our text
-                String text = UI.text;
-                if(text.equals(lastText) == false)
+                String text = UI.log.mostRecent();
+                if(!text.equals(lastText))
                 {
                     out.write(("C\t" + text + "\n").getBytes(encoding));
                     lastText = text;
@@ -100,7 +103,8 @@ public class Client implements Runnable
             in.close();
         }catch(IOException e)
         {
-            
+            //TODO error
+            e.printStackTrace();
         }
         running = false;
     }

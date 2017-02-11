@@ -25,7 +25,7 @@ import UI.UI;
 import java.nio.charset.Charset;
 
 /**
- *
+ * Manages clients connecting to an MP server
  * @author Laurens Weyn
  */
 public class ClientManager extends Thread
@@ -56,7 +56,7 @@ public class ClientManager extends Thread
                 if(bits != null)switch(bits[0])
                 {
                     case "U"://send C (what's your text?)
-                        out.write(("C\t" + UI.text + "\n").getBytes(encoding));
+                        out.write(("C\t" + UI.log.mostRecent() + "\n").getBytes(encoding));
                         break;
                     case "C"://text is now [arg] for me, send R
                         {
@@ -80,10 +80,13 @@ public class ClientManager extends Thread
                             }
                         }
                         break;
+                    case "V"://protocol version request (pseudo future proofing)
+                        out.write("v 1.0\n".getBytes(encoding));
+                        break;
                 }
                 //check for updates on our text
-                String text = UI.text;
-                if(text.equals(lastText) == false)
+                String text = UI.log.mostRecent();
+                if(!text.equals(lastText))
                 {
                     out.write(("C\t" + text + "\n").getBytes(encoding));
                     lastText = text;
@@ -99,7 +102,8 @@ public class ClientManager extends Thread
             in.close();
         }catch(IOException e)
         {
-            
+            //TODO error
+            e.printStackTrace();
         }
         host.removeClient(clientNum);
     }
