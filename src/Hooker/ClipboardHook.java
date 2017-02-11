@@ -29,7 +29,7 @@ import java.io.IOException;
  *
  * @author Laurens Weyn
  */
-public class ClipboardHook
+public class ClipboardHook implements Hook
 {
     private static String lastClip = "";
     private static boolean ignoreNextLine = false;
@@ -54,7 +54,7 @@ public class ClipboardHook
         {
             lastClip = clip;
             System.out.println("clipboard updated to " + clip);
-            boolean isJapanese = Japanese.isJapanese(clip);
+            boolean isJapanese = Japanese.isJapaneseWriting(clip);
             if(isJapanese && !ignoreNextLine)
             {
                 return clip;
@@ -83,9 +83,8 @@ public class ClipboardHook
             try
             {
                 Thread.sleep(1);
-            } catch (InterruptedException e)
-            {
-            }
+            } catch (InterruptedException ignored){}
+
             return getClipboard();//try again later xD
         }
         catch(UnsupportedFlavorException ex)
@@ -118,9 +117,8 @@ public class ClipboardHook
             try
             {
                 Thread.sleep(1);
-            } catch (InterruptedException err)
-            {
-            }
+            } catch (InterruptedException ignored) {}
+
             setClipBoardAndUpdate(text);//try again later
         }
     }

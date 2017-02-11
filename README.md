@@ -3,10 +3,12 @@ A tool to assist non-naitive speakers in reading Japanese
 
 Also my first project on Github
 
-EDICT2 file included for convenience, see this page for more information and licence: http://www.edrdg.org/jmdict/edict.html  All other code is released under the included licence
+EDICT2 file included for convenience, see this page for more information and licence: http://www.edrdg.org/jmdict/edict.html  All other code is released under the included licence.
 
 ## Build requirements
-- Compiled using IntelliJ and Java 8.
+- Compiled using IntelliJ and Java 8. NetBeans project files present as well.
+- Uses eb4j (original, not the one on Github) for EPWING loading
+- Uses JNA for the memory based text hook  
 - Uses JUnit and Hamcrest for tests (yes, all 2 of them)
 
 ## Stuff that still needs doing

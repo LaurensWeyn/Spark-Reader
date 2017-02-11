@@ -16,6 +16,8 @@
  */
 package UI.Popup;
 
+import Hooker.ClipboardHook;
+import Hooker.MemoryHook;
 import Multiplayer.Client;
 import Multiplayer.Host;
 import Options.OptionsUI;
@@ -50,6 +52,7 @@ public class MenuPopup extends JPopupMenu
     JMenuItem exit, imprt, settings, reloadDict, minimise;
     JMenu mp;
     JMenuItem mpHost, mpJoin, mpDisconnect;
+    JMenuItem  memoryHookStart, memoryHookStop, memoryHookRefine;
     public MenuPopup(UI ui)
     {
         this.ui = ui;
@@ -170,18 +173,43 @@ public class MenuPopup extends JPopupMenu
                 }
             }
         });
-        reloadDict = new JMenuItem(new AbstractAction("Reload dictionary files")
+
+        memoryHookStart = new JMenuItem(new AbstractAction("Start memory hook")
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                ui.loadDictionaries();//reload dictionary files
-                ui.updateText(UI.text);//reparse text
-                ui.render();//render new text                
+                MemoryHook newHook = new MemoryHook();
+                if(newHook.isRunning())
+                {
+                    UI.hook = newHook;
+                }
             }
         });
+        memoryHookStop = new JMenuItem(new AbstractAction("Stop memory hook")
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                UI.hook = new ClipboardHook();
+            }
+        });
+        memoryHookRefine = new JMenuItem((new AbstractAction("Rescan memory")
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                MemoryHook hook = (MemoryHook)UI.hook;
+                hook.refine();
+            }
+        }));
         add(settings);
-        add(reloadDict);
+        /*if(UI.hook instanceof MemoryHook)
+        {
+            add(memoryHookRefine);
+            add(memoryHookStop);
+        }
+        else add(memoryHookStart);*/
         add(imprt);
         add(mp);
         add(minimise);

@@ -16,6 +16,7 @@
  */
 package UI;
 
+import Hooker.Hook;
 import Language.Splitter.FoundWord;
 import Language.Splitter.WordSplitter;
 import Language.Dictionary.Dictionary;
@@ -53,7 +54,7 @@ import javax.swing.JOptionPane;
  */
 public class UI implements MouseListener, MouseMotionListener, MouseWheelListener
 {
-    public static final String VERSION = "Beta 0.4";
+    public static final String VERSION = "Beta 0.5";
     
     public static UI instance;
     
@@ -95,7 +96,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     public static String text;
     public static String userComment;
     public static Log log;
-    public static ClipboardHook hook;
+    public static Hook hook;
     
     public static WordSplitter splitter;
     public static Dictionary dict;

@@ -28,7 +28,7 @@ defBackCol = 0, 0, 0, 128
 
 textFont = Meiryo, A, 30
 defFont = Meiryo, , 15
-furiFont = Meiryo, , 10
+furiFont = MS Gothic, , 12
 
 #dictionary file paths#
 #files can be relative or absolute
