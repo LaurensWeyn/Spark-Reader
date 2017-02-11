@@ -79,7 +79,19 @@ public class OptionsUI extends JFrame
             display.add(new ToggleOption("reduceSave", "Reduce file I/O", "<html>If ticked, writing to files is avoided until the program is closed or a lot of changes have been made.<br>Turning this on will improve performance, but if the program crashes some progress may be lost"));
             display.add(new ToggleOption("addKanjiAsDef", "Add Kanji to definitions", "<html>If you have a heisig Kanji file loaded, this will also add those individial characters as 'definitions'"));
         PageGroup window = new PageGroup("Overlay", "Graphical settings related to the on-screen overlay window");
+
+            OptionPage furigana = new OptionPage("Furigana");
+            furigana.add(new RadioOption("unknownFuriMode", mouseoverConfig, "Furigana mode (unknown words)", null));
+            furigana.add(new RadioOption("knownFuriMode", mouseoverConfig, "Furigana mode (known words)", null));//TODO add tips
+            furigana.add(new OptionLabel("Theme:", null));
+            furigana.add(new FontOption("furiFont", "Furigana font", "Also decides the size of the furigana bar"));
+            furigana.add(new ColourOption("furiCol", "Main text colour", "the colour used for the furigana text"));
+            furigana.add(new ColourOption("furiBackCol", "Main bar colour", "the colour used for the main window bar/first furigana bar"));
+            furigana.add(new ColourOption("windowBackCol", "additional bar colour", "the colour used for additional furigana bars if there are multiple lines of text"));
+            window.add(furigana);
+
             OptionPage mainUI = new OptionPage("Main text");
+
             mainUI.add(new ToggleOption("splitLines", "Split lines like they are in game", "If disabled, all text is shown on one line, making the UI more compact"));
             mainUI.add(new ToggleOption("reflowToFit", "Move text to next line if it doesn't fit", "If disabled, you can scroll through the text to see the rest of the line."));
             mainUI.add(new OptionLabel("Theme:", null));
@@ -89,46 +101,32 @@ public class OptionsUI extends JFrame
             
             OptionPage backs = new OptionPage("Background colours");
             
-            backs.add(new OptionLabel("Theme:", null));
+            backs.add(new OptionLabel("Text:", null));
             backs.add(new ColourOption("textBackCol", "Main text background colour", "the colour used for normal words"));
             backs.add(new ColourOption("knownTextBackCol", "known word colour", "Colour used for words marked as known"));
             backs.add(new ColourOption("clickedTextBackCol", "selected word colour", "Colour used for words while their definition is visible"));
+            backs.add(new OptionLabel("Word splits:", null));
+            backs.add(new ColourOption("markerCol", "Manual seperator colour", "These are the word spacers you place when you middle click on text"));
+            backs.add(new ColourOption("noMarkerCol", "Auto seperator colour", "These are spaces assumed by the word splitter"));
             window.add(backs);
-            
-            OptionPage furigana = new OptionPage("Furigana bar/text");
-            furigana.add(new RadioOption("unknownFuriMode", mouseoverConfig, "Furigana mode (unknown words)", null));
-            furigana.add(new RadioOption("knownFuriMode", mouseoverConfig, "Furigana mode (known words)", null));//TODO add tips
-            furigana.add(new OptionLabel("Theme:", null));
-            furigana.add(new FontOption("furiFont", "Furigana font", "Also decides the size of the furigana bar"));
-            furigana.add(new ColourOption("furiCol", "Main text colour", "the colour used for the furigana text"));
-            furigana.add(new ColourOption("furiBackCol", "Main bar colour", "the colour used for the main window bar/first furigana bar"));
-            furigana.add(new ColourOption("windowBackCol", "additional bar colour", "the colour used for additional furigana bars if there are multiple lines of text"));
-            window.add(furigana);
         
         root.add(window);
-        OptionPage splitter = new OptionPage("Text splitter");
-            splitter.add(new OptionLabel("Theme:", null));
-            splitter.add(new ColourOption("markerCol", "Manual seperator colour", "These are the word spacers you place when you middle click on text"));
-            splitter.add(new ColourOption("noMarkerCol", "Auto seperator colour", "These are spaces assumed by the word splitter"));
-        root.add(splitter);
+        //OptionPage splitter = new OptionPage("Text splitter");
+        //root.add(splitter);
         
         PageGroup defs = new PageGroup("Definitions", "Settings related to displaying and storing definitions");
-            OptionPage defWindow = new OptionPage("popup window");
+            OptionPage defWindow = new OptionPage("Window");
             defWindow.add(new NumberOption("defWidth", "Definition popup width", "Determines how wide the definition popup window is"));
             defWindow.add(new ToggleOption("hideDefOnMouseLeave", "Hide definition when mouse leaves the screen", "If unticked, the definition popup will remain visible until you manually close it"));
+            defWindow.add(new ToggleOption("showAllKanji", "Show all possible Kanji for a word", "If unticked, only kana readings are shown"));
             defWindow.add(new OptionLabel("Theme:", null));
             defWindow.add(new ColourOption("defBackCol", "Background colour", "colour for overlay background"));
+            defWindow.add(new FontOption("defFont", "Font", "used for definition popup text"));
+            defWindow.add(new ColourOption("defCol", "Definition colour", "Colour of text defining the word"));
+            defWindow.add(new ColourOption("defTagCol", "Tag colour", "Word tag color (e.g. godan, noun, etc)"));
+            defWindow.add(new ColourOption("defReadingCol", "Reading colour", "Colour of readings and dictionary form"));
+            defWindow.add(new ColourOption("defKanjiCol", "Kanji colour", "(Heisig mode) for Kanji reference in popup"));
             defs.add(defWindow);
-            
-            OptionPage defText = new OptionPage("Popup text");
-            defText.add(new ToggleOption("showAllKanji", "Show all possible Kanji for a word", "If unticked, only kana readings are shown"));
-            defText.add(new OptionLabel("Theme:", null));
-            defText.add(new FontOption("defFont", "Font", "used for definition popup text"));
-            defText.add(new ColourOption("defCol", "Definition colour", "Colour of text defining the word"));
-            defText.add(new ColourOption("defTagCol", "Tag colour", "Word tag color (e.g. godan, noun, etc)"));
-            defText.add(new ColourOption("defReadingCol", "Reading colour", "Colour of readings and dictionary form"));
-            defText.add(new ColourOption("defKanjiCol", "Kanji colour", "(Heisig mode) for Kanji reference in popup"));
-            defs.add(defText);
         root.add(defs);
         OptionPage xport = new OptionPage("Import and Export");
             xport.add(new OptionLabel("Export:", null));
@@ -151,8 +149,7 @@ public class OptionsUI extends JFrame
         lowerButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         optionScroll.getVerticalScrollBar().setUnitIncrement(8);
         menuScroll.getVerticalScrollBar().setUnitIncrement(8);
-        
-       ///*
+
         lowerButtons.add(new JButton(new AbstractAction("Revert changes")
         {
             @Override
@@ -173,7 +170,7 @@ public class OptionsUI extends JFrame
                 }
                 
             }
-        }));//*/
+        }));
         lowerButtons.add(new JButton(new AbstractAction("Apply changes")
         {
             @Override
