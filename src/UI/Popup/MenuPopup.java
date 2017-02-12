@@ -65,8 +65,8 @@ public class MenuPopup extends JPopupMenu
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                UI.hostMode = new Host();
-                UI.mpThread = new Thread(UI.hostMode);
+                UI.mpManager = new Host();
+                UI.mpThread = new Thread(UI.mpManager);
                 UI.mpThread.start();
                 JOptionPane.showMessageDialog(ui.disp.getFrame(), "Server running. Other users with Spark Reader can now connect to your IP.\nIf you want people to connect outside of your LAN, please port forward port 11037");
             }
@@ -80,8 +80,8 @@ public class MenuPopup extends JPopupMenu
                 try
                 {
                     Socket s = new Socket(addr, 11037);
-                    UI.clientMode = new Client(s);
-                    UI.mpThread = new Thread(UI.clientMode);
+                    UI.mpManager = new Client(s);
+                    UI.mpThread = new Thread(UI.mpManager);
                     UI.mpThread.start();
                 } catch (IOException ex)
                 {
@@ -94,15 +94,12 @@ public class MenuPopup extends JPopupMenu
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                if(UI.clientMode != null)
+                if(UI.mpManager != null)
                 {
-                    UI.clientMode.running = false;
-                }
-                if(UI.hostMode != null)
-                {
-                    UI.hostMode.running = false;
+                    UI.mpManager.running = false;
                 }
                 UI.mpThread = null;
+                ui.render();//remove MP text from screen on disconnect
             }
         });
         if(UI.mpThread == null)

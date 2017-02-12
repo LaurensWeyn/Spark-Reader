@@ -23,8 +23,7 @@ import Language.Dictionary.Dictionary;
 import Language.Dictionary.Kanji;
 import Hooker.ClipboardHook;
 import Hooker.Log;
-import Multiplayer.Client;
-import Multiplayer.Host;
+import Multiplayer.MPController;
 import Options.Known;
 import Options.Options;
 import Options.PrefDef;
@@ -58,9 +57,8 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     
     public static UI instance;
     
-    
-    public static Client clientMode;
-    public static Host hostMode;
+
+    public static MPController mpManager;
     public static Thread mpThread;
     public static String mpText;
     
@@ -345,34 +343,21 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
                 
             }
             //check MP systems
-            if(clientMode != null)
+            if(mpManager != null)
             {
-                String newText = clientMode.getStatusText();
+                String newText = mpManager.getStatusText();
                 if(!newText.equals(mpText))
                 {
                     mpText = newText;
                     ui.render();//refresh mp status
                 }
-                if(!clientMode.running)
+                if(!mpManager.running)
                 {
-                    clientMode = null;
+                    mpManager = null;
                     mpThread = null;
                 }
             }
-            else if(hostMode != null)
-            {
-                String newText = hostMode.getStatusText();
-                if(!newText.equals(mpText))
-                {
-                    mpText = newText;
-                    ui.render();//refresh mp status
-                }
-                if(!hostMode.running)
-                {
-                    hostMode = null;
-                    mpThread = null;
-                }
-            }else mpText = null;
+            else mpText = null;
             try
             {
                 Thread.sleep(100);

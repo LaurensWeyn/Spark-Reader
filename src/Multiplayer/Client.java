@@ -17,29 +17,30 @@
 package Multiplayer;
 
 import UI.UI;
-import java.io.BufferedReader;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.charset.Charset;
 
+import javax.swing.*;
+
 /**
  * Manages a client to a Spark Reader MP server
  * @author Laurens Weyn
  */
-public class Client implements Runnable
+public class Client extends MPController
 {
     private final Socket socket;
     private int position = 0;
     private final static Charset encoding = Charset.forName("UTF-8");
     private String lastText;
-    
-    public boolean running = true;
+
     public Client(Socket socket)
     {
         this.socket = socket;
-        lastText = UI.log.mostRecent();
+        lastText = currentLine();
     }
 
     @Override
@@ -49,17 +50,18 @@ public class Client implements Runnable
         {
             PacketReader in = new PacketReader(new InputStreamReader(socket.getInputStream(), encoding));
             OutputStream out = socket.getOutputStream();
+            out.write(("C\t" + currentLine() + "\n").getBytes(encoding));//start by telling server where we are
             while(running)
             {
                 String bits[] = in.getPacket();
                 if(bits != null)switch(bits[0])
                 {
                     case "U"://send C (what's your text?)
-                        out.write(("C\t" + UI.log.mostRecent() + "\n").getBytes(encoding));
+                        out.write(("C\t" + currentLine() + "\n").getBytes(encoding));
                         break;
                     case "C"://text is now [arg] for me, send R
                         {
-                            int pos = UI.log.linePos(bits[1]);
+                            int pos = positionOf(bits[1]);
                             out.write(("R\t" + pos + "\n").getBytes(encoding));
                             //client is behind (in our logs)
                             if(pos >= 0)
@@ -85,17 +87,19 @@ public class Client implements Runnable
                 }
                 
                 //check for updates on our text
-                String text = UI.log.mostRecent();
+                String text = currentLine();
                 if(!text.equals(lastText))
                 {
                     out.write(("C\t" + text + "\n").getBytes(encoding));
                     lastText = text;
                     position = Integer.MIN_VALUE;//unknown until response
                 }
+                //check if server is still connected (will throw Exception if disconnected)
+                out.write(ALIVE_CODE);
                 //wait a bit before we run again
                 try
                 {
-                    Thread.sleep(100);
+                    Thread.sleep(300);
                 }catch(InterruptedException e){}
                 
             }
@@ -103,15 +107,18 @@ public class Client implements Runnable
             in.close();
         }catch(IOException e)
         {
-            //TODO error
-            e.printStackTrace();
+            //disconnect from server
+            JOptionPane.showMessageDialog(UI.instance.disp.getFrame(), "Disconnected from server:\n" + e);
         }
         running = false;
     }
+
+    @Override
     public String getStatusText()
     {
-        if(position == 0)return "in sync";
-        if(position > 0)return position + " lines ahead";
+        if(position == Integer.MIN_VALUE)return "Waiting for server";
+        else if(position == 0)return "in sync";
+        if(position < 0)return (position * -1) + " lines ahead";
         else return position + " lines behind";
     }
 }

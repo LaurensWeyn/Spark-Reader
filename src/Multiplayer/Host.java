@@ -16,19 +16,23 @@
  */
 package Multiplayer;
 
+import java.awt.*;
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
+
+import javax.swing.*;
+
+import UI.UI;
 
 /**
  *
  * @author Laurens Weyn
  */
-public class Host implements Runnable
+public class Host extends MPController
 {
     private ConcurrentHashMap<Integer, Integer> clientPositions = new ConcurrentHashMap<>();
-    public boolean running = true;
+
     @Override
     public void run()
     {
@@ -44,7 +48,11 @@ public class Host implements Runnable
         }
         catch(IOException e)
         {
-            //TODO error message
+            Component parent = null;
+            if(UI.instance != null)parent = UI.instance.disp.getFrame();
+
+            if(parent != null)JOptionPane.showMessageDialog(parent, "Error receiving clients:\n" + e);
+            else e.printStackTrace();//headless
         }
         running = false;
     }
@@ -56,43 +64,56 @@ public class Host implements Runnable
     {
         clientPositions.remove(clientID);
     }
+
+    @Override
     public String getStatusText()
     {
-        int ahead = 0;
-        int behind = 0;
-        int here = 0;
-        int lost = 0;
-        for(Integer i:clientPositions.values())
+        if(clientPositions.size() == 1)//2 player: show friend's status
         {
-            if(i == Integer.MIN_VALUE)lost++;
-            else if(i > 0)ahead++;
-            else if(i < 0)behind++;
-            else here++;
+            int pos = clientPositions.values().iterator().next();
+            if(pos == Integer.MIN_VALUE)return "unknown client position";
+            else if(pos > 0)return "client " + pos + " lines ahead";
+            else if(pos < 0)return "client " + (-pos) + " lines behind";
+            else return "client in sync";
         }
-        String out = "";
-        if(ahead > 0)
+        else//one host, many players: show status summary
         {
-            out += lost + " unknown";
+            int ahead = 0;
+            int behind = 0;
+            int here = 0;
+            int lost = 0;
+            for (Integer i:clientPositions.values())
+            {
+                if(i == Integer.MIN_VALUE) lost++;
+                else if(i > 0) ahead++;
+                else if(i < 0) behind++;
+                else here++;
+            }
+            String out = "";
+            if(lost > 0)
+            {
+                out += lost + " unknown";
+            }
+            if(ahead > 0)
+            {
+                if(!out.equals(""))out += ", ";
+                out += ahead + " ahead";
+            }
+            if(behind > 0)
+            {
+                if(!out.equals(""))out += ", ";
+                out += behind + " behind";
+            }
+            if(here > 0)
+            {
+                if(!out.equals(""))out += ", ";
+                out += here + " in sync";
+            }
+            if(out.equals(""))
+            {
+                out = "Waiting for clients..";
+            }
+            return out + ".";
         }
-        if(ahead > 0)
-        {
-            if(!out.equals(""))out += ", ";
-            out += ahead + " ahead";
-        }
-        if(behind > 0)
-        {
-            if(!out.equals(""))out += ", ";
-            out += behind + " behind";
-        }
-        if(here > 0)
-        {
-            if(!out.equals(""))out += ", ";
-            out += here + " in sync";
-        }
-        if(out.equals(""))
-        {
-            out = "Waiting for clients..";
-        }
-        return out + ".";
     }
 }

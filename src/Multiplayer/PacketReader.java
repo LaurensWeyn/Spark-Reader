@@ -18,7 +18,6 @@ package Multiplayer;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.nio.CharBuffer;
 
 /**
  * Reads "CSV packets". Each packet is terminated by a new line, and has tab separated parameters.
@@ -29,6 +28,8 @@ public class PacketReader
 {
     private Reader input;
     private StringBuilder buffer;
+
+
     public PacketReader(Reader input)
     {
         this.input = input;
@@ -49,9 +50,10 @@ public class PacketReader
             {
                 String output = buffer.toString();
                 buffer = new StringBuilder();
+                System.out.println("recieved packet " + output);
                 return output.split("\t");
             }
-            else buffer.append(c);
+            else if(c != MPController.ALIVE_CODE)buffer.append(c);
         }
         return null;//no packet yet
     }

@@ -16,7 +16,6 @@
  */
 package Multiplayer;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -25,7 +24,7 @@ import UI.UI;
 import java.nio.charset.Charset;
 
 /**
- * Manages clients connecting to an MP server
+ * Manages clients connecting to a MP server
  * @author Laurens Weyn
  */
 public class ClientManager extends Thread
@@ -50,17 +49,18 @@ public class ClientManager extends Thread
         {
             PacketReader in = new PacketReader(new InputStreamReader(socket.getInputStream(), encoding));
             OutputStream out = socket.getOutputStream();
+            out.write(("C\t" + MPController.currentLine()+ "\n").getBytes(encoding));//start by telling client where we are
             while(host.running)
             {
                 String bits[] = in.getPacket();
                 if(bits != null)switch(bits[0])
                 {
                     case "U"://send C (what's your text?)
-                        out.write(("C\t" + UI.log.mostRecent() + "\n").getBytes(encoding));
+                        out.write(("C\t" + MPController.currentLine() + "\n").getBytes(encoding));
                         break;
                     case "C"://text is now [arg] for me, send R
                         {
-                            int pos = UI.log.linePos(bits[1]);
+                            int pos = MPController.positionOf(bits[1]);
                             out.write(("R\t" + pos + "\n").getBytes(encoding));
                             //client is behind (in our logs)
                             if(pos >= 0)
@@ -85,26 +85,29 @@ public class ClientManager extends Thread
                         break;
                 }
                 //check for updates on our text
-                String text = UI.log.mostRecent();
+                String text = MPController.currentLine();
                 if(!text.equals(lastText))
                 {
                     out.write(("C\t" + text + "\n").getBytes(encoding));
                     lastText = text;
                     host.updateClient(clientNum, Integer.MIN_VALUE);//unknown until response
                 }
+                //check if client is still connected (will throw Exception if disconnected)
+                out.write(MPController.ALIVE_CODE);
                 //wait a bit before we run again
                 try
                 {
-                    Thread.sleep(100);
+                    Thread.sleep(300);
                 }catch(InterruptedException e){}
             }
             out.close();
             in.close();
         }catch(IOException e)
         {
-            //TODO error
-            e.printStackTrace();
+            //client disconnect, drop it from the list
+            System.out.println(clientNum + " disconnected: " + e);
         }
+
         host.removeClient(clientNum);
     }
 }

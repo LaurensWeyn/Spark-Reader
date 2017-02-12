@@ -93,9 +93,7 @@ public class Log
     {
         int index = log.indexOf(line);//TODO is this counting from the right side? (was LastIndexOf)
         System.out.println("Searching for line \"" + line + "\"");
-        System.out.println("Found: " + index + ", returning: " + (log.size() - index - 1));
-        if(index == -1)return -1;
-        else return log.size() - index - 1;//TODO why does this reverse the index again?
+        return index;
     }
 
     public int getSize()
@@ -105,10 +103,11 @@ public class Log
 
     /**
      * Gets the most recent line in the backlog. Does not effect the current position in the log
-     * @return The most recently added line
+     * @return The most recently added line, or a blank String if the log is empty
      */
     public String mostRecent()
     {
-        return log.getFirst();
+        if(log.isEmpty())return "";
+        else return log.getFirst();
     }
 }
