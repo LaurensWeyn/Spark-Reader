@@ -32,13 +32,23 @@ import UI.UI;
 public class Host extends MPController
 {
     private ConcurrentHashMap<Integer, Integer> clientPositions = new ConcurrentHashMap<>();
+    private int port;
+
+    public Host(int port)
+    {
+        this.port = port;
+    }
+    public Host()
+    {
+        this(11037);
+    }
 
     @Override
     public void run()
     {
 
         //This thread will wait for and take in clients
-        try(ServerSocket listener = new ServerSocket(11037))
+        try(ServerSocket listener = new ServerSocket(port))
         {
             int clientNumber = 1;
             while (running)

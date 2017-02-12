@@ -32,7 +32,7 @@ import java.io.IOException;
 public class ClipboardHook implements Hook
 {
     private static String lastClip = "";
-    private static boolean ignoreNextLine = false;
+    public static boolean ignoreNextLine = false;
 
     public ClipboardHook()
     {

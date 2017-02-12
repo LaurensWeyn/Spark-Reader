@@ -24,6 +24,8 @@ import Options.OptionsUI;
 import UI.UI;
 
 import static UI.UI.hidden;
+import static UI.UI.options;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -65,10 +67,20 @@ public class MenuPopup extends JPopupMenu
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                UI.mpManager = new Host();
+                String oldIgnoreState = options.getOption("hideOnOtherText");
+                options.setOption("hideOnOtherText", "false");
+                String portStr = JOptionPane.showInputDialog(ui.disp.getFrame(), "Enter the port to use (leave blank for default port, 11037)");
+                int port = 11037;
+                try
+                {
+                    if(portStr.length() > 0)port = Integer.parseInt(portStr);
+                }catch(NumberFormatException ignored){}
+
+                UI.mpManager = new Host(port);
                 UI.mpThread = new Thread(UI.mpManager);
                 UI.mpThread.start();
-                JOptionPane.showMessageDialog(ui.disp.getFrame(), "Server running. Other users with Spark Reader can now connect to your IP.\nIf you want people to connect outside of your LAN, please port forward port 11037");
+                JOptionPane.showMessageDialog(ui.disp.getFrame(), "Server running. Other users with Spark Reader can now connect to your IP.\nIf you want people to connect outside of your LAN, please port forward port " + port);
+                options.setOption("hideOnOtherText", oldIgnoreState);
             }
         });
         mpJoin = new JMenuItem(new AbstractAction("Join")
@@ -76,10 +88,19 @@ public class MenuPopup extends JPopupMenu
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                String oldIgnoreState = options.getOption("hideOnOtherText");
+                options.setOption("hideOnOtherText", "false");
                 String addr = JOptionPane.showInputDialog(ui.disp.getFrame(), "Please enter the IP address of the host");
                 try
                 {
-                    Socket s = new Socket(addr, 11037);
+                    String port = "11037";
+                    String bits[] = addr.split(":");
+                    if(bits.length == 2)
+                    {
+                        addr = bits[0];
+                        port = bits[1];
+                    }
+                    Socket s = new Socket(addr, Integer.parseInt(port));
                     UI.mpManager = new Client(s);
                     UI.mpThread = new Thread(UI.mpManager);
                     UI.mpThread.start();
@@ -87,6 +108,7 @@ public class MenuPopup extends JPopupMenu
                 {
                     JOptionPane.showMessageDialog(ui.disp.getFrame(), "Error connecting to host: " + ex, "Error", JOptionPane.ERROR_MESSAGE);
                 }
+                options.setOption("hideOnOtherText", oldIgnoreState);
             }
         });
         mpDisconnect = new JMenuItem(new AbstractAction("Disconnect")

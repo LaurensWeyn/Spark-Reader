@@ -54,14 +54,14 @@ showFurigana = true
 
 #if false, all text lines are put on one line
 #if true, multiple lines are shown seperately
-splitLines = false
+splitLines = true
 
 #if true, auto-unhides the UI when a new line of Japanese text is detected in the clipboard
 showOnNewLine = true
 
 #If true, focus is stolen from other windows when clicked.
 #If clicks are going through the window, try setting this to true
-takeFocus = false
+takeFocus = true
 
 
 commentOnExport = true
@@ -76,4 +76,4 @@ startInTray = true
 unknownFuriMode = always
 knownFuriMode = mouseover
 lagText = false
-reflowToFit = true
+reflowToFit = false
