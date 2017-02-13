@@ -279,14 +279,28 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
                         newLines.add(newLine);
                         newLine = new Line();
                     }
-                    word.setStartX(newLine.calcLength());
-                    newLine.addWord(word);
+                    addWord(line, newLine, word);
                 }
                 if(newLine.calcLength() != 0)newLines.add(newLine);
             }
             lines = newLines;
         }
     }
+
+    /**
+     * Moves a word from an old line to a new one, maintaining word position and relevant markers
+     * @param oldLine line being copied from
+     * @param newLine line being copied to
+     * @param word word to copy over
+     */
+    private void addWord(Line oldLine, Line newLine, FoundWord word)
+    {
+        int newStartX = newLine.calcLength();
+        if(oldLine.getMarkers().contains(word.startX()))newLine.getMarkers().add(newStartX);
+        word.setStartX(newStartX);
+        newLine.addWord(word);
+    }
+
     public static void main(String[] args)throws Exception
     {
         System.out.println(VERSION);
@@ -411,7 +425,8 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
                 render();
             }
             lMouseClick = false;
-        }else if(e.getY() > textStartY && e.getY() < defStartY && e.getButton() == 2)//middle click: place marker
+        }
+        else if(e.getY() > textStartY && e.getY() < defStartY && e.getButton() == 2)//middle click: place marker
         {
             int pos = toCharPos(e.getX() + mainFontSize/2);
             int lineIndex = getLineIndex(e.getPoint());
@@ -422,7 +437,8 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             
             updateText(text);//reflow
             render();//redraw
-        }else if(e.getButton() == 3)//right click: extra option menu
+        }
+        else if(e.getButton() == 3)//right click: extra option menu
         {
             //settings button
             if(e.getY() < textStartY)

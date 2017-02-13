@@ -76,4 +76,4 @@ startInTray = true
 unknownFuriMode = always
 knownFuriMode = mouseover
 lagText = false
-reflowToFit = false
+reflowToFit = true
