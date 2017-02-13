@@ -105,6 +105,11 @@ public class Options implements Cloneable
         options.put("addKanjiAsDef", "true");
         options.put("startInTray", "false");
         options.put("hideDefOnMouseLeave", "true");
+        options.put("timeStampFormat", "dd-MM-yyyy_hh-mm-ss");
+        options.put("exportImage", "true");
+        options.put("lineExportPath", "savedLines.csv");
+        options.put("screenshotExportPath", "screenshots/");
+        options.put("fullscreenScreenshot", "false");
 
 
     }

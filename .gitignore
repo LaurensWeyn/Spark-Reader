@@ -8,3 +8,16 @@ forAnki.csv
 dictionaries/kanji.txt
 preferences/knownWords
 out/
+/screenshots/
+/savedLines.csv
+.idea/dictionaries/
+.idea/inspectionProfiles/
+.idea/libraries/eb4j_1_0.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/uiDesigner.xml
+.idea/workspace.xml
+MP test lines.txt
+nbproject/private/
+src/META-INF/
+~$manual.docx

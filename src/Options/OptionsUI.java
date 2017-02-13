@@ -129,10 +129,13 @@ public class OptionsUI extends JFrame
             defs.add(defWindow);
         root.add(defs);
         OptionPage xport = new OptionPage("Import and Export");
-            xport.add(new OptionLabel("Export:", null));
+            xport.add(new OptionLabel("Export words:", null));
             xport.add(new ToggleOption("commentOnExport", "Ask for comment when exporting", "<html>If ticked, you will be prompted for extra information when exporting a word."
                                                    + "<br>If unticked, this field is always left blank"));
             xport.add(new ToggleOption("exportMarksKnown", "Automatically mark exported words as known", "If ticked, exported words are also added to the known word list"));
+            xport.add(new OptionLabel("Export lines:", null));
+            xport.add(new ToggleOption("exportImage", "Take screenshot along with the line", "Automatically takes a screenshot when a line is exported. The date code will match the one in the exported line field."));
+            xport.add(new ToggleOption("fullscreenScreenshot", "Make a screenshot of the whole screen, not just the window", "<html>Spark Reader assumes it's placed on the top of the game window, with the width and max height being the window resolution.<br>Tick this if that is not the case or you want the whole screen captured"));
         root.add(xport);
 
         leftMenu = new JTree(new OptionTree(root));

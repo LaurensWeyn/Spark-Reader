@@ -23,8 +23,10 @@ import Language.Splitter.FoundDef;
 import Language.Splitter.FoundWord;
 import UI.UI;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -32,11 +34,12 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
-import javax.swing.AbstractAction;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
 
 /**
  *
@@ -47,6 +50,7 @@ public class WordPopup extends JPopupMenu
     FoundWord word;
     
     JMenuItem addBreak;
+    JMenuItem exportLine;
     JMenuItem copy;
     JMenuItem append;
     JMenuItem copyFull;
@@ -58,7 +62,15 @@ public class WordPopup extends JPopupMenu
         this.word = word;
         this.ui = ui;
         String clipboard = ClipboardHook.getClipboard();
-        
+        exportLine = new JMenuItem(new AbstractAction("Export this line")
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                setVisible(false);//ensure this menu's already gone for the screenshot
+                exportLine();
+            }
+        });
         copy = new JMenuItem(new AbstractAction("Copy word")
         {
             @Override
@@ -114,12 +126,13 @@ public class WordPopup extends JPopupMenu
         markKnown.setSelected(UI.known.isKnown(word));
         
         add(addBreak);
+        add(exportLine);
         add(markKnown);
         add(new Separator());
         add(copy);
         if(UI.text.contains(clipboard) && UI.text.contains(clipboard + word.getText()))add(append);
         add(copyFull);
-        
+
         addPopupMenuListener(new IgnoreExitListener());
     }
     public void show(int x, int y)
@@ -128,4 +141,65 @@ public class WordPopup extends JPopupMenu
         this.y = y;
         show(ui.disp.getFrame(), x, y);
     }
+    public static void exportLine()
+    {
+        JFrame frame = UI.instance.disp.getFrame();
+        try
+        {
+            Date date = new Date();
+            DateFormat df = new SimpleDateFormat(UI.options.getOption("timeStampFormat"));
+            File textFile = new File(UI.options.getOption("lineExportPath"));
+            Writer fr = new OutputStreamWriter(new FileOutputStream(textFile, true), Charset.forName("UTF-8"));
+            fr.append(df.format(date) + "\t" + UI.text.replace("\n", "<br>") + "\n");
+            fr.close();
+            //take a screenshot with the exported line
+            if(UI.options.getOptionBool("exportImage"))
+            {
+                File imageFolder = new File(UI.options.getOption("screenshotExportPath"));
+                if (!imageFolder.exists())
+                {
+                    boolean success = imageFolder.mkdirs();
+                    if (!success) throw new IOException("Failed to create folder(s) for screenshots: directory"
+                                                                + UI.options.getOption("screenshotExportPath"));
+                }
+                Robot robot = new Robot();
+                Point pos = frame.getLocationOnScreen();
+                Rectangle area;
+                if(UI.options.getOptionBool("fullscreenScreenshot"))
+                {
+                    //whole screen
+                    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                    area = new Rectangle(0, 0, screenSize.width, screenSize.height);
+                }
+                else
+                {
+                    //game area
+                    area = new Rectangle(pos.x, pos.y,
+                                         UI.options.getOptionInt("windowWidth"),
+                                         UI.options.getOptionInt("maxHeight"));
+                }
+
+                //hide Spark Reader and take the screenshot
+                UI.hidden = true;
+                UI.instance.render();
+                BufferedImage screenshot = robot.createScreenCapture(area);
+                UI.hidden = false;
+                UI.instance.render();
+
+                String fileName = imageFolder.getAbsolutePath();
+                if(!fileName.endsWith("/") && !fileName.endsWith("\\"))fileName += "/";
+                fileName += df.format(date) + ".png";
+
+                System.out.println("saving screenshot as " + fileName);
+                ImageIO.write(screenshot, "png", new File(fileName));
+            }
+
+        }catch(IOException err)
+        {
+            JOptionPane.showInputDialog(frame, "Error while exporting line:\n" + err);
+        } catch (AWTException err) {
+            JOptionPane.showInputDialog(frame, "Error while taking screenshot:\n" + err);
+        }
+    }
+
 }

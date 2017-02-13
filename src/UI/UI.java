@@ -31,11 +31,7 @@ import UI.Popup.DefPopup;
 import UI.Popup.MenuPopup;
 import UI.Popup.WordPopup;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -45,7 +41,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
-import javax.swing.JOptionPane;
+
+import javax.swing.*;
+
+import org.apache.log4j.helpers.DateTimeDateFormat;
 
 /**
  *
@@ -110,6 +109,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     public static boolean renderBackground = true;
     
     public static boolean tempIgnoreMouseExit = false;
+
     
     public void loadDictionaries()
     {
