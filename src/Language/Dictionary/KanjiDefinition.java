@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
  */
 public class KanjiDefinition extends Definition
 {
+    public static final int SOURCENUM = 5;
     String spellings[];
     String meanings[];
     String constituents;
@@ -62,7 +63,7 @@ public class KanjiDefinition extends Definition
     @Override
     public int getSourceNum()
     {
-        return 5;//TODO stop making up these numbers
+        return SOURCENUM;
     }
 
     @Override

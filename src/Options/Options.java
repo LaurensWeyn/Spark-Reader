@@ -97,6 +97,7 @@ public class Options implements Cloneable
         
         
         options.put("commentOnExport", "true");
+        options.put("commentOnExportLine", "true");
         options.put("exportMarksKnown", "false");
         options.put("showAllKanji", "false");
         options.put("reduceSave", "true");

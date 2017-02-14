@@ -191,6 +191,8 @@ public class FoundDef implements Comparable<FoundDef>
         if (foundDef.getSourceNum() == 1) score += 100;//prefer user added defs
         if (UI.prefDef.isPreferred(foundDef)) score += 1000;//HIGHLY favour definitions the user preferred
 
+        if(foundDef.getSourceNum() == KanjiDefinition.SOURCENUM)score -= 500;//Kanji at back
+
         Set<DefTag> tags = foundDef.getTags();
         if (tags != null)
         {

@@ -62,7 +62,7 @@ public class WordPopup extends JPopupMenu
         this.word = word;
         this.ui = ui;
         String clipboard = ClipboardHook.getClipboard();
-        exportLine = new JMenuItem(new AbstractAction("Export this line")
+        exportLine = new JMenuItem(new AbstractAction("Export whole line")
         {
             @Override
             public void actionPerformed(ActionEvent e)
@@ -149,8 +149,25 @@ public class WordPopup extends JPopupMenu
             Date date = new Date();
             DateFormat df = new SimpleDateFormat(UI.options.getOption("timeStampFormat"));
             File textFile = new File(UI.options.getOption("lineExportPath"));
+            String note = "";
+
+            if(UI.options.getOptionBool("commentOnExportLine"))
+            {
+                note = (String)JOptionPane.showInputDialog(frame,
+                                                           "Enter comment\n(You may also leave this blank)",
+                                                           "Exporting line",
+                                                           JOptionPane.PLAIN_MESSAGE,
+                                                           null,
+                                                           null,
+                                                           UI.userComment);
+                if(note == null)return;//cancelled
+
+                UI.userComment = note;//update for next time
+                Thread.sleep(500);//give the popup time to disappear
+            }
+
             Writer fr = new OutputStreamWriter(new FileOutputStream(textFile, true), Charset.forName("UTF-8"));
-            fr.append(df.format(date) + "\t" + UI.text.replace("\n", "<br>") + "\n");
+            fr.append(df.format(date) + "\t" + UI.text.replace("\n", "<br>") + "\t" + note + "\n");
             fr.close();
             //take a screenshot with the exported line
             if(UI.options.getOptionBool("exportImage"))
@@ -194,11 +211,9 @@ public class WordPopup extends JPopupMenu
                 ImageIO.write(screenshot, "png", new File(fileName));
             }
 
-        }catch(IOException err)
+        }catch(IOException | AWTException | InterruptedException err)
         {
             JOptionPane.showInputDialog(frame, "Error while exporting line:\n" + err);
-        } catch (AWTException err) {
-            JOptionPane.showInputDialog(frame, "Error while taking screenshot:\n" + err);
         }
     }
 
