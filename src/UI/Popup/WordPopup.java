@@ -92,7 +92,6 @@ public class WordPopup extends JPopupMenu
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                //TODO move this elsewhere when possible
                 ClipboardHook.setClipboard(UI.text);
             }
         });

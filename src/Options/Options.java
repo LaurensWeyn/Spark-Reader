@@ -89,6 +89,7 @@ public class Options implements Cloneable
         
         options.put("splitLines", "true");
         options.put("reflowToFit", "false");
+        options.put("defsShowUpwards", "false");
         options.put("knownFuriMode", "mouseover");
         options.put("unknownFuriMode", "always");
 

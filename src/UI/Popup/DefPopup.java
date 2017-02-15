@@ -96,8 +96,6 @@ public class DefPopup extends JPopupMenu
                 ClipboardHook.setClipboard("Definition for " + word.getText() + ":\n" + getDefText(-1));
             }
         });
-        //TODO add option to close def after selecting an option?
-        
         add(anki);
         add(setDef);
         add(new Separator());

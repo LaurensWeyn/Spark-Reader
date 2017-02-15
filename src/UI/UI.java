@@ -70,7 +70,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     ArrayList<Line> lines;
     int longestLine = 0;
     
-    public static int mainFontSize = 0;
+    public static int mainFontSize = 1;//1 default to stop division by 0
     int xOffset = 0;
     boolean lMouseClick = false;
     boolean lMouseState = false;
@@ -79,10 +79,11 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     FoundWord selectedWord = null;
     
     public static int furiganaStartY = 0;
-    public static int textStartY = 20;
+    public static int textStartY = 0;
+    public static int textEndY = 0;
     public static int defStartY = 0;//now auto-recalculated in render
     
-    public static int lineHeight = 0;
+    public static int lineHeight = 1;//default 1 to stop division by 0
     public static int textHeight = 0;
     public static int furiHeight = 0;
     
@@ -148,7 +149,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             known = new Known(options.getFile("knownWordsPath"));
             prefDef = new PrefDef(options.getFile("preferredDefsPath"));
             disp = new Overlay(options.getOptionInt("windowWidth") + options.getOptionInt("defWidth"), options.getOptionInt("maxHeight"));
-            log = new Log(50);//TODO let user override this
+            log = new Log(50);
             
             loadDictionaries();
             splitter = new WordSplitter(dict);
@@ -179,11 +180,24 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         textHeight = g.getFontMetrics(options.getFont("textFont")).getHeight();
         furiHeight = g.getFontMetrics(options.getFont("furiFont")).getHeight();
         lineHeight = textHeight + furiHeight;
-        
+
         options.getFont(g, "textFont");
         mainFontSize = g.getFontMetrics().charWidth('べ');
-        defStartY = lineHeight * lines.size();
-        
+        if(options.getOptionBool("defsShowUpwards"))
+        {
+            furiganaStartY = options.getOptionInt("maxHeight") - lineHeight * lines.size();
+            defStartY = furiganaStartY - 2;
+            textStartY = furiHeight + furiganaStartY;
+            textEndY = textStartY + lineHeight * lines.size();
+        }
+        else
+        {
+            textStartY = furiHeight + furiganaStartY;
+            textEndY = textStartY + lineHeight * lines.size();
+            defStartY = textEndY - furiHeight;
+        }
+
+
         if(!hidden)
         {
             //render background
@@ -202,13 +216,13 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             }
             //render furigana/window bar
             options.getFont(g, "furiFont");
-            textStartY = g.getFontMetrics().getHeight();
+
             g.setColor(options.getColor("furiBackCol"));
-            g.fillRect(0, 0, options.getOptionInt("windowWidth"), textStartY - furiganaStartY - 1);
+            g.fillRect(0, furiganaStartY, options.getOptionInt("windowWidth"), furiHeight - 1);
             if(text.equals(""))
             {
                 g.setColor(options.getColor("furiCol"));
-                g.drawString("Spark Reader " + VERSION + ", by Laurens Weyn. Waiting for text...", 0, g.getFontMetrics().getAscent());
+                g.drawString("Spark Reader " + VERSION + ", by Laurens Weyn. Waiting for text...", 0,furiganaStartY + g.getFontMetrics().getAscent());
             }
             
             int yOff = 0;
@@ -220,6 +234,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             }
 
             //render MP text (if running, there's text and no def's open)
+            //TODO ensure this works for reversed text
             if(mpThread != null && mpText != null && selectedWord == null)
             {
                 options.getFont(g, "furiFont");
@@ -231,11 +246,12 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             }
             
             //render settings icon
+            //TODO do this better
             options.getFont(g, "furiFont");
-            String cog = "三";//TODO use an icon for this, not a character
-            g.setColor(Color.white);//TODO don't hardcode
+            String cog = "三";
+            g.setColor(Color.white);
             buttonStartX = options.getOptionInt("windowWidth") - optionsButtonWidth;
-            g.drawString(cog, buttonStartX, g.getFontMetrics().getAscent());
+            g.drawString(cog, buttonStartX, g.getFontMetrics().getAscent() + furiganaStartY);
         }
         disp.refresh();
     }
@@ -403,7 +419,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
                 new MenuPopup(this).show();
             }
             
-            if(e.getY() >= textStartY && e.getY() <= defStartY)
+            if(e.getY() >= textStartY && e.getY() <= textEndY)
             {
                 int pos = toCharPos(e.getX());
                 int lineIndex = getLineIndex(e.getPoint());
@@ -426,7 +442,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             }
             lMouseClick = false;
         }
-        else if(e.getY() > textStartY && e.getY() < defStartY && e.getButton() == 2)//middle click: place marker
+        else if(e.getY() > textStartY && e.getY() < textEndY && e.getButton() == 2)//middle click: place marker
         {
             int pos = toCharPos(e.getX() + mainFontSize/2);
             int lineIndex = getLineIndex(e.getPoint());
@@ -441,12 +457,12 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         else if(e.getButton() == 3)//right click: extra option menu
         {
             //settings button
-            if(e.getY() < textStartY)
+            if(e.getY() > furiganaStartY && e.getY() < textStartY)
             {
                 new MenuPopup(this).show(e);//no longer requires button; right click anywhere on bar works
             }
             //word
-            else if(e.getY() >= textStartY && e.getY() <= defStartY)
+            else if(e.getY() >= textStartY && e.getY() <= textEndY)
             {
                 WordPopup popup = null;
                 int lineIndex = getLineIndex(e.getPoint());
@@ -466,7 +482,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
                 }
             }
             //definition
-            else if(e.getY() > defStartY)
+            else if(options.getOptionBool("defsShowUpwards") ? (e.getY() < defStartY):(e.getY() > defStartY))
             {
                 DefPopup popup = new DefPopup(selectedWord, this, e.getY());
                 popup.show(e.getX(), e.getY());
@@ -481,7 +497,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         if(e.getButton() == 1)
         {
             lMouseClick = true;
-            if(e.getY() <= textStartY)//only furigana bar draggable
+            if(e.getY() >= furiganaStartY && e.getY() <= textStartY)//only furigana bar draggable
             {
                 lMouseState = true;
             }
@@ -552,7 +568,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     {
         int pos = toCharPos(e.getX());
         int lineIndex = getLineIndex(e.getPoint());
-        if(lineIndex >= lines.size())return;
+        if(lineIndex >= lines.size() || lineIndex < 0)return;
         if(lineIndex != mouseLine || (mousedWord!= null && !mousedWord.inBounds(pos)))
         {
             boolean reRender = false;
@@ -588,14 +604,19 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     public void mouseWheelMoved(MouseWheelEvent e)
     {
         if(hidden)return;
-        
-        if(e.getY() >= defStartY && selectedWord != null)//scroll up/down definition
+        boolean onTextRange = (e.getY() < textEndY && e.getY() >= textStartY);
+
+        //scroll up/down definition
+        if((options.getOptionBool("defsShowUpwards") ? (e.getY() < defStartY):
+                                                            (e.getY() > defStartY)) && selectedWord != null)
         {
             if(e.getWheelRotation() > 0)selectedWord.getCurrentDef().scrollDown();
             if(e.getWheelRotation() < 0)selectedWord.getCurrentDef().scrollUp();
             render();
         }
-        else if(e.getY() <= defStartY && e.getY() > furiganaStartY && selectedWord != null)//scroll through definitions
+
+        //scroll through definitions
+        else if(onTextRange && selectedWord != null)
         {
             if(selectedWord.inBounds(toCharPos(e.getX())))
             {
@@ -611,13 +632,13 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             }
             render();
         }
-        else if(selectedWord == null && e.getY() >= textStartY)//scroll text
+        else if(onTextRange && selectedWord == null)//scroll text
         {
             xOffset += e.getWheelRotation() * -mainFontSize;
             boundXOff();
             render();
         }
-        else if(e.getY() <= textStartY)//scroll history
+        else if(e.getY() <= textStartY && e.getY() > furiganaStartY)//scroll history
         {
             String historyLine;
             if(e.getWheelRotation() < 0)//scroll up

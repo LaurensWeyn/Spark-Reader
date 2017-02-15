@@ -69,9 +69,9 @@ public class OptionsUI extends JFrame
         
         OptionPage display = new OptionPage("General");
             display.add(new OptionLabel("Window properties:", null));
-            display.add(new NumberOption("windowWidth", "Window width", "I recommend setting this to the width of the window you plan to overlay this on"));
-            display.add(new NumberOption("maxHeight", "Maximum height", "<html>Definitions will not be longer than this.<br>I recommend setting this to the height of the window you plan to overlay this on"));        root.add(display);
-            display.add(new ToggleOption("takeFocus", "Take focus when clicked", "If the game under the overlay is still receiving clicks, try turning this on"));
+            display.add(new NumberOption("windowWidth", "Window width (requires restart)", "I recommend setting this to the width of the window you plan to overlay this on"));
+            display.add(new NumberOption("maxHeight", "Maximum height (requires restart)", "<html>Definitions will not be longer than this.<br>I recommend setting this to the height of the window you plan to overlay this on"));        root.add(display);
+            display.add(new ToggleOption("takeFocus", "Take focus when clicked (requires restart)", "If the game under the overlay is still receiving clicks, try turning this on"));
             display.add(new ToggleOption("showOnNewLine", "Restore window on new Japanese text", "If on, the window will automatically reappear if new Japanese text is detected."));
             display.add(new ToggleOption("hideOnOtherText", "Minimise window on new non-Japanese text", "If on, the window will automatically minimise if non-Japanese text is put into the clipboard."));
             display.add(new ToggleOption("startInTray", "Start in tray if there's no Japanese text on startup", "By default, the window will be visible after startup even if there is no text to display."));
@@ -98,9 +98,9 @@ public class OptionsUI extends JFrame
             mainUI.add(new ColourOption("textCol", "Main text colour", "the colour used for the main font"));
             mainUI.add(new FontOption("textFont", "Main text font", "The font used for the captured Japanese text"));
             window.add(mainUI);
-            
+
             OptionPage backs = new OptionPage("Background colours");
-            
+
             backs.add(new OptionLabel("Text:", null));
             backs.add(new ColourOption("textBackCol", "Main text background colour", "the colour used for normal words"));
             backs.add(new ColourOption("knownTextBackCol", "known word colour", "Colour used for words marked as known"));
@@ -109,13 +109,14 @@ public class OptionsUI extends JFrame
             backs.add(new ColourOption("markerCol", "Manual seperator colour", "These are the word spacers you place when you middle click on text"));
             backs.add(new ColourOption("noMarkerCol", "Auto seperator colour", "These are spaces assumed by the word splitter"));
             window.add(backs);
-        
+
         root.add(window);
         //OptionPage splitter = new OptionPage("Text splitter");
         //root.add(splitter);
-        
+
         PageGroup defs = new PageGroup("Definitions", "Settings related to displaying and storing definitions");
             OptionPage defWindow = new OptionPage("Window");
+            defWindow.add(new ToggleOption("defsShowUpwards", "Show definitions above text (requires restart)", "I'd reccomend this on if you prefer to keep Spark Reader on the lower half of your screen"));
             defWindow.add(new NumberOption("defWidth", "Definition popup width", "Determines how wide the definition popup window is"));
             defWindow.add(new ToggleOption("hideDefOnMouseLeave", "Hide definition when mouse leaves the screen", "If unticked, the definition popup will remain visible until you manually close it"));
             defWindow.add(new ToggleOption("showAllKanji", "Show all possible Kanji for a word", "If unticked, only kana readings are shown"));

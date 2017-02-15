@@ -31,12 +31,19 @@ import java.util.HashMap;
  */
 public class Kanji
 {
-    static HashMap<Character, String> kanjiDefs = new HashMap<>();
+    private static HashMap<Character, String> kanjiDefs = new HashMap<>();
+
+    /**
+     * Loads a Kanji deck
+     * @param file exported deck file. If file does not exist, Kanji are not loaded
+     * @param dict dictionary to add KanjiDefinitions to (null to not add definitions)
+     * @throws IOException if an error occurs while loading the file
+     */
     public static void load(File file, Dictionary dict)throws IOException
     {
         if(!file.exists())return;//leave kanjiDefs empty
-        
-        
+
+        System.out.println("loading Kanji");
         //C:\Users\Laurens\Desktop\Databases\KanjiDB\anki.csv
         FileInputStream is = new FileInputStream(file);
         InputStreamReader isr = new InputStreamReader(is, Charset.forName("UTF-8"));
@@ -44,13 +51,16 @@ public class Kanji
         //kanjiDefs = new HashMap<>();
         br.readLine();//first line is header, skip
         String line = br.readLine();
+        int count = 0;
         while(line != null)
         {
             String bits[] = line.split("\t");
             kanjiDefs.put(bits[4].charAt(0), bits[0] + ": " + bits[3]);//Kanji = ####: meaning
             if(dict != null)dict.addKanji(new KanjiDefinition(line));
             line = br.readLine();
+            count++;
         }
+        System.out.println("loaded" + count + " Kanji");
     }
     public static String lookup(char kanji)
     {

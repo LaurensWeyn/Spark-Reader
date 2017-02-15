@@ -24,7 +24,12 @@ import static UI.UI.options;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.Set;
+
+import com.sun.xml.internal.bind.v2.TODO;
 
 /**
  * Holds and renders a found definition of a FoundWord
@@ -51,9 +56,9 @@ public class FoundDef implements Comparable<FoundDef>
         g.setColor(new Color(0,0,0,1));
         g.fillRect(xPos, y, maxWidth, 1);//let mouse move thorugh 1 pixel space
         y++;//slight spacer
-        
+        if(!options.getOptionBool("defsShowUpwards"))y -= g.getFontMetrics().getHeight() * 1;
         defLines = 0;//will be recounted
-        
+
         //output original form if processed
         if(!foundForm.getProcess().equals(""))y = renderText(g, options.getColor("defReadingCol"), options.getColor("defBackCol"), xPos, y, foundForm.toString(), maxWidth);
         
@@ -109,22 +114,17 @@ public class FoundDef implements Comparable<FoundDef>
     private int renderText(Graphics g, Color fore, Color back, int x, int y, String text, int width)
     {
         if(text == null)return y;//don't render null text
-        defLines++;
-        if(startLine > defLines)return y;//don't render here yet
         int startY = y;
         FontMetrics font = g.getFontMetrics();
         TextStream stream = new TextStream(text);
         String line = "";
+        Deque<String> lines = new LinkedList<>();
         while(!stream.isDone())
         {
             String nextBit = stream.nextWord();
             if(font.stringWidth(line + nextBit) > width)//too much for this line, wrap over
             {
-                g.setColor(back);
-                g.fillRect(x, y - font.getAscent(), width, font.getHeight());
-                g.setColor(fore);
-                g.drawString(line, x, y);
-                y += font.getHeight();
+                lines.add(line);//add line for rendering
                 line = nextBit.trim();//put word on new line
             }
             else
@@ -132,18 +132,39 @@ public class FoundDef implements Comparable<FoundDef>
                 line += nextBit;
             }
         }
-        //draw last line
-        g.setColor(back);
-        g.fillRect(x, y - font.getAscent(), width, font.getHeight() - 1);//leave out 1 pixel seperator
-        g.setColor(new Color(0,0,0,1));
-        g.fillRect(x, y - font.getAscent() + font.getHeight() - 1, width, 1);//add a dim line here so scrolling still works
-        g.setColor(fore);
-        g.drawString(line, x, y);
-        y += font.getHeight();
-        
+        if(!line.equals(""))lines.add(line);//add last line
+        //draw lines
+        while(!lines.isEmpty())
+        {
+            if(options.getOptionBool("defsShowUpwards"))line = lines.pollLast();
+            else line = lines.pollFirst();
+            //draw line
+            defLines++;
+            if(startLine <= defLines)
+            {
+                if(options.getOptionBool("defsShowUpwards"))y -= font.getHeight();
+                if(!options.getOptionBool("defsShowUpwards")) y += font.getHeight();
+
+                //print background
+                g.setColor(back);
+                g.fillRect(x, y - font.getAscent(), width, font.getHeight());
+
+                //print text
+                g.setColor(fore);
+                g.drawString(line, x, y);
+
+            }
+        }
+        //'gap' between def lines
+        g.setColor(new Color(0, 0, 0, 1));
+        g.clearRect(x, y - font.getAscent() + (options.getOptionBool("defsShowUpwards")?0:font.getHeight() - 1), width,1);//clear this last line
+        g.fillRect (x, y - font.getAscent() + (options.getOptionBool("defsShowUpwards")?0:font.getHeight() - 1), width,1);//add a dim line here so scrolling still works
+
         //capture if in this
-        if(capturePoint == -1 || (capturePoint > startY - font.getHeight() + font.getDescent()
-            && capturePoint <= y - font.getHeight() + font.getDescent()))
+        //TODO account for upward defs in capture
+        if(capturePoint == -1 ||options.getOptionBool("defsShowUpwards")?
+             (capturePoint <= startY - font.getHeight() + font.getDescent() && capturePoint > y - font.getHeight() + font.getDescent()):
+             (capturePoint > startY - font.getHeight() + font.getDescent() && capturePoint <= y - font.getHeight() + font.getDescent()))
         {
             //TODO allow export with HTML color info perhaps?
             if(capture.equals(""))
@@ -160,7 +181,7 @@ public class FoundDef implements Comparable<FoundDef>
     }
     public void scrollDown()
     {
-        startLine = Math.min(startLine + 1, defLines - 1);
+        startLine = Math.min(startLine + 1, defLines - 2);
     }
     public void scrollUp()
     {

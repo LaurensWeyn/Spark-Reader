@@ -48,16 +48,6 @@ public class FoundWord
         this.startX = startX;
         
         if(definitions != null)definitions.sort(null);
-        /*int bestScore = Integer.MIN_VALUE;//take best scoreing word as the default definition
-        if(definitions == null)return;
-        for (int i = 0; i < definitions.size(); i++)
-        {
-            if(definitions.get(i).getScore() > bestScore)
-            {
-                bestScore = definitions.get(i).getScore();
-                currentDef = i;
-            }
-        }*/
     }
     public FoundWord(String text, int startX)
     {

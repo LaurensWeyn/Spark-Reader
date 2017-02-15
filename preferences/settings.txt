@@ -83,3 +83,4 @@ exportImage = true
 timeStampFormat = dd-MM-yyyy_hh-mm-ss
 fullscreenScreenshot = false
 commentOnExportLine = true
+defsShowUpwards = false

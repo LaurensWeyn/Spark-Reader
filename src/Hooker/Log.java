@@ -91,7 +91,7 @@ public class Log
      */
     public int linePos(String line)
     {
-        int index = log.indexOf(line);//TODO is this counting from the right side? (was LastIndexOf)
+        int index = log.indexOf(line);
         System.out.println("Searching for line \"" + line + "\"");
         return index;
     }
