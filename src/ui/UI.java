@@ -316,7 +316,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         
         try
         {
-            if(options.getOptionBool("useNaitiveUI"))javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
+            if(options.getOptionBool("useNativeUI"))javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
         }catch(Exception e)
         {
             //fall back to default if this fails
@@ -348,7 +348,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
 
                 if(options.getOptionBool("showOnNewLine"))
                 {
-                    hidden = false;//force visiblility on new line if needed
+                    hidden = false;//force visibility on new line if needed
                     ui.tray.hideTray();
                 }
                 
