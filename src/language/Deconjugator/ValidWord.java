@@ -17,8 +17,11 @@
 package language.deconjugator;
 
 import language.dictionary.DefTag;
+import language.dictionary.Definition;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Holds a possible valid conjugation if a word exists with the valid tags
@@ -27,13 +30,14 @@ import java.util.ArrayList;
 public class ValidWord
 {
     private String word;
-    private ArrayList<DefTag> neededTags;
+    private Set<DefTag> neededTags, impliedTags;
     private String process;
 
-    public ValidWord(String word, ArrayList<DefTag> neededTags, String process)
+    public ValidWord(String word, Set<DefTag> neededTags, Set<DefTag> impliedTags, String process)
     {
         this.word = word;
         this.neededTags = neededTags;
+        this.impliedTags = impliedTags;
         this.process = process.trim();
         if(process.contains("i stem"))
         {
@@ -43,14 +47,16 @@ public class ValidWord
     public ValidWord(String word, DefTag neededTag, String process)
     {
         this.word = word;
-        neededTags = new ArrayList<>();
+        neededTags = new HashSet<>();
+        impliedTags = new HashSet<>();
         this.process = process.trim();
         if(neededTag != null)neededTags.add(neededTag);
     }
     public ValidWord(String word, String process)
     {
         this.word = word;
-        neededTags = new ArrayList<>();
+        neededTags = new HashSet<>();
+        impliedTags = new HashSet<>();
         this.process = process;
     }
     public String getWord()
@@ -58,9 +64,33 @@ public class ValidWord
         return word;
     }
 
-    public ArrayList<DefTag> getNeededTags()
+    public Set<DefTag> getNeededTags()
     {
         return neededTags;
+    }
+
+    public Set<DefTag> getImpliedTags()
+    {
+        return impliedTags;
+    }
+
+    /**
+     * Checks if a definition is valid for this word, assuming this matches one of the spellings
+     * @param def the definition to check
+     * @return true if this is a valid definition, false otherwise
+     */
+    public boolean defMatches(Definition def)
+    {
+
+        if(def.getTags() == null && getNeededTags().isEmpty())return true;//still accept if no tags needed
+        for(DefTag needed:getNeededTags())
+        {
+            if(!def.getTags().contains(needed) && !getImpliedTags().contains(needed))
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     public String getProcess()

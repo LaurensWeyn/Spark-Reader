@@ -58,39 +58,12 @@ public class WordSplitter
                 FoundWord foundWord = new FoundWord(word.getWord(), pos + off);//prototype definition
                 for(ValidWord match:word.getMatches())//for each possible conjugation...
                 {
-                    
-                    //System.out.println("serching for form that needs " + match.getNeededTags());
                     ArrayList<Definition> defs = dict.find(match.getWord());
                     if(defs != null)for(Definition def:defs)//for each possible definition...
                     {
                         //System.out.println("found def " + def);
-                        //check if it meets the tag requirements of this conjugation:
-                        boolean pass = def.getTags() != null;//stop nullpointer exception
-                        if(match.getNeededTags().isEmpty())pass = true;//still except if no tags needed
-                        if(pass)for(DefTag needed:match.getNeededTags())
-                        {
-                            if(def.getTags().contains(needed) == false)
-                            {
-                                if(match.getProcess().contains("negative") && needed == DefTag.adj_i)
-                                {
-                                    //when negative, it conjugates like an i adjective. do not reject!
-                                }
-                                else if(match.getProcess().contains(" potential") && needed == DefTag.v1)
-                                {
-                                    //potential form further conjugates like v1
-                                }
-                                else if(match.getProcess().contains(" passive") && needed == DefTag.v1)
-                                {
-                                    //passive form as well?
-                                }
-                                else
-                                {
-                                    pass = false;
-                                    break;
-                                }
-                            }
-                        }
-                        if(pass)//we've found a meaning for this word!
+                        //check if it meets the tag requirements of this conjugation
+                        if(match.defMatches(def))
                         {
                             //System.out.println("REQUIREMENTS MET");
                             foundWord.addDefinition(new FoundDef(match, def));//add the definition and how we got the form for it
@@ -111,7 +84,7 @@ public class WordSplitter
                 if(bestWord.getText().length() == 0)//didn't find it
                 {
                     words.add(new FoundWord(text.charAt(pos) + "", null, pos + off));//add it as a single character "word"
-                    pos++;//skip this letter, not inportant
+                    pos++;//skip this letter, not important
                 }
                 else
                 {

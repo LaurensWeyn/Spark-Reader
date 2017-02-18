@@ -24,7 +24,8 @@ import java.util.ArrayList;
  */
 public class Japanese
 {
-
+    //disallow instances of class
+    private Japanese(){}
 
     //reference: http://www.rikai.com/library/kanjitables/kanji_codes.unicode.shtml
 
@@ -72,19 +73,11 @@ public class Japanese
         }
         return false;
     }
-    public static boolean hasKana(String text)
-    {
-        for (int i = 0; i < text.length(); i++)
-        {
-            if(isKana(text.charAt(i)))return true;
-        }
-        return false;
-    }
     public static boolean isKanji(char c)
     {
         return (0x4e00 <= c && c <= 0x9faf) || (0x3400 <= c && c <= 0x4dbf);
     }
-    public static boolean isKana(String text)
+    public static boolean hasKana(String text)
     {
         for (int i = 0; i < text.length(); i++)
         {
@@ -118,7 +111,7 @@ public class Japanese
             {
                 output += (char)(c - (0x30a0 - 0x3040));//shift
             }
-            else if(stripOthers == false)output += c;//Kanji and others intentionally removed from output (for reading extraction)
+            else if(!stripOthers)output += c;//Kanji and others intentionally removed from output if needed (for reading extraction)
         }
         return output;
     }
