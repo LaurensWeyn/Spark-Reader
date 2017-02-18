@@ -159,9 +159,9 @@ public class FoundDef implements Comparable<FoundDef>
 
         //capture if in this
         //TODO account for upward defs in capture
-        if(capturePoint == -1 ||options.getOptionBool("defsShowUpwards")?
+        if(capturePoint == -1 || (options.getOptionBool("defsShowUpwards")?
              (capturePoint <= startY - font.getHeight() + font.getDescent() && capturePoint > y - font.getHeight() + font.getDescent()):
-             (capturePoint > startY - font.getHeight() + font.getDescent() && capturePoint <= y - font.getHeight() + font.getDescent()))
+             (capturePoint > startY - font.getHeight() + font.getDescent() && capturePoint <= y - font.getHeight() + font.getDescent())))
         {
             //TODO allow export with HTML color info perhaps?
             if(capture.equals(""))

@@ -10,7 +10,7 @@ defKanjiCol = 255, 255, 255, 255
 defTagCol = 255, 255, 255, 255
 
 #Seperator colours#
-noMarkerCol = 0, 0, 0, 100
+noMarkerCol = 50, 50, 50, 150
 markerCol = 255, 255, 0, 200
 
 #background colours#
@@ -84,3 +84,4 @@ timeStampFormat = dd-MM-yyyy_hh-mm-ss
 fullscreenScreenshot = false
 commentOnExportLine = true
 defsShowUpwards = false
+expectedLineCount = 4

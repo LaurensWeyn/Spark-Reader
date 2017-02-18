@@ -178,7 +178,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         mainFontSize = g.getFontMetrics().charWidth('べ');
         if(options.getOptionBool("defsShowUpwards"))
         {
-            furiganaStartY = options.getOptionInt("maxHeight") - lineHeight * lines.size();
+            furiganaStartY = options.getOptionInt("maxHeight") - lineHeight * Math.max(options.getOptionInt("expectedLineCount"), lines.size());
             defStartY = furiganaStartY - 2;
             textStartY = furiHeight + furiganaStartY;
             textEndY = textStartY + lineHeight * lines.size();

@@ -31,7 +31,7 @@ import java.util.Map.Entry;
  */
 public class PrefDef
 {
-    private HashMap<String, Integer> table;
+    private HashMap<String, Long> table;
     private int dueChanges = 0;
     private int saveThreshold = 10;
     private final File file;
@@ -49,7 +49,7 @@ public class PrefDef
         while(line != null)
         {
             String bits[] = line.split("=");
-            if(bits.length == 2)table.put(bits[0], Integer.parseInt(bits[1]));
+            if(bits.length == 2)table.put(bits[0], Long.parseLong(bits[1]));
             line = br.readLine();
         }
         br.close();
@@ -58,7 +58,7 @@ public class PrefDef
     {
         if(dueChanges == 0)return;//don't bother writing if nothing changed
         Writer fr = new OutputStreamWriter(new FileOutputStream(file, false), Charset.forName("UTF-8"));
-        for(Entry<String, Integer> entries: table.entrySet())
+        for(Entry<String, Long> entries: table.entrySet())
         {
             fr.append(entries.getKey()).append("=").append(String.valueOf(entries.getValue())).append("\n");
         }

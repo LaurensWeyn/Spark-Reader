@@ -181,9 +181,18 @@ public class WordPopup extends JPopupMenu
                 else
                 {
                     //game area
-                    area = new Rectangle(pos.x, pos.y,
-                                         UI.options.getOptionInt("windowWidth"),
-                                         UI.options.getOptionInt("maxHeight"));
+                    if(UI.options.getOptionBool("defsShowUpwards"))
+                    {
+                        area = new Rectangle(pos.x, pos.y + UI.furiganaStartY - UI.options.getOptionInt("maxHeight"),
+                                UI.options.getOptionInt("windowWidth"),
+                                UI.options.getOptionInt("maxHeight"));
+                    }
+                    else
+                    {
+                        area = new Rectangle(pos.x, pos.y + UI.defStartY,
+                                UI.options.getOptionInt("windowWidth"),
+                                UI.options.getOptionInt("maxHeight"));
+                    }
                 }
 
                 //hide Spark Reader and take the screenshot

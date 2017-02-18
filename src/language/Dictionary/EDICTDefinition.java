@@ -122,7 +122,7 @@ public class EDICTDefinition extends Definition
     }
 
     @Override
-    public int getID()
+    public long getID()
     {
         return ID;
     }

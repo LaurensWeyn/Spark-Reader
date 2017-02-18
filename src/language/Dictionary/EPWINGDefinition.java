@@ -55,9 +55,9 @@ public class EPWINGDefinition extends Definition
     }
 
     @Override
-    public int getID()
+    public long getID()
     {
-        return (int)(id);//TODO encode source here?
+        return id;//TODO encode source here?
     }
 
     @Override

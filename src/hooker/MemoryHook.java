@@ -29,11 +29,6 @@ import java.awt.*;
  */
 public class MemoryHook implements Hook
 {
-    public static Kernel32 kernel32;
-    //I/O permissions
-    public static int PROCESS_VM_READ= 0x0010;
-    public static int PROCESS_VM_WRITE = 0x0020;
-    public static int PROCESS_VM_OPERATION = 0x0008;
 
     private static final String START_MESSAGE = "Welcome to the memory text hook wizard."
             + "\nPlease enter the process ID (pid) of the game you want to hook. You can get this pid from the task manager."
@@ -56,9 +51,9 @@ public class MemoryHook implements Hook
         {
             int pid = Integer.parseInt(response);
 
-            if(kernel32 == null)kernel32 = (Kernel32) Native.loadLibrary("kernel32",Kernel32.class);
+            Kernel32 kernel32 = KernelController.getKernel32();
 
-            process = kernel32.OpenProcess(PROCESS_VM_READ|PROCESS_VM_WRITE|PROCESS_VM_OPERATION, true, pid);
+            process = kernel32.OpenProcess(KernelController.PROCESS_VM_READ|KernelController.PROCESS_VM_WRITE|KernelController.PROCESS_VM_OPERATION, true, pid);
         }catch(NumberFormatException ignored) {}
 
         if(process == null)

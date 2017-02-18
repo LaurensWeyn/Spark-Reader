@@ -48,7 +48,7 @@ public class MemoryBuffer
             startPoint = pos;
             endPoint = pos + buffSize;
             IntByReference memoryRead = new IntByReference();
-            MemoryHook.kernel32.ReadProcessMemory(process, startPoint, memory, buffSize, memoryRead);
+            KernelController.getKernel32().ReadProcessMemory(process, startPoint, memory, buffSize, memoryRead);
             //allRead = memoryRead.getValue() == 0;
             //System.out.println("read: " + memoryRead.getValue());
             //System.out.println();

@@ -25,7 +25,7 @@ import java.util.Set;
 public abstract class Definition
 {
     public abstract String getFurigana();
-    public abstract int getID();
+    public abstract long getID();
 
     public abstract int getSourceNum();
     public abstract String[] getSpellings();

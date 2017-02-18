@@ -55,7 +55,7 @@ public class KanjiDefinition extends Definition
     }
 
     @Override
-    public int getID()
+    public long getID()
     {
         return id;
     }
