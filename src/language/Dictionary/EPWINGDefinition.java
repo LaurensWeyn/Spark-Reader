@@ -37,7 +37,7 @@ public class EPWINGDefinition extends Definition
         this.book = book;
         id = result.getTextPosition();//guaranteed to be unique within book at least
         
-        Hook hook = new EpwingHook(book, blacklist);
+        Hook hook = new EpwingAdapter(book, blacklist);
         String lines[] = (String[])hook.getObject();
         
         spellings = Japanese.splitJapaneseWriting(lines[0]);
@@ -49,7 +49,7 @@ public class EPWINGDefinition extends Definition
     {
         for(String spelling:spellings)
         {
-            if(Japanese.isKana(spelling))return spelling;
+            if(Japanese.hasKana(spelling))return spelling;
         }
         return "";//TODO or is it null?
     }
