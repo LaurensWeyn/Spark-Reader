@@ -24,60 +24,12 @@ import java.util.ArrayList;
  * Holds a rule for deconjugating a word
  * @author Laurens Weyn
  */
-public class DeconRule
+public interface DeconRule
 {
-    private String ending, replace, change;
-    private DefTag neededTag;
-    public DeconRule(String ending, String replace, String change, DefTag neededTag)
-    {
-        this.ending = ending;
-        this.replace = replace;
-        this.change = change;
-        this.neededTag = neededTag;
-    }
-    public DeconRule(String ending, String replace, String change)
-    {
-        this(ending, replace, change, null);
-    }
-    
-    public ValidWord process(ValidWord word)
-    {
-        if(word.getProcess().contains(change))
-        {
-            return null;//don't stack the same conjugation onto itself
-        }
-        //ending matches:
-        if(word.getWord().endsWith(ending))
-        {
-            //add tag and return
-            ArrayList<DefTag> tags = (ArrayList<DefTag>)word.getNeededTags().clone();
-            if(neededTag != null)tags.add(neededTag);
-            return new ValidWord(word.getWord().substring(0, word.getWord().length() - ending.length()) + replace, tags, word.getProcess() + " " + change);
-        }
-        //doesn't match, don't add new word
-        return null;
-    }
-
-    public String getEnding()
-    {
-        return ending;
-    }
-
-    public String getReplace()
-    {
-        return replace;
-    }
-
-    public String getChange()
-    {
-        return change;
-    }
-
-    public DefTag getNeededTag()
-    {
-        return neededTag;
-    }
-    
-    
-    
+    /**
+     * Attempts to deconjugate a word with this
+     * @param word the word to attempt to deconjugate
+     * @return the deconjugated word, or null if it doesn't apply
+     */
+    public abstract ValidWord process(ValidWord word);
 }

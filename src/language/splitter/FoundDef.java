@@ -159,9 +159,9 @@ public class FoundDef implements Comparable<FoundDef>
 
         //capture if in this
         //TODO account for upward defs in capture
-        if(capturePoint == -1 ||options.getOptionBool("defsShowUpwards")?
+        if(capturePoint == -1 || (options.getOptionBool("defsShowUpwards")?
              (capturePoint <= startY - font.getHeight() + font.getDescent() && capturePoint > y - font.getHeight() + font.getDescent()):
-             (capturePoint > startY - font.getHeight() + font.getDescent() && capturePoint <= y - font.getHeight() + font.getDescent()))
+             (capturePoint > startY - font.getHeight() + font.getDescent() && capturePoint <= y - font.getHeight() + font.getDescent())))
         {
             //TODO allow export with HTML color info perhaps?
             if(capture.equals(""))
@@ -217,8 +217,8 @@ public class FoundDef implements Comparable<FoundDef>
             if (tags.contains(DefTag.obs) || tags.contains(DefTag.obsc) || tags.contains(DefTag.rare) || tags.contains(DefTag.arch))
                 score -= 50;//obscure penalty
 
-            if (tags.contains(DefTag.uk) && !Japanese.isKana(foundForm.getWord())) score -= 10;//usually kana without kana
-            if (tags.contains(DefTag.uK) && Japanese.isKana(foundForm.getWord())) score -= 10;//usually Kanji, only kana
+            if (tags.contains(DefTag.uk) && !Japanese.hasKana(foundForm.getWord())) score -= 10;//usually kana without kana
+            if (tags.contains(DefTag.uK) && Japanese.hasKana(foundForm.getWord())) score -= 10;//usually Kanji, only kana
 
             if (tags.contains(DefTag.suf) || tags.contains(DefTag.pref))
                 score -= 3;//suf/prefixes _usually_ caught with the whole word
