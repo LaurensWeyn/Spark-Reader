@@ -20,24 +20,25 @@ import language.splitter.FoundWord;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 import static ui.UI.*;
 
 /**
- *
+ * Holds a line of Japanese text
  * @author Laurens Weyn
  */
 public class Line
 {
     SortedSet<Integer> markers;
-    ArrayList<FoundWord> words;
+    List<FoundWord> words;
 
     public Line(SortedSet<Integer> markers, ArrayList<FoundWord> words)
     {
         this.markers = markers;
         this.words = words;
     }
-    public Line(ArrayList<FoundWord> words)
+    public Line(List<FoundWord> words)
     {
         markers = new TreeSet<>();
         this.words = words;
@@ -113,7 +114,7 @@ public class Line
         return markers;
     }
 
-    public ArrayList<FoundWord> getWords()
+    public List<FoundWord> getWords()
     {
         return words;
     }
@@ -123,7 +124,7 @@ public class Line
         words.add(word);
     }
 
-    public void setWords(ArrayList<FoundWord> words)
+    public void setWords(List<FoundWord> words)
     {
         this.words = words;
     }

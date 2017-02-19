@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- *
+ * UI used to scan for lines to hook
  * @author Laurens Weyn
  */
 public class LineSelectUI implements ListSelectionListener

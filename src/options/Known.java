@@ -26,6 +26,8 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+
 /**
  * Holds a list of words the user knows
  * @author Laurens Weyn
@@ -81,7 +83,7 @@ public class Known
     }
     private void addWord(String word)
     {
-        ArrayList<Definition> defs = UI.dict.find(word);
+        List<Definition> defs = UI.dict.find(word);
         if(defs != null)//if this word isn't known, don't bother adding it as a known word
         {
             for(String match:defs.get(0).getSpellings())

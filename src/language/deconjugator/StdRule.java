@@ -43,7 +43,8 @@ public class StdRule implements DeconRule
             HashSet<DefTag> impliedTags = new HashSet<DefTag>(word.getImpliedTags());
             if(neededTag != null)tags.add(neededTag);
             if(impliedTag != null)tags.add(impliedTag);
-            return new ValidWord(word.getWord().substring(0, word.getWord().length() - ending.length()) + replace, tags, impliedTags, word.getProcess() + " " + change);
+            String newProcess = word.getProcess() + " " + change;
+            return new ValidWord(word.getWord().substring(0, word.getWord().length() - ending.length()) + replace, tags, impliedTags, newProcess);
         }
         //doesn't match, don't add new word
         return null;

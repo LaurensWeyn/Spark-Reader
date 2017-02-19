@@ -21,6 +21,7 @@ import fuku.eb4j.SubBook;
 import fuku.eb4j.hook.Hook;
 
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -28,11 +29,19 @@ import java.util.HashSet;
  */
 public class EPWINGDefinition extends Definition
 {
-    String[] spellings;
-    String[] defLines;
-    SubBook book;
-    long id;
-    public EPWINGDefinition(Result result, SubBook book, HashSet<Character> blacklist)
+    private String[] spellings;
+    private String[] defLines;
+    private SubBook book;
+    private long id;
+    private static Set<Character> blacklist = new HashSet<>();
+    private Set<DefTag> tags = null;
+
+    public static void setBlacklist(Set<Character> blacklist)
+    {
+        EPWINGDefinition.blacklist = blacklist;
+    }
+
+    public EPWINGDefinition(Result result, SubBook book)
     {
         this.book = book;
         id = result.getTextPosition();//guaranteed to be unique within book at least
@@ -89,5 +98,19 @@ public class EPWINGDefinition extends Definition
         }
         return sb.toString();
     }
-    
+
+    @Override
+    public Set<DefTag> getTags()
+    {
+        return tags;
+    }
+
+    /**
+     * Assign tags to this EPWING definition (can have none by default)
+     * @param tags tags to assign
+     */
+    public void setTags(Set<DefTag> tags)
+    {
+        this.tags = tags;
+    }
 }

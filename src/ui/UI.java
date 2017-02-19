@@ -37,15 +37,16 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
- *
+ * Main Spark Reader UI
  * @author Laurens Weyn
  */
 public class UI implements MouseListener, MouseMotionListener, MouseWheelListener
 {
-    public static final String VERSION = "Beta 0.5";
+    public static final String VERSION = "Beta 0.6";
     
     public static UI instance;
     
@@ -260,7 +261,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             
             if(i == lines.size())
             {
-                lines.add(new Line(splitter.split(bit)));
+                lines.add(new Line(splitter.split(bit, new HashSet<>())));
             }
             else
             {

@@ -16,10 +16,14 @@
  */
 package language.dictionary;
 
+import fuku.eb4j.*;
+
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Contains words and their definitions
@@ -29,10 +33,17 @@ public class Dictionary
 {
     //text -> definition
     private HashMap<String, ArrayList<Definition>> lookup;
+    //can query for words
+    private List<SubBook> books;
 
     public Dictionary()throws IOException
     {
         lookup = new HashMap<>();
+        books = new ArrayList<>();
+    }
+    public void loadEpwing(File file)throws EBException
+    {
+        books.addAll(Arrays.asList(new Book(file).getSubBooks()));
     }
     public void loadEdict(File file, String encoding, int sourceNum)throws IOException
     {
@@ -41,40 +52,49 @@ public class Dictionary
         BufferedReader reader = new BufferedReader(isr);
         reader.readLine();//first line is copyright stuff
         String line = reader.readLine();
-        
-        
         while(line != null)
         {
             //generate definition
             Definition def = new EDICTDefinition(line, sourceNum);
             for(String spelling:def.getSpellings())//for each possible spelling...
             {
-                ArrayList<Definition> meanings = lookup.get(spelling);
-                if(meanings == null)
-                {
-                    meanings = new ArrayList<>();//create if it doesn't exist
-                    lookup.put(spelling, meanings);
-                }
+                //create if it doesn't exist
+                ArrayList<Definition> meanings = lookup.computeIfAbsent(spelling, k -> new ArrayList<>());
                 meanings.add(def);//add this definition for this spelling
-            }                   
+            }
             line = reader.readLine();
         }
         System.out.println("loaded " + lookup.keySet().size() + " entries so far");
     }
-    public void addKanji(KanjiDefinition def)
+    public void loadKanji(KanjiDefinition def)
     {
         String kanji = def.getSpellings()[0].charAt(0) + "";
-        ArrayList<Definition> meanings = lookup.get(kanji);
-        if(meanings == null)
-        {
-            meanings = new ArrayList<>();//create if it doesn't exist
-            lookup.put(kanji, meanings);
-        }
+        //create if it doesn't exist
+        ArrayList<Definition> meanings = lookup.computeIfAbsent(kanji, k -> new ArrayList<>());
         meanings.add(def);//add this definition for this spelling
     }
-    public ArrayList<Definition> find(String word)
+    public List<Definition> find(String word)
     {
         //System.out.println("looking up " + word);
         return lookup.get(word);
+    }
+
+    public List<EPWINGDefinition> findEpwing(String word)
+    {
+        ArrayList<EPWINGDefinition> defs = new ArrayList<>();
+        for(SubBook book:books)
+        {
+            try
+            {
+                Searcher search = book.searchExactword(word);
+                Result result = search.getNextResult();
+                while(result != null)
+                {
+                    defs.add(new EPWINGDefinition(result, book));
+                    result = search.getNextResult();
+                }
+            }catch(EBException ignored){}
+        }
+        return defs;
     }
 }

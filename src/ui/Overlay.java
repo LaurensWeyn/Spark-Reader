@@ -23,7 +23,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 /**
- *
+ * Transparent UI overlay window
  * @author laure
  */
 public class Overlay

@@ -21,6 +21,7 @@ import ui.UI;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 
 import static ui.UI.options;
 
@@ -31,7 +32,7 @@ import static ui.UI.options;
 public class FoundWord
 {
     private final String text;//text to show
-    private final ArrayList<FoundDef> definitions;//known meanings
+    private List<FoundDef> definitions;//known meanings
     private int startX;//start point in sentence (for rendering)
     
     private int currentDef = 0;//current definition to render
@@ -41,8 +42,11 @@ public class FoundWord
 
     private final boolean hasKanji;
 
-
-    public FoundWord(String text, ArrayList<FoundDef> definitions, int startX)
+    public FoundWord(char text, List<FoundDef> definitions, int startX)
+    {
+        this(text + "", definitions, startX);
+    }
+    public FoundWord(String text, List<FoundDef> definitions, int startX)
     {
         this.text = text;
         hasKanji = Japanese.hasKanji(text);
@@ -51,16 +55,40 @@ public class FoundWord
         
         if(definitions != null)definitions.sort(null);
     }
+    public FoundWord(String text, List<FoundDef> definitions)
+    {
+        this.text = text;
+        hasKanji = Japanese.hasKanji(text);
+        this.definitions = definitions;
+        this.startX = 0;
+
+        if(definitions != null)definitions.sort(null);
+    }
+    public FoundWord(char text, int startX)
+    {
+        this(text + "", startX);
+    }
     public FoundWord(String text, int startX)
     {
         this.text = text;
         hasKanji = Japanese.hasKanji(text);
-        definitions = new ArrayList<>();
+        definitions = null;
         this.startX = startX;
-        if(definitions != null)definitions.sort(null);
+    }
+    public FoundWord(char text)
+    {
+        this(text + "");
+    }
+    public FoundWord(String text)
+    {
+        this.text = text;
+        hasKanji = Japanese.hasKanji(text);
+        definitions = null;
+        this.startX = 0;
     }
     public void addDefinition(FoundDef def)
     {
+        if(definitions == null)definitions = new ArrayList<>();
         definitions.add(def);
     }
     public void sortDefs()
@@ -69,6 +97,7 @@ public class FoundWord
     }
     public int getDefinitionCount()
     {
+        if(definitions == null)return 0;
         return definitions.size();
     }
     
@@ -184,7 +213,7 @@ public class FoundWord
         currentDef = 0;
     }
     
-    public ArrayList<FoundDef> getFoundDefs()
+    public List<FoundDef> getFoundDefs()
     {
         return definitions;
     }

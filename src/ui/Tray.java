@@ -27,7 +27,7 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 
 /**
- *
+ * Tray icon controller
  * @author Laurens Weyn
  */
 public class Tray

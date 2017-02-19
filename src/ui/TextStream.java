@@ -40,7 +40,7 @@ public class TextStream
             
             if(pos >= text.length() || !noWrap(text.charAt(pos)) || text.charAt(pos) == ' ')
             {
-                if(buffer.equals(" ") == false)return buffer;
+                if(!buffer.equals(" "))return buffer;
             }
         }
     }

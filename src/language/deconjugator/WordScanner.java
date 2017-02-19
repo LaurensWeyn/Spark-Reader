@@ -86,7 +86,6 @@ public class WordScanner
         ruleList.add(new StdRule("れる", "る", "potential", DefTag.v5r, DefTag.v1));
 
         //past->dict
-        //*
         ruleList.add(new StdRule("った", "う", "past", DefTag.v5u));
         ruleList.add(new StdRule("いた", "く", "past", DefTag.v5k));
         ruleList.add(new StdRule("いだ", "ぐ", "past", DefTag.v5g));
@@ -132,6 +131,7 @@ public class WordScanner
         //masu/tai/etc removal (handled after past so that still conjugates, before i stem)
         //TODO make these only work with verbs (not with gatai!)
         ruleList.add(new StdRule("ます", "", "polite"));
+        ruleList.add(new StdRule("ません", "", "negative polite"));
         ruleList.add(new StdRule("たい", "", "want"));
         ruleList.add(new StdRule("なさい", "", "command"));
 
@@ -276,7 +276,7 @@ public class WordScanner
     public static void main(String[] args)
     {
         System.out.println();
-        for(ValidWord vw: new WordScanner("遅くな").getMatches())
+        for(ValidWord vw: new WordScanner("分かりません").getMatches())
         {
             System.out.println(vw.toString() + " " + vw.getNeededTags());
         }

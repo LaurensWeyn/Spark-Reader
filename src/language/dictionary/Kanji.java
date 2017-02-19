@@ -51,7 +51,7 @@ public class Kanji
         {
             String bits[] = line.split("\t");
             kanjiDefs.put(bits[4].charAt(0), bits[0] + ": " + bits[3]);//Kanji = ####: meaning
-            if(dict != null)dict.addKanji(new KanjiDefinition(line));
+            if(dict != null)dict.loadKanji(new KanjiDefinition(line));
             line = br.readLine();
             count++;
         }

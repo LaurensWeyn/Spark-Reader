@@ -22,7 +22,8 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
 /**
- *  Used by popup windows to stop focus loss when the mouse is moved over to them
+ *  Used by popup windows to stop focus loss when the mouse is moved over to them.
+ *  Sends status to UI.tempIgnoreMouseExit
  * @author Laurens Weyn
  */
 public class IgnoreExitListener implements PopupMenuListener
