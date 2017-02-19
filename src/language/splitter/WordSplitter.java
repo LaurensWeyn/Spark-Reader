@@ -58,7 +58,6 @@ public class WordSplitter
                 WordScanner word = new WordScanner(text.substring(start, pos));//deconjugate
                 matchedWord = new FoundWord(word.getWord());//prototype definition
                 attachDefinitions(matchedWord, word);//add cached definitions
-
                 //override: match more words than usual
                 if(matchedWord.getDefinitionCount() == 0 && firstSection)
                 {
@@ -115,25 +114,33 @@ public class WordSplitter
         ArrayList<FoundWord> words = new ArrayList<>();
         int pos = 0;
         int start = 0;
+        breaks.add(0);
         while(pos < text.length())
         {
             if(breaks.contains(pos))
             {
                 String section = text.substring(start, pos);
-                words.addAll(splitSection(section, true));
+                words.addAll(splitSection(section, false));
                 start = pos;
             }
             else if(!Japanese.isJapaneseWriting(text.charAt(pos)))
             {
                 String section = text.substring(start, pos);
-                words.addAll(splitSection(section, false));
+                words.addAll(splitSection(section, breaks.contains(start)));
                 words.add(new FoundWord(text.charAt(pos) + ""));
                 pos++;//skip over grammar
                 start = pos;
             }
             pos++;
         }
+        if(pos > start && pos <= text.length())
+        {
+            String section = text.substring(start, pos);
+            System.out.println("final section " + section);
+            words.addAll(splitSection(section, breaks.contains(start)));
+        }
         recalcPositions(words);
+        breaks.remove(0);
         return words;
     }
 

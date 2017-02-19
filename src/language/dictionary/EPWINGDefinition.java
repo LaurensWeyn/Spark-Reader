@@ -52,10 +52,30 @@ public class EPWINGDefinition extends Definition
         Hook hook = new EpwingAdapter(book, blacklist);
         result.getText(hook);
         String lines[] = (String[])hook.getObject();
-        
-        spellings = Japanese.splitJapaneseWriting(lines[0]);
-        defLines = new String[lines.length - 1];
-        System.arraycopy(lines, 1, defLines, 0, defLines.length);
+        if(lines.length < 2)
+        {
+            //Blacklist must've blocked the only text. Re-parse without blacklist
+            hook = new EpwingAdapter(book, new HashSet<>());
+            result.getText(hook);
+            lines = (String[])hook.getObject();
+            if(lines.length == 0)
+            {
+                throw new Error("EPWING dictionary gave no text in response");
+            }
+        }
+        if(lines.length == 1)
+        {
+            //still only 1 line, alright then. That line'll have to double as the definition
+            defLines = new String[]{lines[0]};
+            spellings = Japanese.splitJapaneseWriting(lines[0]);
+        }
+        else
+        {
+            //multiple lines, take out the first and use for spellings
+            spellings = Japanese.splitJapaneseWriting(lines[0]);
+            defLines = new String[lines.length - 1];
+            System.arraycopy(lines, 1, defLines, 0, defLines.length);
+        }
     }
     @Override
     public String getFurigana()

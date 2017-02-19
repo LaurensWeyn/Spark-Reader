@@ -122,8 +122,19 @@ public class EpwingAdapter extends HookAdapter<String[]>
             }
             if (StringUtils.isBlank(str))
             {
-                //str = "[GAIJI=n" + HexUtil.toHexString(code) + "]";
-                str = "?";
+                switch(code)
+                {
+                    case 0xA238:
+                        str = "ō";
+                        break;
+                    case 0xA239:
+                        str = "ū";
+                        break;
+                    default:
+                        System.out.println("Epwing adapter: unknown character " + HexUtil.toHexString(code));
+                        str = "?";
+                        break;
+                }
             }
         } else
         {
@@ -141,13 +152,15 @@ public class EpwingAdapter extends HookAdapter<String[]>
                 switch(code)
                 {
                     case 0xB65E:
-                        str = "▶";
+                    case 0xB571:
+                        str = "▶";//all basically solid arrows
                         break;
                     case 0xB667:
-                        str =  "Romaji: ";
+                        str =  "Romaji: ";//'romaji' symbol
                         break;
                     case 0xB23D://weird start quote that's never closed
                     case 0xB66B://weird half-book thing
+                    case 0xB66C://weird half-book thing as well
                         str = "";//ignore these
                         break;
                     default:
