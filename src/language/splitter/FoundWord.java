@@ -16,12 +16,19 @@
  */
 package language.splitter;
 
+import language.deconjugator.ValidWord;
+import language.deconjugator.WordScanner;
+import language.dictionary.DefTag;
+import language.dictionary.Dictionary;
+import language.dictionary.EPWINGDefinition;
 import language.dictionary.Japanese;
 import ui.UI;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static ui.UI.options;
 
@@ -41,6 +48,7 @@ public class FoundWord
     private boolean mouseover;
 
     private final boolean hasKanji;
+    private boolean hasOpened = false;
 
     public FoundWord(char text, List<FoundDef> definitions, int startX)
     {
@@ -120,6 +128,12 @@ public class FoundWord
         String furiText = "";
         if(showDef)
         {
+            if(!hasOpened)
+            {
+                attachEpwingDefinitions(UI.dict);//load these in only when needed
+                //sortDefs();//TODO put EPWING defs somewhere in sort order
+                hasOpened = true;
+            }
             furiText = (currentDef + 1) + "/" + definitions.size();
         }
         else if(showFurigana(known))
@@ -251,5 +265,28 @@ public class FoundWord
 
     public void setStartX(int startX) {
         this.startX = startX;
+    }
+
+    private void attachEpwingDefinitions(Dictionary dict)
+    {
+        Set<String> alreadyQueried = new HashSet<>();
+        //for each known valid reading, find a dictionary equivalent
+        if(definitions != null)for(int i = 0; i < definitions.size(); i++)
+        {
+            FoundDef foundDef = definitions.get(i);
+            String query = foundDef.getDictForm();
+            if(alreadyQueried.contains(query))continue;
+            alreadyQueried.add(query);
+            List<EPWINGDefinition> extraDefs = dict.findEpwing(foundDef.getDictForm());
+            for(EPWINGDefinition extraDef:extraDefs)
+            {
+                extraDef.setTags(foundDef.getDefinition().getTags());
+                addDefinition(new FoundDef(foundDef.getFoundForm(), extraDef));
+            }
+        }
+
+        //find plain form word as well
+        //TODO finish this if the above is working
+        //if(!alreadyQueried.contains(text))
     }
 }

@@ -34,7 +34,7 @@ public class Kanji
      * @param dict dictionary to add KanjiDefinitions to (null to not add definitions)
      * @throws IOException if an error occurs while loading the file
      */
-    public static void load(File file, Dictionary dict)throws IOException
+    public static void load(File file, Dictionary dict, DefSource source)throws IOException
     {
         if(!file.exists())return;//leave kanjiDefs empty
 
@@ -51,11 +51,11 @@ public class Kanji
         {
             String bits[] = line.split("\t");
             kanjiDefs.put(bits[4].charAt(0), bits[0] + ": " + bits[3]);//Kanji = ####: meaning
-            if(dict != null)dict.loadKanji(new KanjiDefinition(line));
+            if(dict != null)dict.loadKanji(new KanjiDefinition(line, source));
             line = br.readLine();
             count++;
         }
-        System.out.println("loaded" + count + " Kanji");
+        System.out.println("loaded " + count + " Kanji");
     }
     public static String lookup(char kanji)
     {

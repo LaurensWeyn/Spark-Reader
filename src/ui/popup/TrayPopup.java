@@ -25,15 +25,15 @@ import java.awt.event.ActionEvent;
 import java.io.IOException;
 
 /**
- *
+ * Right-click menu associated with the tray icon
  * @author Laurens Weyn
  */
 public class TrayPopup extends JPopupMenu
 {
 
-    JMenuItem restore;
-    JMenuItem close;
-    JMenuItem settings;
+    private JMenuItem restore;
+    private JMenuItem close;
+    private JMenuItem settings;
 
     int x, y;
     UI ui;
@@ -95,7 +95,6 @@ public class TrayPopup extends JPopupMenu
     {
         this.x = x;
         this.y = y;
-        //show(this, x, y);
         setLocation(x, y);
         setInvoker(this);
         setVisible(true);

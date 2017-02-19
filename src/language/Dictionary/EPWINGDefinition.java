@@ -16,11 +16,13 @@
  */
 package language.dictionary;
 
+import fuku.eb4j.EBException;
 import fuku.eb4j.Result;
 import fuku.eb4j.SubBook;
 import fuku.eb4j.hook.Hook;
 
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -28,21 +30,32 @@ import java.util.HashSet;
  */
 public class EPWINGDefinition extends Definition
 {
-    String[] spellings;
-    String[] defLines;
-    SubBook book;
-    long id;
-    public EPWINGDefinition(Result result, SubBook book, HashSet<Character> blacklist)
+    private String[] spellings;
+    private String[] defLines;
+    private SubBook book;
+    private DefSource source;
+    private long id;
+    private static Set<Character> blacklist = new HashSet<>();
+    private Set<DefTag> tags = null;
+
+    public static void setBlacklist(Set<Character> blacklist)
+    {
+        EPWINGDefinition.blacklist = blacklist;
+    }
+
+    public EPWINGDefinition(Result result, SubBook book, DefSource source)throws EBException
     {
         this.book = book;
+        this.source = source;
         id = result.getTextPosition();//guaranteed to be unique within book at least
         
         Hook hook = new EpwingAdapter(book, blacklist);
+        result.getText(hook);
         String lines[] = (String[])hook.getObject();
         
         spellings = Japanese.splitJapaneseWriting(lines[0]);
         defLines = new String[lines.length - 1];
-        System.arraycopy(lines, 0, defLines, 1, defLines.length);
+        System.arraycopy(lines, 1, defLines, 0, defLines.length);
     }
     @Override
     public String getFurigana()
@@ -61,9 +74,9 @@ public class EPWINGDefinition extends Definition
     }
 
     @Override
-    public int getSourceNum()
+    public DefSource getSource()
     {
-        return 3;//TODO depend on subBook
+        return source;
     }
 
     @Override
@@ -89,5 +102,19 @@ public class EPWINGDefinition extends Definition
         }
         return sb.toString();
     }
-    
+
+    @Override
+    public Set<DefTag> getTags()
+    {
+        return tags;
+    }
+
+    /**
+     * Assign tags to this EPWING definition (can have none by default)
+     * @param tags tags to assign
+     */
+    public void setTags(Set<DefTag> tags)
+    {
+        this.tags = tags;
+    }
 }

@@ -31,19 +31,19 @@ public class EDICTDefinition extends Definition
     Set<DefTag> tags;
     
     private boolean showReading = true;
-    private final int sourceNum;
+    private final DefSource source;
     private int ID;
     
     //String[] meaningArr;
     String meaning;
     
     private static final Pattern FIND_TAGS = Pattern.compile("\\((.*?)\\)");//regex vodoo magic
-    public EDICTDefinition(String line, int sourceNum)
+    public EDICTDefinition(String line, DefSource source)
     {
         //parses EDICT2 definition lines
         //TODO deal with that (P) thing at the end properly (currently using workarounds)
         tags = new HashSet<>();
-        this.sourceNum = sourceNum;
+        this.source = source;
         
         String bits[] = line.split("/");
         String[] meaningArr = new String[bits.length - 2];
@@ -128,11 +128,10 @@ public class EDICTDefinition extends Definition
     }
 
     @Override
-    public int getSourceNum()
+    public DefSource getSource()
     {
-        return sourceNum;
+        return source;
     }
-    
     
     @Override
     public Set<DefTag> getTags()

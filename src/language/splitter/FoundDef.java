@@ -17,14 +17,13 @@
 package language.splitter;
 
 import language.deconjugator.ValidWord;
+import language.deconjugator.WordScanner;
 import language.dictionary.*;
 import ui.TextStream;
 import ui.UI;
 
 import java.awt.*;
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.Set;
+import java.util.*;
 
 import static ui.UI.options;
 
@@ -39,6 +38,8 @@ public class FoundDef implements Comparable<FoundDef>
     
     private int defLines = 0;
     private int startLine = 0;
+
+    private int score = Integer.MIN_VALUE;
     
     
     public FoundDef(ValidWord foundForm, Definition foundDef)
@@ -51,10 +52,13 @@ public class FoundDef implements Comparable<FoundDef>
     public void render(Graphics g, int xPos, int maxWidth, int y)
     {
         g.setColor(new Color(0,0,0,1));
-        g.fillRect(xPos, y, maxWidth, 1);//let mouse move thorugh 1 pixel space
+        g.fillRect(xPos, y, maxWidth, 1);//let mouse move through 1 pixel space
         y++;//slight spacer
         if(!options.getOptionBool("defsShowUpwards"))y -= g.getFontMetrics().getHeight() * 1;
         defLines = 0;//will be recounted
+
+        //output source name TODO custom color for this
+        y = renderText(g, options.getColor("defReadingCol"), options.getColor("defBackCol"), xPos, y, foundDef.getSource().getName(), maxWidth);
 
         //output original form if processed
         if(!foundForm.getProcess().equals(""))y = renderText(g, options.getColor("defReadingCol"), options.getColor("defBackCol"), xPos, y, foundForm.toString(), maxWidth);
@@ -158,10 +162,9 @@ public class FoundDef implements Comparable<FoundDef>
         g.fillRect (x, y - font.getAscent() + (options.getOptionBool("defsShowUpwards")?0:font.getHeight() - 1), width,1);//add a dim line here so scrolling still works
 
         //capture if in this
-        //TODO account for upward defs in capture
-        if(capturePoint == -1 || (options.getOptionBool("defsShowUpwards")?
+        if(capturePoint <= -1 || (options.getOptionBool("defsShowUpwards")?
              (capturePoint <= startY - font.getHeight() + font.getDescent() && capturePoint > y - font.getHeight() + font.getDescent()):
-             (capturePoint > startY - font.getHeight() + font.getDescent() && capturePoint <= y - font.getHeight() + font.getDescent())))
+             (capturePoint > startY + font.getDescent() && capturePoint <= y + font.getDescent())))
         {
             //TODO allow export with HTML color info perhaps?
             if(capture.equals(""))
@@ -202,14 +205,13 @@ public class FoundDef implements Comparable<FoundDef>
     {
         return foundDef;
     }
-    
-    public int getScore() {
+
+    private int genScore()
+    {
         int score = 0;
 
-        if (foundDef.getSourceNum() == 1) score += 100;//prefer user added defs
+        score += foundDef.getSource().getPriority() * 100;
         if (UI.prefDef.isPreferred(foundDef)) score += 1000;//HIGHLY favour definitions the user preferred
-
-        if(foundDef.getSourceNum() == KanjiDefinition.SOURCENUM)score -= 500;//Kanji at back
 
         Set<DefTag> tags = foundDef.getTags();
         if (tags != null)
@@ -233,12 +235,22 @@ public class FoundDef implements Comparable<FoundDef>
         //System.out.println("score for " + foundDef + " is " + score);
         return score;
     }
+    
+    public int getScore()
+    {
+        if(score == Integer.MIN_VALUE)score = genScore();
+        return score;
+    }
 
     @Override
     public int compareTo(FoundDef o)
     {
         return o.getScore() - getScore();
     }
-    
-    
+
+
+    public ValidWord getFoundForm()
+    {
+        return foundForm;
+    }
 }

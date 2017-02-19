@@ -16,6 +16,13 @@
  */
 package language.dictionary;
 
+import language.deconjugator.ValidWord;
+import language.deconjugator.WordScanner;
+import language.splitter.FoundDef;
+import language.splitter.FoundWord;
+
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -27,7 +34,7 @@ public abstract class Definition
     public abstract String getFurigana();
     public abstract long getID();
 
-    public abstract int getSourceNum();
+    public abstract DefSource getSource();
     public abstract String[] getSpellings();
     public abstract String[] getMeaning();
     
@@ -50,4 +57,6 @@ public abstract class Definition
         }
         return tagList.trim();
     }
+
+
 }

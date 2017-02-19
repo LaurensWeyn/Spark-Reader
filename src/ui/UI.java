@@ -20,6 +20,7 @@ import hooker.ClipboardHook;
 import hooker.Hook;
 import hooker.Log;
 import language.dictionary.Dictionary;
+import language.dictionary.EPWINGDefinition;
 import language.dictionary.Kanji;
 import language.splitter.FoundWord;
 import language.splitter.WordSplitter;
@@ -98,36 +99,22 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     public static Options options;
     
     public static int optionsButtonWidth = 10;
-    
-
-    
     public static boolean renderBackground = true;
-    
     public static boolean tempIgnoreMouseExit = false;
 
-    
     public void loadDictionaries()
     {
         try
         {
-            dict = new Dictionary();//clear old defs if needed
-            loadDictionary("customDictPath", "UTF-8", 1);
-            loadDictionary("edictPath", "EUC-JP", 2);
-            Kanji.load(new File(options.getOption("kanjiPath")), options.getOptionBool("addKanjiAsDef")?dict:null);
+            Set<Character> blacklist = new HashSet<>();
+            blacklist.add('・');
+            EPWINGDefinition.setBlacklist(blacklist);
+
+            dict = new Dictionary(new File(options.getOption("dictionaryPath")));
             System.out.println("loaded dictionaries");
         }catch(IOException e)
         {
             JOptionPane.showMessageDialog(disp.getFrame(), "Error loading dictionaries: " + e, "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-    public void loadDictionary(String option, String encoding, int source)
-    {
-        try
-        {
-            dict.loadEdict(new File(options.getOption(option)), encoding, source);
-        }catch(IOException e)
-        {
-            JOptionPane.showMessageDialog(disp.getFrame(), "Error loading dictionary from " + option + ": " + e, "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
     public UI()
@@ -187,8 +174,8 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         else
         {
             textStartY = furiHeight + furiganaStartY;
-            textEndY = textStartY + lineHeight * lines.size();
-            defStartY = textEndY - furiHeight;
+            textEndY = textStartY + lineHeight * lines.size() - furiHeight;
+            defStartY = textEndY;
         }
 
 

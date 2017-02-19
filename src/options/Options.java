@@ -66,6 +66,7 @@ public class Options implements Cloneable
         
         
         options.put("edictPath", "dictionaries/edict2");
+        options.put("dictionaryPath", "dictionaries/");
         options.put("customDictPath", "dictionaries/customDict.txt");
         options.put("kanjiPath", "dictionaries/kanji.txt");
         options.put("ankiExportPath", "forAnki.csv");

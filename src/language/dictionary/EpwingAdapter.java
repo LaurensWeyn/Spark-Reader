@@ -14,6 +14,7 @@ import fuku.eb4j.util.HexUtil;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -24,7 +25,7 @@ public class EpwingAdapter extends HookAdapter<String[]>
 {
 
     private int maxLine;
-    ArrayList<String> defLines;
+    List<String> defLines = new ArrayList<>();
     /**
      * half/full width character mode
      */
@@ -144,6 +145,10 @@ public class EpwingAdapter extends HookAdapter<String[]>
                         break;
                     case 0xB667:
                         str =  "Romaji: ";
+                        break;
+                    case 0xB23D://weird start quote that's never closed
+                    case 0xB66B://weird half-book thing
+                        str = "";//ignore these
                         break;
                     default:
                         str = "[UNKNOWN CHAR 0x" + HexUtil.toHexString(code) + "]";

@@ -18,12 +18,10 @@ package language.splitter;
 
 import language.deconjugator.ValidWord;
 import language.deconjugator.WordScanner;
-import language.dictionary.DefTag;
-import language.dictionary.Definition;
+import language.dictionary.*;
 import language.dictionary.Dictionary;
 
-import java.util.ArrayList;
-import java.util.SortedSet;
+import java.util.*;
 
 /**
  * Takes in text and splits it into individual words
@@ -37,81 +35,101 @@ public class WordSplitter
     {
         this.dict = dict;
     }
-    public ArrayList<FoundWord> split(String text)
+    public static void recalcPositions(List<FoundWord> words)
     {
-        return split(0, text);
-    }
-    public ArrayList<FoundWord> split(int off, String text)
-    {
-        //Can we do better than O(N^2)? Probably not needed but would be nice.
-        //TODO: optimisations like give up on grammar
-        
-        ArrayList<FoundWord> words = new ArrayList<>();
-        int pos = 0;
-        int len = 0;
-        FoundWord bestWord = new FoundWord("", null, 0);
-        while(pos < text.length())
+        int x = 0;
+        for(FoundWord word:words)
         {
-            try
+            word.setStartX(x);
+            x = word.endX();
+        }
+    }
+    private List<FoundWord> splitSection(String text, boolean firstSection)
+    {
+        ArrayList<FoundWord> words = new ArrayList<>();
+        int start = 0;
+        //until we've covered all words
+        while(start < text.length())
+        {
+            int pos = text.length();
+            FoundWord matchedWord = null;
+            //until we've tried all lengths and failed
+            while(pos > start)
             {
-                WordScanner word = new WordScanner(text.substring(pos, pos + len));//may crash (in which case, decide the winner)
-                FoundWord foundWord = new FoundWord(word.getWord(), pos + off);//prototype definition
-                for(ValidWord match:word.getMatches())//for each possible conjugation...
+                WordScanner word = new WordScanner(text.substring(start, pos));//deconjugate
+                matchedWord = new FoundWord(word.getWord());//prototype definition
+                attachDefinitions(matchedWord, word);//add cached definitions
+                //attachEpwingDefinitions(matchedWord, word);//add epwing definitions
+
+                if(matchedWord.getDefinitionCount() == 0)
                 {
-                    ArrayList<Definition> defs = dict.find(match.getWord());
-                    if(defs != null)for(Definition def:defs)//for each possible definition...
-                    {
-                        //System.out.println("found def " + def);
-                        //check if it meets the tag requirements of this conjugation
-                        if(match.defMatches(def))
-                        {
-                            //System.out.println("REQUIREMENTS MET");
-                            foundWord.addDefinition(new FoundDef(match, def));//add the definition and how we got the form for it
-                        }
-                    }
+                    matchedWord = null;
+                    pos--;//try shorter word
                 }
-                foundWord.sortDefs();//sort newly found definitions
-                
-                //a word is better if it's longer and has a definition
-                if(foundWord.getText().length() >= bestWord.getText().length() && foundWord.getDefinitionCount() != 0)
+                else//found a word
                 {
-                    bestWord = foundWord;
-                }
-            }catch(StringIndexOutOfBoundsException e)
-            {
-                len = 0;
-                pos += bestWord.getText().length();//skip ahead
-                if(bestWord.getText().length() == 0)//didn't find it
-                {
-                    words.add(new FoundWord(text.charAt(pos) + "", null, pos + off));//add it as a single character "word"
-                    pos++;//skip this letter, not important
-                }
-                else
-                {
-                    words.add(bestWord);//only add actual definitions
-                    bestWord = new FoundWord("", null, 0);//reset
+                    start = pos;//start next definition from here
+                    break;//stop searching and add this word
                 }
             }
-            len++;
+            if(matchedWord == null)//if we failed
+            {
+                words.add(new FoundWord(text.charAt(start) + ""));//add the character as an 'unknown word'
+                start++;
+            }
+            else words.add(matchedWord);
+
+            firstSection = false;
         }
         return words;
     }
-    public ArrayList<FoundWord> split(String text, SortedSet<Integer> breaks)
+
+    private void attachDefinitions(FoundWord word, WordScanner conjugations)
+    {
+        for(ValidWord match:conjugations.getMatches())//for each possible conjugation...
+        {
+            List<Definition> defs = dict.find(match.getWord());
+            if(defs != null)for(Definition def:defs)//for each possible definition...
+            {
+                //check if it meets the tag requirements of this conjugation
+                if(match.defMatches(def))
+                {
+                    word.addDefinition(new FoundDef(match, def));//add the definition and how we got the form for it
+                }
+            }
+        }
+    }
+
+
+    public List<FoundWord> split(String text, Set<Integer> breaks)
     {
         ArrayList<FoundWord> words = new ArrayList<>();
-        int lastPos = 0;
-        
-        for(Integer pos:breaks)
+        int pos = 0;
+        int start = 0;
+        while(pos < text.length())
         {
-            String substr = text.substring(lastPos, pos);
-            words.addAll(split(lastPos, substr));
-            lastPos = pos;
+            if(breaks.contains(pos))
+            {
+                String section = text.substring(start, pos);
+                words.addAll(splitSection(section, true));
+                start = pos;
+            }
+            else if(!Japanese.isJapaneseWriting(text.charAt(pos)))
+            {
+                String section = text.substring(start, pos);
+                words.addAll(splitSection(section, false));
+                words.add(new FoundWord(text.charAt(pos) + ""));
+                pos++;//skip over grammar
+                start = pos;
+            }
+            pos++;
         }
-        if(lastPos != text.length())
-        {
-            String substr = text.substring(lastPos, text.length());
-            words.addAll(split(lastPos, substr));
-        }
+        recalcPositions(words);
         return words;
+    }
+
+    public static void main(String[] args)
+    {
+        new WordSplitter(null).split("こんにちは、世界！", new HashSet<>());
     }
 }

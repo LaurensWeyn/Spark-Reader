@@ -83,9 +83,11 @@ public class ValidWord
     {
 
         if(def.getTags() == null && getNeededTags().isEmpty())return true;//still accept if no tags needed
+        else if (def.getTags() == null)return false;//does not have needed tags
+
         for(DefTag needed:getNeededTags())
         {
-            if(!def.getTags().contains(needed) && !getImpliedTags().contains(needed))
+            if(!def.getTags().contains(needed) &&!getImpliedTags().contains(needed))
             {
                 return false;
             }

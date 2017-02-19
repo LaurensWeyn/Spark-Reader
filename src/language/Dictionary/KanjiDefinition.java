@@ -9,13 +9,16 @@ import java.util.regex.Pattern;
 public class KanjiDefinition extends Definition
 {
     public static final int SOURCENUM = 5;
+    private final DefSource source;
     String spellings[];
     String meanings[];
     String constituents;
     private static final Pattern stripHTML = Pattern.compile("<(?:.|\\n)*?>");
-    int id;
-    public KanjiDefinition(String line)
+    private int id;
+
+    public KanjiDefinition(String line, DefSource source)
     {
+        this.source = source;
         String bits[] = line.split("\t");
         try
         {
@@ -61,9 +64,9 @@ public class KanjiDefinition extends Definition
     }
 
     @Override
-    public int getSourceNum()
+    public DefSource getSource()
     {
-        return SOURCENUM;
+        return source;
     }
 
     @Override

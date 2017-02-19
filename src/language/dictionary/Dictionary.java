@@ -17,6 +17,7 @@
 package language.dictionary;
 
 import fuku.eb4j.*;
+import ui.UI;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -35,17 +36,60 @@ public class Dictionary
     private HashMap<String, ArrayList<Definition>> lookup;
     //can query for words
     private List<SubBook> books;
+    public static final DefSource EPWING_SOURCE = new DefSource(-1, "Epwing");
 
     public Dictionary()throws IOException
     {
         lookup = new HashMap<>();
         books = new ArrayList<>();
     }
+    public Dictionary(File dictFolder)throws IOException
+    {
+        this();
+        loadDirectory(dictFolder);
+    }
+    public void loadDirectory(File dictFolder)throws IOException
+    {
+        File[] fileList = dictFolder.listFiles();
+        if(fileList == null)throw new IOException(dictFolder + " not a valid directory");
+        for(File file:fileList)
+        {
+            if(file.isDirectory())
+            {
+                try
+                {
+                    //perhaps it's an epwing dictionary
+                    loadEpwing(file);
+                }catch(EBException ignored)
+                {
+                    //failed, try load subdirectory
+                    loadDirectory(file);
+                }
+            }
+            else if(file.getName().equals("kanji.txt"))
+            {
+                Kanji.load(file, UI.options.getOptionBool("addKanjiAsDef")?this:null, new DefSource(-5, "Kanji deck"));
+            }
+            else if(file.getName().equalsIgnoreCase("edict2"))
+            {
+                //edict file encoding
+                loadEdict(file, "EUC-JP", new DefSource(0, "Edict"));
+            }
+            else if(file.getName().endsWith(".txt"))
+            {
+                //UTF-8 dictionary
+                loadEdict(file, "UTF-8", new DefSource(1, "Custom"));
+            }
+
+
+
+        }
+    }
     public void loadEpwing(File file)throws EBException
     {
         books.addAll(Arrays.asList(new Book(file).getSubBooks()));
     }
-    public void loadEdict(File file, String encoding, int sourceNum)throws IOException
+    public void loadEdict(File file, String encoding, DefSource source)throws IOException
     {
         FileInputStream is = new FileInputStream(file);
         InputStreamReader isr = new InputStreamReader(is, Charset.forName(encoding));
@@ -55,7 +99,7 @@ public class Dictionary
         while(line != null)
         {
             //generate definition
-            Definition def = new EDICTDefinition(line, sourceNum);
+            Definition def = new EDICTDefinition(line, source);
             for(String spelling:def.getSpellings())//for each possible spelling...
             {
                 //create if it doesn't exist
@@ -90,7 +134,7 @@ public class Dictionary
                 Result result = search.getNextResult();
                 while(result != null)
                 {
-                    defs.add(new EPWINGDefinition(result, book));
+                    defs.add(new EPWINGDefinition(result, book, EPWING_SOURCE));
                     result = search.getNextResult();
                 }
             }catch(EBException ignored){}

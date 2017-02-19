@@ -59,7 +59,7 @@ public class WordSplitter
                 WordScanner word = new WordScanner(text.substring(start, pos));//deconjugate
                 matchedWord = new FoundWord(word.getWord());//prototype definition
                 attachDefinitions(matchedWord, word);//add cached definitions
-                attachEpwingDefinitions(matchedWord, word);//add epwing definitions
+                //attachEpwingDefinitions(matchedWord, word);//add epwing definitions
 
                 if(matchedWord.getDefinitionCount() == 0)
                 {
@@ -75,11 +75,11 @@ public class WordSplitter
             if(matchedWord == null)//if we failed
             {
                 words.add(new FoundWord(text.charAt(start) + ""));//add the character as an 'unknown word'
-                firstSection = false;
                 start++;
             }
             else words.add(matchedWord);
 
+            firstSection = false;
         }
         return words;
     }
@@ -99,35 +99,10 @@ public class WordSplitter
             }
         }
     }
-    private void attachEpwingDefinitions(FoundWord word, WordScanner conjugations)
-    {
-        //build a list of all known valid tags
-        Set<DefTag> knownTags = new HashSet<>();
-        if(word.getFoundDefs() != null)for(FoundDef foundDef:word.getFoundDefs())
-        {
-            Set<DefTag> tags = foundDef.getDefinition().getTags();
-            if(tags != null)knownTags.addAll(tags);
-        }
-        for(ValidWord match:conjugations.getMatches())//for each possible conjugation...
-        {
-            List<EPWINGDefinition> defs = dict.findEpwing(match.getWord());
-            if(defs != null)for(EPWINGDefinition def:defs)//for each possible definition...
-            {
-                def.setTags(knownTags);//set all valid tags for matching
-                //check if it meets the tag requirements of this conjugation
-                if(match.defMatches(def))
-                {
-                    //TODO let user decide on tag list?
-                    def.setTags(match.getNeededTags());//set tag list to needed tags for user's info
-                    word.addDefinition(new FoundDef(match, def));//add the definition and how we got the form for it
-                }
-            }
-        }
-    }
+
 
     public List<FoundWord> split(String text, Set<Integer> breaks)
     {
-        System.out.println("reflow, breaks " + breaks);
         ArrayList<FoundWord> words = new ArrayList<>();
         int pos = 0;
         int start = 0;
