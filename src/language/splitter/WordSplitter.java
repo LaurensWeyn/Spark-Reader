@@ -20,7 +20,6 @@ import language.deconjugator.ValidWord;
 import language.deconjugator.WordScanner;
 import language.dictionary.*;
 import language.dictionary.Dictionary;
-
 import java.util.*;
 
 /**
@@ -59,7 +58,17 @@ public class WordSplitter
                 WordScanner word = new WordScanner(text.substring(start, pos));//deconjugate
                 matchedWord = new FoundWord(word.getWord());//prototype definition
                 attachDefinitions(matchedWord, word);//add cached definitions
-                //attachEpwingDefinitions(matchedWord, word);//add epwing definitions
+
+                //override: match more words than usual
+                if(matchedWord.getDefinitionCount() == 0 && firstSection)
+                {
+                    //if found in an EPWING dictionary
+                    if(!dict.findEpwing(word.getWord()).isEmpty())
+                    {
+                        start = pos;//start next definition from here
+                        break;//stop searching and add this word
+                    }
+                }
 
                 if(matchedWord.getDefinitionCount() == 0)
                 {

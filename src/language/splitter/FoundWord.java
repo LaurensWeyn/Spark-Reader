@@ -122,18 +122,19 @@ public class FoundWord
         g.fillRect (startPos + 1,yOff + UI.textStartY, width - 2, g.getFontMetrics().getHeight());//set to new color
         g.setColor(options.getColor("textCol"));
         g.drawString(text, startPos, yOff + UI.textStartY + g.getFontMetrics().getMaxAscent());
-        
+
+        if(showDef && !hasOpened)
+        {
+            attachEpwingDefinitions(UI.dict);//load these in only when needed
+            //sortDefs();//TODO put EPWING defs somewhere in sort order
+            hasOpened = true;
+        }
+
         //find furigana
         if(definitions == null)return;//don't bother rendering furigana/defs if we don't know it
         String furiText = "";
         if(showDef)
         {
-            if(!hasOpened)
-            {
-                attachEpwingDefinitions(UI.dict);//load these in only when needed
-                //sortDefs();//TODO put EPWING defs somewhere in sort order
-                hasOpened = true;
-            }
             furiText = (currentDef + 1) + "/" + definitions.size();
         }
         else if(showFurigana(known))
@@ -286,7 +287,14 @@ public class FoundWord
         }
 
         //find plain form word as well
-        //TODO finish this if the above is working
-        //if(!alreadyQueried.contains(text))
+        if(!alreadyQueried.contains(text))
+        {
+            List<EPWINGDefinition> extraDefs = dict.findEpwing(text);
+            for(EPWINGDefinition extraDef:extraDefs)
+            {
+                addDefinition(new FoundDef(new ValidWord(text, ""), extraDef));
+            }
+        }
+        //TODO search for other forms (kana etc.)
     }
 }
