@@ -122,6 +122,19 @@ public class Dictionary
         //System.out.println("looking up " + word);
         return lookup.get(word);
     }
+    public boolean hasEpwingDef(String word)
+    {
+        for(SubBook book:books)
+        {
+            try
+            {
+                Searcher search = book.searchExactword(word);
+                Result result = search.getNextResult();
+                if(result != null)return true;
+            }catch(EBException ignored){}
+        }
+        return false;
+    }
 
     public List<EPWINGDefinition> findEpwing(String word)
     {

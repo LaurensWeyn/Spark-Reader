@@ -24,7 +24,7 @@ public interface Hook
 {
     /**
      * Check for new text from this hook
-     * @return a new line of text if something has changed, otherwize null
+     * @return a new line of text if something has changed, otherwise null
      */
     String check();
 }

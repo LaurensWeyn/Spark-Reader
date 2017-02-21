@@ -62,7 +62,7 @@ public class WordSplitter
                 if(matchedWord.getDefinitionCount() == 0 && firstSection)
                 {
                     //if found in an EPWING dictionary
-                    if(!dict.findEpwing(word.getWord()).isEmpty())
+                    if(!dict.hasEpwingDef(word.getWord()))
                     {
                         start = pos;//start next definition from here
                         break;//stop searching and add this word
@@ -136,7 +136,6 @@ public class WordSplitter
         if(pos > start && pos <= text.length())
         {
             String section = text.substring(start, pos);
-            System.out.println("final section " + section);
             words.addAll(splitSection(section, breaks.contains(start)));
         }
         recalcPositions(words);
