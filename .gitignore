@@ -1,6 +1,5 @@
 /build/
 /dist/
-Spark Reader.iml
 Spark Reader.jar
 forAnki.csv
 dictionaries/kanji.txt
@@ -10,6 +9,5 @@ out/
 /screenshots/
 /savedLines.csv
 nbproject/private/
-src/META-INF/
 ~$manual.docx
 /dictionaries/Kenkyusha_Waei_Daijiten_V5/

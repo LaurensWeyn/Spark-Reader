@@ -82,9 +82,9 @@ public class EPWINGDefinition extends Definition
     {
         for(String spelling:spellings)
         {
-            if(Japanese.hasKana(spelling))return spelling;
+            if(!Japanese.hasKanji(spelling))return spelling;
         }
-        return "";//TODO or is it null?
+        return "";
     }
 
     @Override

@@ -131,21 +131,20 @@ public class EpwingAdapter extends HookAdapter<String[]>
                         str = "ū";
                         break;
                     default:
-                        System.out.println("Epwing adapter: unknown character " + HexUtil.toHexString(code));
+                        System.out.println("Epwing adapter: unknown half width character " + HexUtil.toHexString(code));
                         str = "?";
                         break;
                 }
             }
-        } else
+        }
+        else
         {
             if (appendix != null)
             {
                 try
                 {
                     str = appendix.getWideFontAlt(code);
-                } catch (EBException e)
-                {
-                }
+                } catch (EBException ignored){}
             }
             if (StringUtils.isBlank(str))
             {
@@ -164,7 +163,8 @@ public class EpwingAdapter extends HookAdapter<String[]>
                         str = "";//ignore these
                         break;
                     default:
-                        str = "[UNKNOWN CHAR 0x" + HexUtil.toHexString(code) + "]";
+                        System.out.println("Epwing adapter: unknown full width character " + HexUtil.toHexString(code));
+                        str = "?";
                         break;
                 }
             }

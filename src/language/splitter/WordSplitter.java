@@ -120,7 +120,7 @@ public class WordSplitter
             if(breaks.contains(pos))
             {
                 String section = text.substring(start, pos);
-                words.addAll(splitSection(section, false));
+                words.addAll(splitSection(section, breaks.contains(start)));
                 start = pos;
             }
             else if(!Japanese.isJapaneseWriting(text.charAt(pos)))
