@@ -22,6 +22,8 @@ import language.dictionary.*;
 import language.dictionary.Dictionary;
 import java.util.*;
 
+import ui.UI;
+
 /**
  * Takes in text and splits it into individual words
  * @author Laurens Weyn
@@ -88,6 +90,13 @@ public class WordSplitter
             else words.add(matchedWord);
 
             firstSection = false;
+        }
+
+        // if automatically parsing is disabled and we think there's more than one automatically parsed word, return the original string as a single word
+        if(!UI.options.getOptionBool("automaticallyParse") && words.size() != 1)
+        {
+            words.clear();
+            words.add(new FoundWord(text + ""));
         }
         return words;
     }

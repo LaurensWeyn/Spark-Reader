@@ -104,7 +104,7 @@ public class Options implements Cloneable
         options.put("lineExportPath", "savedLines.csv");
         options.put("screenshotExportPath", "screenshots/");
         options.put("fullscreenScreenshot", "false");
-
+        options.put("automaticallyParse", "true");
 
     }
     public Options(File file)throws IOException

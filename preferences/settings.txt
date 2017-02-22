@@ -85,3 +85,5 @@ fullscreenScreenshot = false
 commentOnExportLine = true
 defsShowUpwards = false
 expectedLineCount = 4
+dictionaryPath = dictionaries/
+automaticallyParse = true
