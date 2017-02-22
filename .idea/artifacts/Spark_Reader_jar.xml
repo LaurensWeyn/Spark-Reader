@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="Spark Reader:jar">
+  <artifact type="jar" build-on-make="true" name="Spark Reader:jar">
     <output-path>$PROJECT_DIR$/</output-path>
     <root id="archive" name="Spark Reader.jar">
       <element id="module-output" name="Spark Reader" />
