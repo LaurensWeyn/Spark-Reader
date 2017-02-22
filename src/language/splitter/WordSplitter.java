@@ -62,7 +62,7 @@ public class WordSplitter
                 if(matchedWord.getDefinitionCount() == 0 && firstSection)
                 {
                     //if found in an EPWING dictionary
-                    if(!dict.hasEpwingDef(word.getWord()))
+                    if(dict.hasEpwingDef(word.getWord()))
                     {
                         start = pos;//start next definition from here
                         break;//stop searching and add this word
