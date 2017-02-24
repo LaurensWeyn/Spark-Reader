@@ -29,23 +29,29 @@ import java.util.Set;
  */
 public class ValidWord
 {
-    private String word;
+    private String word, originalWord;
     private Set<DefTag> neededTags, impliedTags;
     private String process;
 
-    public ValidWord(String word, Set<DefTag> neededTags, Set<DefTag> impliedTags, String process)
+    public ValidWord(String originalWord, String word, Set<DefTag> neededTags, Set<DefTag> impliedTags, String process)
     {
+        this.originalWord = originalWord;
         this.word = word;
         this.neededTags = neededTags;
         this.impliedTags = impliedTags;
         this.process = process.trim();
-        if(process.contains("i stem"))
-        {
-            neededTags.remove(DefTag.v5s);//"su" ending not needed anymore (note: su ending i stem seceretly doesn't produce exactly "i stem")
-        }
+    }
+    public ValidWord(String word, Set<DefTag> neededTags, Set<DefTag> impliedTags, String process)
+    {
+        this.originalWord = word;
+        this.word = word;
+        this.neededTags = neededTags;
+        this.impliedTags = impliedTags;
+        this.process = process.trim();
     }
     public ValidWord(String word, DefTag neededTag, String process)
     {
+        this.originalWord = word;
         this.word = word;
         neededTags = new HashSet<>();
         impliedTags = new HashSet<>();
@@ -54,10 +60,15 @@ public class ValidWord
     }
     public ValidWord(String word, String process)
     {
+        this.originalWord = word;
         this.word = word;
         neededTags = new HashSet<>();
         impliedTags = new HashSet<>();
         this.process = process;
+    }
+    public String getOriginalWord()
+    {
+        return originalWord;
     }
     public String getWord()
     {
@@ -87,8 +98,15 @@ public class ValidWord
 
         for(DefTag needed:getNeededTags())
         {
-            if(!def.getTags().contains(needed) &&!getImpliedTags().contains(needed))
+            if(!def.getTags().contains(needed) && !getImpliedTags().contains(needed) && !needed.toString().equals(""))
             {
+                /*
+                System.out.println("Tag mismatch");
+                System.out.println("Definition: " + def.getFurigana());
+                System.out.println("Inherent: " + def.getTags());
+                System.out.println("Implied: " + getImpliedTags());
+                System.out.println("Needed: " + needed);
+                */
                 return false;
             }
         }
@@ -103,7 +121,15 @@ public class ValidWord
     @Override
     public String toString()
     {
-        return word + "(" + process + ")";
+        // hide non-freestanding weak forms and remove parens from freestanding ones
+        String temp = process;
+        if(temp.startsWith("("))
+        {
+            temp = temp.replaceFirst("[(]", "");
+            temp = temp.replaceFirst("[)]", "");
+        }
+        temp = temp.replaceAll("[(].*?[)]", "");
+        return word + "―" + temp;
     }
     
     

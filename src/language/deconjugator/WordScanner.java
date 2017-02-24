@@ -42,225 +42,209 @@ public class WordScanner
             {
                 return new ValidWord(hiragana, "hiragana");
             }
-            else return null;
+            else
+            {
+                return null;
+            }
         });
-
-        //entire Japanese deconjugation lookup table
-        //see http://www.wikiwand.com/en/Japanese_verb_conjugation
-
-        //conditional/past conditional (ra) (+ba for formal) (adds on to past, must come before)
-        ruleList.add(new StdRule("ったら", "った", "conditional", DefTag.v5u));
-        ruleList.add(new StdRule("ったらば", "った", "conditional-formal", DefTag.v5u));
-        ruleList.add(new StdRule("いたら", "いた", "conditional", DefTag.v5k));
-        ruleList.add(new StdRule("いたらば", "いた", "conditional-formal", DefTag.v5k));
-        ruleList.add(new StdRule("いだら", "いだ", "conditional", DefTag.v5g));
-        ruleList.add(new StdRule("いだらば", "いだ", "conditional-formal", DefTag.v5g));
-        ruleList.add(new StdRule("したら", "した", "conditional", DefTag.v5s));
-        ruleList.add(new StdRule("したらば", "した", "conditional-formal", DefTag.v5s));
-        ruleList.add(new StdRule("ったら", "った", "conditional", DefTag.v5t));
-        ruleList.add(new StdRule("ったらば", "った", "conditional-formal", DefTag.v5t));
-        ruleList.add(new StdRule("んだら", "んだ", "conditional", DefTag.v5b));
-        ruleList.add(new StdRule("んだらば", "んだ", "conditional-formal", DefTag.v5b));
-        ruleList.add(new StdRule("んだら", "んだ", "conditional", DefTag.v5n));
-        ruleList.add(new StdRule("んだらば", "んだ", "conditional-formal", DefTag.v5n));
-        ruleList.add(new StdRule("んだら", "んだ", "conditional", DefTag.v5m));
-        ruleList.add(new StdRule("んだらば", "んだ", "conditional-formal", DefTag.v5m));
-        ruleList.add(new StdRule("ったら", "った", "conditional", DefTag.v5r));
-        ruleList.add(new StdRule("ったらば", "った", "conditional-formal", DefTag.v5r));
-
-        ruleList.add(new StdRule("かったら", "かった", "conditional", DefTag.adj_i));//TODO does this work with i adjectives?
-        ruleList.add(new StdRule("かったらば", "かった", "conditional-formal", DefTag.adj_i));//TODO does this work with i adjectives?
-        ruleList.add(new StdRule("たら", "た", "conditional", DefTag.v1));
-        ruleList.add(new StdRule("たらば", "た", "conditional-formal", DefTag.v1));
-
-        //potential (can do verb, can combine with past)
-        //further conjugates like v1
-        ruleList.add(new StdRule("える", "う", "potential", DefTag.v5u, DefTag.v1));
-        ruleList.add(new StdRule("ける", "く", "potential", DefTag.v5k, DefTag.v1));
-        ruleList.add(new StdRule("げる", "ぐ", "potential", DefTag.v5g, DefTag.v1));
-        ruleList.add(new StdRule("せる", "す", "potential", DefTag.v5s, DefTag.v1));
-        ruleList.add(new StdRule("てる", "つ", "potential", DefTag.v5t, DefTag.v1));
-        ruleList.add(new StdRule("べる", "ぶ", "potential", DefTag.v5b, DefTag.v1));
-        ruleList.add(new StdRule("ねる", "ぬ", "potential", DefTag.v5n, DefTag.v1));
-        ruleList.add(new StdRule("める", "む", "potential", DefTag.v5m, DefTag.v1));
-        ruleList.add(new StdRule("れる", "る", "potential", DefTag.v5r, DefTag.v1));
-
-        //past->dict
-        ruleList.add(new StdRule("った", "う", "past", DefTag.v5u));
-        ruleList.add(new StdRule("いた", "く", "past", DefTag.v5k));
-        ruleList.add(new StdRule("いだ", "ぐ", "past", DefTag.v5g));
-        ruleList.add(new StdRule("した", "す", "past", DefTag.v5s));
-        ruleList.add(new StdRule("った", "つ", "past", DefTag.v5t));
-        ruleList.add(new StdRule("んだ", "ぶ", "past", DefTag.v5b));
-        ruleList.add(new StdRule("んだ", "ぬ", "past", DefTag.v5n));
-        ruleList.add(new StdRule("んだ", "む", "past", DefTag.v5m));
-        ruleList.add(new StdRule("った", "る", "past", DefTag.v5r));
-
-        ruleList.add(new StdRule("かった", "い", "past", DefTag.adj_i));
-        ruleList.add(new StdRule("た", "る", "past", DefTag.v1));
-
-        //te->dict
-        ruleList.add(new StdRule("って", "う", "て form", DefTag.v5u));
-        ruleList.add(new StdRule("いて", "く", "て form", DefTag.v5k));
-        ruleList.add(new StdRule("いで", "ぐ", "て form", DefTag.v5g));
-        ruleList.add(new StdRule("して", "す", "て form", DefTag.v5s));
-        ruleList.add(new StdRule("って", "つ", "て form", DefTag.v5t));
-        ruleList.add(new StdRule("んで", "ぶ", "て form", DefTag.v5b));
-        ruleList.add(new StdRule("んで", "ぬ", "て form", DefTag.v5n));
-        ruleList.add(new StdRule("んで", "む", "て form", DefTag.v5m));
-        ruleList.add(new StdRule("って", "る", "て form", DefTag.v5r));
-
-        ruleList.add(new StdRule("くて", "い", "て form", DefTag.adj_i));
-        ruleList.add(new StdRule("て", "る", "て form", DefTag.v1));
-
-        //neg->dict (te form must be done first)
-        //further conjugates like i adjective
-        ruleList.add(new StdRule("わない", "う", "negative", DefTag.v5u, DefTag.adj_i));
-        ruleList.add(new StdRule("かない", "く", "negative", DefTag.v5k, DefTag.adj_i));
-        ruleList.add(new StdRule("がない", "ぐ", "negative", DefTag.v5g, DefTag.adj_i));
-        ruleList.add(new StdRule("さない", "す", "negative", DefTag.v5s, DefTag.adj_i));
-        ruleList.add(new StdRule("たない", "つ", "negative", DefTag.v5t, DefTag.adj_i));
-        ruleList.add(new StdRule("ばない", "ぶ", "negative", DefTag.v5b, DefTag.adj_i));
-        ruleList.add(new StdRule("なない", "ぬ", "negative", DefTag.v5n, DefTag.adj_i));
-        ruleList.add(new StdRule("まない", "む", "negative", DefTag.v5m, DefTag.adj_i));
-        ruleList.add(new StdRule("らない", "る", "negative", DefTag.v5r, DefTag.adj_i));
-
-        ruleList.add(new StdRule("くない", "い", "negative", DefTag.adj_i));
-        ruleList.add(new StdRule("ない", "る", "negative", DefTag.v1, DefTag.adj_i));
-
-        //masu/tai/etc removal (handled after past so that still conjugates, before i stem)
-        //TODO make these only work with verbs (not with gatai!)
-        ruleList.add(new StdRule("ます", "", "polite"));
-        ruleList.add(new StdRule("ません", "", "negative polite"));
-        ruleList.add(new StdRule("たい", "", "want"));
-        ruleList.add(new StdRule("なさい", "", "command"));
-
-        //i stem (polite/tai/etc)
-        ruleList.add(new StdRule("い", "う", "i stem", DefTag.v5u));
-        ruleList.add(new StdRule("き", "く", "i stem", DefTag.v5k));
-        ruleList.add(new StdRule("ぎ", "ぐ", "i stem", DefTag.v5g));
-        ruleList.add(new StdRule("し", "す", "I stem", DefTag.v5s));//note: capital I to stop removal of v5s tag
-        ruleList.add(new StdRule("ち", "つ", "i stem", DefTag.v5t));
-        ruleList.add(new StdRule("に", "ぬ", "i stem", DefTag.v5n));
-        ruleList.add(new StdRule("び", "ぶ", "i stem", DefTag.v5b));
-        ruleList.add(new StdRule("み", "む", "i stem", DefTag.v5m));
-        ruleList.add(new StdRule("り", "る", "i stem", DefTag.v5r));
-
-        ruleList.add(new StdRule("", "る", "i stem", DefTag.v1));
-        //adjective stems moved to bottom to avoid conflict with provisional-conditional
-
-        //adjective conjugations
-        ruleList.add(new StdRule("く", "い", "adverb", DefTag.adj_i));
+        
+        // collapse these at will because they're dumb and long
+        ruleList.add(new StdRule("なければいけない", "", "must", DefTag.stem_a, DefTag.adj_i));
+        ruleList.add(new StdRule("なければならない", "", "must", DefTag.stem_a, DefTag.adj_i));
+        ruleList.add(new StdRule("なくてはいけない", "", "must", DefTag.stem_a, DefTag.adj_i));
+        ruleList.add(new StdRule("なくてはならない", "", "must", DefTag.stem_a, DefTag.adj_i));
+        ruleList.add(new StdRule("なければいけない", "", "must", DefTag.stem_ku, DefTag.adj_i));
+        ruleList.add(new StdRule("なければならない", "", "must", DefTag.stem_ku, DefTag.adj_i));
+        ruleList.add(new StdRule("なくてはいけない", "", "must", DefTag.stem_ku, DefTag.adj_i));
+        ruleList.add(new StdRule("なくてはならない", "", "must", DefTag.stem_ku, DefTag.adj_i));
+        
+        ruleList.add(new StdRule("たい", "", "want", DefTag.stem_ren, DefTag.adj_i));
+        ruleList.add(new StdRule("ください", "", "polite request", DefTag.stem_te, DefTag.adj_i));
+        
+        // te form
+        // verbs
+        ruleList.add(new StdRule("で", "", "(te form)", DefTag.stem_ren_less_v, DefTag.stem_te));
+        ruleList.add(new StdRule("て", "", "(te form)", DefTag.stem_ren_less, DefTag.stem_te));
+        ruleList.add(new StdRule("て", "", "(te form)", DefTag.stem_ren, DefTag.stem_te)); // formal but real
+        // i-adjectives
+        // i-adjectives have two te forms. One works well with auxiliary verbs (and thus deconjugation), and the other does not.
+        ruleList.add(new StdRule("で", "", "(te form)", DefTag.adj_i, DefTag.stem_te));
+        ruleList.add(new StdRule("て", "", "(te form)", DefTag.stem_ku, DefTag.stem_te_defective));
+        
+        // たら, the generic conditional
+        // verbs
+        ruleList.add(new StdRule("たら", "", "conditional", DefTag.stem_ren_less, DefTag.uninflectable));
+        ruleList.add(new StdRule("たらば", "", "formal conditional", DefTag.stem_ren_less, DefTag.uninflectable));
+        // i-adjectives
+        ruleList.add(new StdRule("だら", "", "conditional", DefTag.stem_ren_less_v, DefTag.uninflectable));
+        ruleList.add(new StdRule("だらば", "", "formal conditional", DefTag.stem_ren_less_v, DefTag.uninflectable));
+        
+        // ば, the provisional conditional
+        // verbs
+        ruleList.add(new StdRule("ば", "", "provisional conditional", DefTag.stem_e, DefTag.uninflectable));
+        // i-adjectives
+        ruleList.add(new StdRule("れば", "", "provisional conditional", DefTag.stem_ke, DefTag.uninflectable));
+        
+        // past
+        // verbs
+        ruleList.add(new StdRule("だ", "", "past", DefTag.stem_ren_less_v, DefTag.uninflectable));
+        ruleList.add(new StdRule("た", "", "past", DefTag.stem_ren_less, DefTag.uninflectable));
+        // i-adjectives
+        ruleList.add(new StdRule("った", "", "past", DefTag.stem_ka, DefTag.uninflectable));
+        
+        // passive (godan)
+        // pattern: areru
+        
+        // potential (godan)
+        // pattern: eru
+        
+        // passive-potential and potential (ichidan)
+        // passive-potential: rareru; potential: reru
+        
+        // nasai
+        // technically an i-adjective, but again, letting the deconjugator use it like that would cause more problems than it's worth
+        ruleList.add(new StdRule("なさい",         "", "kind request", DefTag.stem_ren, DefTag.uninflectable));
+        ruleList.add(new StdRule("な",         "", "casual kind request", DefTag.stem_ren, DefTag.uninflectable));
+        
+        // ます inflects, but does so entirely irregularly.
+        ruleList.add(new StdRule("ます",         "", "polite", DefTag.stem_ren, DefTag.uninflectable));
+        ruleList.add(new StdRule("ません",       "", "negative polite", DefTag.stem_ren, DefTag.uninflectable));
+        ruleList.add(new StdRule("ました",       "", "past polite", DefTag.stem_ren, DefTag.uninflectable));
+        ruleList.add(new StdRule("ませんでした", "", "past negative polite", DefTag.stem_ren, DefTag.uninflectable));
+        
+        // part-of-speech roles
         ruleList.add(new StdRule("な", "", "adjective", DefTag.adj_na));
         ruleList.add(new StdRule("の", "", "adjective", DefTag.adj_no));
-
-        //potential was here
-
-        //not for adjectives
-        ruleList.add(new StdRule("られる", "る", "potential", DefTag.v1));//normal
-        ruleList.add(new StdRule("らる", "る", "potential", DefTag.v1));//coloquial
-
-        //passive
-        //further conjugates like v1
-        ruleList.add(new StdRule("われる", "う", "passive", DefTag.v5u, DefTag.v1));
-        ruleList.add(new StdRule("かれる", "く", "passive", DefTag.v5k, DefTag.v1));
-        ruleList.add(new StdRule("がれる", "ぐ", "passive", DefTag.v5g, DefTag.v1));
-        ruleList.add(new StdRule("される", "す", "passive", DefTag.v5s, DefTag.v1));
-        ruleList.add(new StdRule("たてる", "つ", "passive", DefTag.v5t, DefTag.v1));
-        ruleList.add(new StdRule("ばれる", "ぶ", "passive", DefTag.v5b, DefTag.v1));
-        ruleList.add(new StdRule("なれる", "ぬ", "passive", DefTag.v5n, DefTag.v1));
-        ruleList.add(new StdRule("まれる", "む", "passive", DefTag.v5m, DefTag.v1));
-        ruleList.add(new StdRule("られる", "る", "passive", DefTag.v5r, DefTag.v1));
-
-        //not for adjectives
-        ruleList.add(new StdRule("られる", "る", "passive", DefTag.v1));
-
-
-        //causative
-
-        //causative passive (colloquial version, add polite later?)
-
-
-        //-eba form (provisional conditional)
-        ruleList.add(new StdRule("えば", "う", "provisional-conditional", DefTag.v5u));
-        ruleList.add(new StdRule("けば", "く", "provisional-conditional", DefTag.v5k));
-        ruleList.add(new StdRule("げば", "ぐ", "provisional-conditional", DefTag.v5g));
-        ruleList.add(new StdRule("せば", "す", "provisional-conditional", DefTag.v5s));
-        ruleList.add(new StdRule("てば", "つ", "provisional-conditional", DefTag.v5t));
-        ruleList.add(new StdRule("べば", "ぶ", "provisional-conditional", DefTag.v5b));
-        ruleList.add(new StdRule("ねば", "ぬ", "provisional-conditional", DefTag.v5n));
-        ruleList.add(new StdRule("めば", "む", "provisional-conditional", DefTag.v5m));
-        ruleList.add(new StdRule("れば", "る", "provisional-conditional", DefTag.v5r));
-        ruleList.add(new StdRule("れば", "る", "provisional-conditional", DefTag.v5r_i));
-
-        ruleList.add(new StdRule("くない", "い", "provisional-conditional", DefTag.adj_i));
-        ruleList.add(new StdRule("なければ", "ない", "provisional-conditional", DefTag.aux_adj));
-        ruleList.add(new StdRule("れば", "る", "provisional-conditional", DefTag.v1));
-
-
-        //imperative (for orders)
-        ruleList.add(new StdRule("え", "う", "imperative", DefTag.v5u));
-        ruleList.add(new StdRule("け", "く", "imperative", DefTag.v5k));
-        ruleList.add(new StdRule("げ", "ぐ", "imperative", DefTag.v5g));
-        ruleList.add(new StdRule("せ", "す", "imperative", DefTag.v5s));
-        ruleList.add(new StdRule("て", "つ", "imperative", DefTag.v5t));
-        ruleList.add(new StdRule("べ", "ぶ", "imperative", DefTag.v5b));
-        ruleList.add(new StdRule("ね", "ぬ", "imperative", DefTag.v5n));
-        ruleList.add(new StdRule("め", "む", "imperative", DefTag.v5m));
-        ruleList.add(new StdRule("れ", "る", "imperative", DefTag.v5r));
-        ruleList.add(new StdRule("れ", "る", "imperative", DefTag.v5r_i));
-
-        //not for i-adj, 4 exist for v1
-        ruleList.add(new StdRule("いろ", "いる", "imperative", DefTag.v1));
-        ruleList.add(new StdRule("いよ", "いる", "imperative", DefTag.v1));
-        ruleList.add(new StdRule("えろ", "える", "imperative", DefTag.v1));
-        ruleList.add(new StdRule("えよ", "える", "imperative", DefTag.v1));
-
-        //volitional (let's)
-        ruleList.add(new StdRule("おう", "う", "volitional", DefTag.v5u));
-        ruleList.add(new StdRule("こう", "く", "volitional", DefTag.v5k));
-        ruleList.add(new StdRule("ごう", "ぐ", "volitional", DefTag.v5g));
-        ruleList.add(new StdRule("そう", "す", "volitional", DefTag.v5s));
-        ruleList.add(new StdRule("とう", "つ", "volitional", DefTag.v5t));
-        ruleList.add(new StdRule("ぼう", "ぶ", "volitional", DefTag.v5b));
-        ruleList.add(new StdRule("のう", "ぬ", "volitional", DefTag.v5n));
-        ruleList.add(new StdRule("もう", "む", "volitional", DefTag.v5m));
-        ruleList.add(new StdRule("ろう", "る", "volitional", DefTag.v5r));
-
-        ruleList.add(new StdRule("かろう", "い", "volitional", DefTag.adj_i));
-        ruleList.add(new StdRule("よう", "る", "volitional", DefTag.v1));
-
-
-        ruleList.add(new StdRule("", "い", "adj 'stem'", DefTag.adj_i));//Try match stem anyways, needed for things like '頼もしげに'
-        //no stem for adjectives, but -sou sort-of uses a stem
-        ruleList.add(new StdRule("そう", "い", "-sou", DefTag.adj_i));
+        
+        // i-adjective stems
+        ruleList.add(new StdRule("く", "い", "(adverb)", DefTag.adj_i, DefTag.stem_ku));
+        ruleList.add(new StdRule("か", "い", "ka stem", DefTag.adj_i, DefTag.stem_ka));
+        ruleList.add(new StdRule("け", "い", "ke stem", DefTag.adj_i, DefTag.stem_ke));
+        ruleList.add(new StdRule("さ", "い", "noun form", DefTag.adj_i, DefTag.n));
+        
+        // negative
+        // verbs
+        ruleList.add(new StdRule("ない", "", "negative", DefTag.stem_a, DefTag.adj_i));
+        // i-adjectives
+        ruleList.add(new StdRule("ない", "", "negative", DefTag.stem_ku, DefTag.adj_i));
+        
+        // potential stem (and stem of some conjunctions)
+        ruleList.add(new StdRule("け", "く", "(izenkei)", DefTag.v5k, DefTag.stem_e));
+        ruleList.add(new StdRule("せ", "す", "(izenkei)", DefTag.v5s, DefTag.stem_e));
+        ruleList.add(new StdRule("て", "つ", "(izenkei)", DefTag.v5t, DefTag.stem_e));
+        ruleList.add(new StdRule("え", "う", "(izenkei)", DefTag.v5u, DefTag.stem_e));
+        ruleList.add(new StdRule("れ", "る", "(izenkei)", DefTag.v5r, DefTag.stem_e));
+        ruleList.add(new StdRule("げ", "ぐ", "(izenkei)", DefTag.v5g, DefTag.stem_e));
+        ruleList.add(new StdRule("べ", "ぶ", "(izenkei)", DefTag.v5b, DefTag.stem_e));
+        ruleList.add(new StdRule("ね", "ぬ", "(izenkei)", DefTag.v5n, DefTag.stem_e));
+        ruleList.add(new StdRule("め", "む", "(izenkei)", DefTag.v5m, DefTag.stem_e));
+        ruleList.add(new StdRule("れ", "る", "(izenkei)", DefTag.v1,  DefTag.stem_e)); // not a copy/paste mistake
+        // marginal categories
+        ruleList.add(new StdRule("え", "う", "(izenkei)", DefTag.v5u_s, DefTag.stem_a));
+        
+        // negative stem (and stem of some conjunctions)
+        ruleList.add(new StdRule("か", "く", "(mizenkei)", DefTag.v5k, DefTag.stem_a));
+        ruleList.add(new StdRule("さ", "す", "(mizenkei)", DefTag.v5s, DefTag.stem_a));
+        ruleList.add(new StdRule("た", "つ", "(mizenkei)", DefTag.v5t, DefTag.stem_a));
+        ruleList.add(new StdRule("わ", "う", "(mizenkei)", DefTag.v5u, DefTag.stem_a));
+        ruleList.add(new StdRule("ら", "る", "(mizenkei)", DefTag.v5r, DefTag.stem_a));
+        ruleList.add(new StdRule("が", "ぐ", "(mizenkei)", DefTag.v5g, DefTag.stem_a));
+        ruleList.add(new StdRule("ば", "ぶ", "(mizenkei)", DefTag.v5b, DefTag.stem_a));
+        ruleList.add(new StdRule("な", "ぬ", "(mizenkei)", DefTag.v5n, DefTag.stem_a));
+        ruleList.add(new StdRule("ま", "む", "(mizenkei)", DefTag.v5m, DefTag.stem_a));
+        // fixme: having multiple conjugations with the same form can make the ui display bogus extra definitions
+        ruleList.add(new StdRule(""  , "る", "(mizenkei)", DefTag.v1,  DefTag.stem_a));
+        // marginal categories
+        ruleList.add(new StdRule("わ", "う", "(mizenkei)", DefTag.v5u_s, DefTag.stem_a));
+        
+        // past stem
+        ruleList.add(new StdRule("い", "く", "(other infinitive)", DefTag.v5k, DefTag.stem_ren_less));
+        ruleList.add(new StdRule("し", "す", "(other infinitive)", DefTag.v5s, DefTag.stem_ren_less));
+        ruleList.add(new StdRule("っ", "つ", "(other infinitive)", DefTag.v5t, DefTag.stem_ren_less));
+        ruleList.add(new StdRule("っ", "う", "(other infinitive)", DefTag.v5u, DefTag.stem_ren_less));
+        ruleList.add(new StdRule("っ", "る", "(other infinitive)", DefTag.v5r, DefTag.stem_ren_less));
+        ruleList.add(new StdRule("い", "ぐ", "(other infinitive)", DefTag.v5g, DefTag.stem_ren_less_v));
+        ruleList.add(new StdRule("ん", "ぶ", "(other infinitive)", DefTag.v5b, DefTag.stem_ren_less_v));
+        ruleList.add(new StdRule("ん", "ぬ", "(other infinitive)", DefTag.v5n, DefTag.stem_ren_less_v));
+        ruleList.add(new StdRule("ん", "む", "(other infinitive)", DefTag.v5m, DefTag.stem_ren_less_v));
+        ruleList.add(new StdRule(""  , "る", "(other infinitive)", DefTag.v1,  DefTag.stem_ren_less));
+        // marginal categories
+        ruleList.add(new StdRule("う", "う", "(other infinitive)", DefTag.v5u_s, DefTag.stem_ren_less));
+        
+        // masu stem
+        ruleList.add(new StdRule("き", "く", "(infinitive)", DefTag.v5k, DefTag.stem_ren));
+        ruleList.add(new StdRule("し", "す", "(infinitive)", DefTag.v5s, DefTag.stem_ren));
+        ruleList.add(new StdRule("ち", "つ", "(infinitive)", DefTag.v5t, DefTag.stem_ren));
+        ruleList.add(new StdRule("い", "う", "(infinitive)", DefTag.v5u, DefTag.stem_ren));
+        ruleList.add(new StdRule("り", "る", "(infinitive)", DefTag.v5r, DefTag.stem_ren));
+        ruleList.add(new StdRule("ぎ", "ぐ", "(infinitive)", DefTag.v5g, DefTag.stem_ren));
+        ruleList.add(new StdRule("び", "ぶ", "(infinitive)", DefTag.v5b, DefTag.stem_ren));
+        ruleList.add(new StdRule("に", "ぬ", "(infinitive)", DefTag.v5n, DefTag.stem_ren));
+        ruleList.add(new StdRule("み", "む", "(infinitive)", DefTag.v5m, DefTag.stem_ren));
+        ruleList.add(new StdRule(""  , "る", "(infinitive)", DefTag.v1,  DefTag.stem_ren));
+        // marginal categories
+        ruleList.add(new StdRule("い", "う", "(infinitive)", DefTag.v5u_s, DefTag.stem_ren));
     }
     
     public WordScanner(String word)
     {
         init();
-
+        
         matches = new ArrayList<>();
         this.word = word;
-        matches.add(new ValidWord(word, ""));//add initial unmodified word
+        matches.add(new ValidWord(word, ""));//add initial undeconjugated word
+        // start from the top of the list when we have a successful deconjugation
+        int fully_covered_matches = 0;
+        int iters = 0;
+        while(true)
+        {
+            int temp = matches.size();
+            int number_of_new_matches = test_rules(fully_covered_matches, word);
+            
+            // the safeguards in process() should be enough, but in case they're not, or they break...
+            if(iters > 32)
+            {
+                System.out.println("bailing out from deconjugation");
+                break;
+            }
+            
+            iters++;
+            
+            if(number_of_new_matches > 0)
+                fully_covered_matches += number_of_new_matches;
+            else
+                break;
+        }
+    }
+    
+    private int test_rules(int starting_match, String word)
+    {
+        //if(starting_match > 3) return false;
+        int new_matches = 0;
+        //attempt all deconjugation rules in order
         for(DeconRule rule:ruleList)
         {
-            test(rule);//attempt all deconjugation rules in order
+            //check if any of our possible matches can be deconjugated by this rule
+            new_matches += test_matches(starting_match, rule);
         }
+        return new_matches;
     }
     
-    
-    private void add(ValidWord word)
+    private int test_matches(int starting_match, DeconRule rule)
     {
-        if(word != null)matches.add(word);
-    }
-    private void test(DeconRule rule)
-    {
-        int size = matches.size();//don't scan ones added by this rule
-        for(int i = 0; i < size; i++)
+        int size = matches.size();//don't scan matches added during iteration
+        int good_matches = 0;
+        if(starting_match >= size) return 0; // shouldn't happen but just in case it does we should also save the cpu
+        for(int i = starting_match; i < size; i++)
         {
-           add(rule.process(matches.get(i)));
+            ValidWord gotten = rule.process(matches.get(i));
+            if(gotten != null)
+            {
+                matches.add(gotten);
+                good_matches += 1;
+            }
         }
+        return good_matches;
     }
 
     public ArrayList<ValidWord> getMatches()

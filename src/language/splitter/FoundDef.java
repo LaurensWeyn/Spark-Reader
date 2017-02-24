@@ -61,7 +61,8 @@ public class FoundDef implements Comparable<FoundDef>
         y = renderText(g, options.getColor("defReadingCol"), options.getColor("defBackCol"), xPos, y, foundDef.getSource().getName(), maxWidth);
 
         //output original form if processed
-        if(!foundForm.getProcess().equals(""))y = renderText(g, options.getColor("defReadingCol"), options.getColor("defBackCol"), xPos, y, foundForm.toString(), maxWidth);
+        if(!foundForm.getProcess().equals(""))
+            y = renderText(g, options.getColor("defReadingCol"), options.getColor("defBackCol"), xPos, y, foundForm.toString(), maxWidth);
         
         //output tags
 
@@ -115,6 +116,7 @@ public class FoundDef implements Comparable<FoundDef>
     private int renderText(Graphics g, Color fore, Color back, int x, int y, String text, int width)
     {
         if(text == null)return y;//don't render null text
+        text = text.trim();
         int startY = y;
         FontMetrics font = g.getFontMetrics();
         TextStream stream = new TextStream(text);

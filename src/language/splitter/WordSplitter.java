@@ -71,7 +71,7 @@ public class WordSplitter
                     }
                 }
 
-                if(matchedWord.getDefinitionCount() == 0)
+                if(matchedWord.getDefinitionCount() == 0 && UI.options.getOptionBool("automaticallyParse"))
                 {
                     matchedWord = null;
                     pos--;//try shorter word
@@ -90,13 +90,6 @@ public class WordSplitter
             else words.add(matchedWord);
 
             firstSection = false;
-        }
-
-        // if automatically parsing is disabled and we think there's more than one automatically parsed word, return the original string as a single word
-        if(!UI.options.getOptionBool("automaticallyParse") && words.size() != 1)
-        {
-            words.clear();
-            words.add(new FoundWord(text + ""));
         }
         return words;
     }
@@ -124,20 +117,23 @@ public class WordSplitter
         int pos = 0;
         int start = 0;
         breaks.add(0);
+        
+        // todo: make segmenting on writing system changes optional? (when normal segmentation disabled only; dropdown menu?)
+        // fixme: not segmenting non-japanese text into single characters makes the renderer's assumtions on segment width break, horribly.
+        boolean was_japanese;
+        boolean is_japanese = Japanese.isJapaneseWriting(text.charAt(0));
         while(pos < text.length())
         {
-            if(breaks.contains(pos))
+            was_japanese = is_japanese;
+            is_japanese = Japanese.isJapaneseWriting(text.charAt(pos));
+            if(breaks.contains(pos) || is_japanese != was_japanese)
             {
+                // cause was_japanese to be equal to is_japanese on the next iteration
+                if(breaks.contains(pos) && pos+1 < text.length())
+                    is_japanese = Japanese.isJapaneseWriting(text.charAt(pos+1));
+                
                 String section = text.substring(start, pos);
                 words.addAll(splitSection(section, breaks.contains(start)));
-                start = pos;
-            }
-            else if(!Japanese.isJapaneseWriting(text.charAt(pos)))
-            {
-                String section = text.substring(start, pos);
-                words.addAll(splitSection(section, breaks.contains(start)));
-                words.add(new FoundWord(text.charAt(pos) + ""));
-                pos++;//skip over grammar
                 start = pos;
             }
             pos++;

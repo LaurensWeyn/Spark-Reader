@@ -29,11 +29,20 @@ public class StdRule implements DeconRule
     }
 
     @Override
+    // Adds inner-more (closer to base) meaning tag
+    // So, "(infinitive)" will get added after "past"
     public ValidWord process(ValidWord word)
     {
-        if(word.getProcess().contains(change))
+        // these numbers can probably be reduced a lot with no harm at all. however the first one has to be at least +1 and the second one is subjective.
+        // don't allow the deconjugation to become too much longer than the original text
+        if(word.getWord().length() > word.getOriginalWord().length()+10)
         {
-            return null;//don't stack the same conjugation onto itself
+            return null;
+        }
+        // don't allow the deconjugator to make impossibly information-dense conjugations
+        if(word.getNeededTags().size() > word.getOriginalWord().length()+6)
+        {
+            return null;
         }
         //ending matches:
         if(word.getWord().endsWith(ending))
@@ -41,10 +50,17 @@ public class StdRule implements DeconRule
             //add tag and return
             HashSet<DefTag> tags = new HashSet<DefTag>(word.getNeededTags());
             HashSet<DefTag> impliedTags = new HashSet<DefTag>(word.getImpliedTags());
+            
             if(neededTag != null)tags.add(neededTag);
-            if(impliedTag != null)tags.add(impliedTag);
-            String newProcess = word.getProcess() + " " + change;
-            return new ValidWord(word.getWord().substring(0, word.getWord().length() - ending.length()) + replace, tags, impliedTags, newProcess);
+            if(impliedTag != null)impliedTags.add(impliedTag);
+            
+            String newProcess = word.getProcess();
+            if(newProcess.equals(""))
+                newProcess = change;
+            else
+                newProcess = newProcess + " " + change;
+            
+            return new ValidWord(word.getOriginalWord(), word.getWord().substring(0, word.getWord().length() - ending.length()) + replace, tags, impliedTags, newProcess);
         }
         //doesn't match, don't add new word
         return null;
