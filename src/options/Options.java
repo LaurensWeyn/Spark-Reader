@@ -64,13 +64,16 @@ public class Options implements Cloneable
         options.put("defCol", "255, 255, 0, 255");
         options.put("defBackCol", "0, 0, 0, 128");
         
-        
-        options.put("edictPath", "dictionaries/edict2");
-        options.put("dictionaryPath", "dictionaries/");
-        options.put("customDictPath", "dictionaries/customDict.txt");
-        options.put("kanjiPath", "dictionaries/kanji.txt");
-        options.put("ankiExportPath", "forAnki.csv");
 
+        options.put("dictionaryPath", "dictionaries/");
+        options.put("customSourcePriority", "1");
+        options.put("edictSourcePriority", "0");
+        options.put("epwingSourcePriority", "-1");
+        options.put("kanjideckSourcePriority", "-5");
+
+
+
+        options.put("ankiExportPath", "forAnki.csv");
         options.put("knownWordsPath", "preferences/knownWords");
         options.put("preferredDefsPath", "preferences/preferredDefs");
         
@@ -158,7 +161,7 @@ public class Options implements Cloneable
     public String getOption(String tag)
     {
         //find, or return default option if it doesn't exist
-        if(defaults.options.containsKey(tag) == false)throw new IllegalArgumentException("Unknown option tag '" + tag + "'");
+        if(!defaults.options.containsKey(tag))throw new IllegalArgumentException("Unknown option tag '" + tag + "'");
         return options.getOrDefault(tag, defaults.options.get(tag));
     }
     public boolean getOptionBool(String tag)

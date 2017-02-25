@@ -24,6 +24,14 @@ import javax.swing.*;
  */
 public interface Page
 {
-    public abstract JComponent getComponent();
-    public abstract void update();
+    /**
+     * Get the UI component representing this Page
+     * @return the UI component
+     */
+    JComponent getComponent();
+
+    /**
+     * Request that this Page and all of its children reload their settings from the Options map.
+     */
+    void update();
 }

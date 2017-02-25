@@ -24,7 +24,7 @@ import java.io.IOException;
 
 /**
  * Transparent UI overlay window
- * @author laure
+ * @author Laurens Weyn
  */
 public class Overlay
 {
@@ -49,19 +49,21 @@ public class Overlay
         // point, including points  inside textboxes.
         frame.getRootPane().putClientProperty("apple.awt.draggableWindowBackground", false);
 
-        front = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        //back = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        display = new ImageIcon(front);
-        frame.getContentPane().add(new JLabel(display));
-        
-        //frame.getContentPane().add(new JTextField("text field south"), java.awt.BorderLayout.SOUTH);
-        frame.setSize(width, height);
+        setSize(width, height);//build components with given size
+
         frame.setFocusableWindowState(UI.options.getOptionBool("takeFocus"));//set the focus mode
         //frame.pack();
         frame.setVisible(true);
         frame.setFocusable(false);
         
         //frame.repaint();
+    }
+    public void setSize(int width, int height)
+    {
+        front = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        display = new ImageIcon(front);
+        frame.getContentPane().add(new JLabel(display));
+        frame.setSize(width, height);
     }
     public JFrame getFrame()
     {
@@ -83,8 +85,6 @@ public class Overlay
         //*/
         //update
         frame.repaint();
-        
-         
     }
     public Graphics2D getGraphics()
     {

@@ -27,15 +27,15 @@ import java.util.regex.Pattern;
  */
 public class EDICTDefinition extends Definition
 {
-    private String[] word, reading;// spellings;
-    Set<DefTag> tags;
-    
-    private boolean showReading = true;
-    private final DefSource source;
-    private int ID;
+    protected String[] word, reading;// spellings;
+    protected Set<DefTag> tags;
+
+    protected boolean showReading = true;
+    protected final DefSource source;
+    protected int ID;
     
     //String[] meaningArr;
-    String meaning;
+    protected String meaning;
     
     private static final Pattern FIND_TAGS = Pattern.compile("\\((.*?)\\)");//regex vodoo magic
     public EDICTDefinition(String line, DefSource source)
@@ -87,16 +87,17 @@ public class EDICTDefinition extends Definition
             }else meaningArr[i - 1] = defLine.trim();
             
         }
-        //reconstruct meaning list (save RAM)
-        meaning = "";
+        //reconstruct meaning list
+        StringBuilder meaningBuilder = new StringBuilder();
         for(String part:meaningArr)
         {
-            if(part.equals("(P)") == false)
+            if(!part.equals("(P)"))
             {
-                if(part.equals(""))meaning += part;
-                else meaning += "/" + part;
+                if(meaningBuilder.length() == 0)meaningBuilder.append(part);
+                else meaningBuilder.append("/").append(part);
             }
         }
+        meaning = meaningBuilder.toString();
         //process ID
         String IDCode = bits[bits.length - 1].replaceFirst("Ent", "");
         try
@@ -176,7 +177,13 @@ public class EDICTDefinition extends Definition
     @Override
     public String toString()
     {
-        return meaning;
+        StringBuilder builder = new StringBuilder(word[0]);
+        if(reading != null && reading.length > 0)
+        {
+            builder.append("[").append(reading[0]).append("]");
+        }
+        builder.append(": ").append(meaning.split("/")[0]);
+        return builder.toString();
     }
     
     

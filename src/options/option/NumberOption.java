@@ -33,7 +33,7 @@ public class NumberOption extends UIOption
         super(tag, name, tip);
         
         spinner = new JSpinner(new SpinnerNumberModel(Integer.parseInt(getValue()), 0, Integer.MAX_VALUE, 10));
-        JLabel label = new JLabel(name + ": ");
+        JLabel label = new JLabel(name);
         label.setToolTipText(tip);
         spinner.addChangeListener(new ChangeListener(){
 
@@ -47,8 +47,8 @@ public class NumberOption extends UIOption
         //spinner.setMaximumSize(label.getPreferredSize());
         panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-        panel.add(label);
         panel.add(spinner);
+        panel.add(label);
         ((JSpinner.DefaultEditor)spinner.getEditor()).getTextField().setColumns(5);
         spinner.setMaximumSize(spinner.getPreferredSize());
     }
