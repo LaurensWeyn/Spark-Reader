@@ -16,10 +16,12 @@
  */
 package options;
 
+import language.dictionary.DefSource;
 import options.option.*;
 import options.page.OptionPage;
 import options.page.Page;
 import options.page.PageGroup;
+import options.page.UserDefPage;
 import ui.UI;
 
 import javax.imageio.ImageIO;
@@ -115,6 +117,8 @@ public class OptionsUI extends JFrame
             defWindow.add(new ColourOption("defReadingCol", "Reading colour", "Colour of readings and dictionary form"));
             defWindow.add(new ColourOption("defKanjiCol", "Kanji colour", "(Heisig mode) for Kanji reference in popup"));
             defs.add(defWindow);
+            defs.add(new UserDefPage(DefSource.getSource("Custom")));
+
         root.add(defs);
         OptionPage xport = new OptionPage("Import and Export");
             xport.add(new OptionLabel("Export words:", null));

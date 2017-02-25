@@ -21,10 +21,7 @@ import ui.UI;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Contains words and their definitions
@@ -33,10 +30,9 @@ import java.util.List;
 public class Dictionary
 {
     //text -> definition
-    private HashMap<String, ArrayList<Definition>> lookup;
+    private HashMap<String, List<Definition>> lookup;
     //can query for words
     private List<SubBook> books;
-    public static final DefSource EPWING_SOURCE = new DefSource(-1, "Epwing");
 
     public Dictionary()throws IOException
     {
@@ -68,20 +64,18 @@ public class Dictionary
             }
             else if(file.getName().equals("kanji.txt"))
             {
-                Kanji.load(file, UI.options.getOptionBool("addKanjiAsDef")?this:null, new DefSource(-5, "Kanji deck"));
+                Kanji.load(file, UI.options.getOptionBool("addKanjiAsDef")?this:null, DefSource.getSource("Kanji deck"));
             }
             else if(file.getName().equalsIgnoreCase("edict2"))
             {
                 //edict file encoding
-                loadEdict(file, "EUC-JP", new DefSource(0, "Edict"));
+                loadEdict(file, "EUC-JP", DefSource.getSource("Edict"));
             }
             else if(file.getName().endsWith(".txt"))
             {
                 //UTF-8 dictionary
-                loadEdict(file, "UTF-8", new DefSource(1, "Custom"));
+                loadUserDict(file, "UTF-8", DefSource.getSource("Custom"));
             }
-
-
 
         }
     }
@@ -98,23 +92,65 @@ public class Dictionary
         String line = reader.readLine();
         while(line != null)
         {
-            //generate definition
-            Definition def = new EDICTDefinition(line, source);
-            for(String spelling:def.getSpellings())//for each possible spelling...
-            {
-                //create if it doesn't exist
-                ArrayList<Definition> meanings = lookup.computeIfAbsent(spelling, k -> new ArrayList<>());
-                meanings.add(def);//add this definition for this spelling
-            }
+            //generate and insert definition
+            insertDefinition(new EDICTDefinition(line, source));
             line = reader.readLine();
         }
         System.out.println("loaded " + lookup.keySet().size() + " entries so far");
     }
+    public void loadUserDict(File file, String encoding, DefSource source)throws IOException
+    {
+        FileInputStream is = new FileInputStream(file);
+        InputStreamReader isr = new InputStreamReader(is, Charset.forName(encoding));
+        BufferedReader reader = new BufferedReader(isr);
+        reader.readLine();//first line is design info
+        String line = reader.readLine();
+        while(line != null)
+        {
+            //generate and insert definition
+            UserDefinition definition = new UserDefinition(line, source);
+            insertDefinition(definition);
+            source.attach(definition);
+            line = reader.readLine();
+        }
+        System.out.println("loaded " + lookup.keySet().size() + " entries so far");
+    }
+
+    /**
+     * Inserts a definition into the lookup data structure
+     * @param def the definition to insert
+     */
+    public void insertDefinition(Definition def)
+    {
+        for(String spelling:def.getSpellings())//for each possible spelling...
+        {
+            //create if it doesn't exist
+            List<Definition> meanings = lookup.computeIfAbsent(spelling, k -> new LinkedList<>());
+            meanings.add(def);//add this definition for this spelling
+        }
+    }
+
+    /**
+     * Removes a definition from the lookup data structure
+     * @param def the definition to remove
+     */
+    public void removeDefinition(Definition def)
+    {
+        for(String spelling:def.getSpellings())//for each possible spelling...
+        {
+            List<Definition> meanings = lookup.get(spelling);
+            if(meanings == null)continue;
+
+            meanings.remove(def);
+            if(meanings.isEmpty())lookup.remove(spelling);
+        }
+    }
+
     public void loadKanji(KanjiDefinition def)
     {
         String kanji = def.getSpellings()[0].charAt(0) + "";
         //create if it doesn't exist
-        ArrayList<Definition> meanings = lookup.computeIfAbsent(kanji, k -> new ArrayList<>());
+        List<Definition> meanings = lookup.computeIfAbsent(kanji, k -> new ArrayList<>());
         meanings.add(def);//add this definition for this spelling
     }
     public List<Definition> find(String word)
@@ -147,7 +183,7 @@ public class Dictionary
                 Result result = search.getNextResult();
                 while(result != null)
                 {
-                    defs.add(new EPWINGDefinition(result, book, EPWING_SOURCE));
+                    defs.add(new EPWINGDefinition(result, book, DefSource.getSource("Epwing")));
                     result = search.getNextResult();
                 }
             }catch(EBException ignored){}
