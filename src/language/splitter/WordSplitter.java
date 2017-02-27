@@ -106,6 +106,7 @@ public class WordSplitter
                 }
             }
         }
+        word.sortDefs();//sort these new definitions
     }
 
 

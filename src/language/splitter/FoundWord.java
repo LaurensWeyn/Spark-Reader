@@ -126,7 +126,7 @@ public class FoundWord
         if(showDef && !hasOpened)
         {
             attachEpwingDefinitions(UI.dict);//load these in only when needed
-            //sortDefs();//TODO put EPWING defs somewhere in sort order
+            sortDefs();
             hasOpened = true;
         }
 
