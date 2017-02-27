@@ -130,6 +130,9 @@ public class EpwingAdapter extends HookAdapter<String[]>
                     case 0xA239:
                         str = "ū";
                         break;
+                    case 0xA135:
+                        str = "*";
+                        break;
                     default:
                         System.out.println("Epwing adapter: unknown half width character " + HexUtil.toHexString(code));
                         str = "?";
@@ -153,6 +156,9 @@ public class EpwingAdapter extends HookAdapter<String[]>
                     case 0xB65E:
                     case 0xB571:
                         str = "▶";//all basically solid arrows
+                        break;
+                    case 0xB661:
+                        str = "▷";//why are there so many codes for these arrows...
                         break;
                     case 0xB667:
                         str =  "Romaji: ";//'romaji' symbol

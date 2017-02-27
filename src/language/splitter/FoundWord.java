@@ -101,7 +101,7 @@ public class FoundWord
     }
     public void sortDefs()
     {
-        definitions.sort(null);
+        if(definitions != null)definitions.sort(null);
     }
     public int getDefinitionCount()
     {
