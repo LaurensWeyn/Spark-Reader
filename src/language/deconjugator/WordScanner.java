@@ -276,7 +276,7 @@ public class WordScanner
     public static void main(String[] args)
     {
         System.out.println();
-        for(ValidWord vw: new WordScanner("分かりません").getMatches())
+        for(ValidWord vw: new WordScanner("分からない").getMatches())
         {
             System.out.println(vw.toString() + " " + vw.getNeededTags());
         }
