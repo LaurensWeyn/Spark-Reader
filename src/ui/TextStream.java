@@ -27,20 +27,20 @@ public class TextStream
 
     public TextStream(String text)
     {
-        this.text = text;
+        this.text = text.trim();//things will go weirdly if we end on whitespace
         pos = 0;
     }
     public String nextWord()
     {
         if(pos >= text.length())return null;
-        String buffer = "";
+        StringBuilder buffer = new StringBuilder();
         while(true)
         {
-            buffer += text.charAt(pos++);
+            buffer.append(text.charAt(pos++));
             
             if(pos >= text.length() || !noWrap(text.charAt(pos)) || text.charAt(pos) == ' ')
             {
-                if(!buffer.equals(" "))return buffer;
+                if(!buffer.toString().equals(" "))return buffer.toString();
             }
         }
     }

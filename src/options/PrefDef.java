@@ -39,7 +39,11 @@ public class PrefDef
     {
         table = new HashMap<>();
         this.file = file;
-        if(!file.exists())return;
+        if(!file.exists())
+        {
+            System.out.println("WARN: no preferred definition file");
+            return;
+        }
         
         
         FileInputStream is = new FileInputStream(file);
@@ -73,7 +77,7 @@ public class PrefDef
     public void setPreferred(FoundDef def)
     {
         String spelling = def.getDictForm();
-        System.out.println(spelling + " for " + def.getDefinition().getID()+ " set");
+        System.out.println(spelling + " for " + def.getDefinition().getID() + " set");
         table.put(spelling, def.getDefinition().getID());
         dueChanges++;
         
@@ -84,19 +88,20 @@ public class PrefDef
                 save();
             }catch(IOException e)
             {
+                System.out.println("Failed to write changes: " + e);
                 //if this fails, wel'll try again on the next change
             }
         }
     }
-    public void setPreferred(Definition def)
-    {
-        
-    }
+
     public boolean isPreferred(Definition def)
     {
         for(String spelling:def.getSpellings())
         {
-            if(table.containsKey(spelling) && table.get(spelling) == def.getID())return true;
+            if(table.containsKey(spelling) && table.get(spelling) == def.getID())
+            {
+                return true;
+            }
         }
         return false;
     }

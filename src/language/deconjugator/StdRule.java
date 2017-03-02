@@ -59,7 +59,7 @@ public class StdRule implements DeconRule
                 newProcess = change;
             else
                 newProcess = newProcess + " " + change;
-            
+
             return new ValidWord(word.getOriginalWord(), word.getWord().substring(0, word.getWord().length() - ending.length()) + replace, tags, impliedTags, newProcess);
         }
         //doesn't match, don't add new word
