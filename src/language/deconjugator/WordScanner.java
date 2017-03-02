@@ -60,7 +60,17 @@ public class WordScanner
         
         ruleList.add(new StdRule("たい", "", "want", DefTag.stem_ren, DefTag.adj_i));
         ruleList.add(new StdRule("ください", "", "polite request", DefTag.stem_te, DefTag.adj_i));
-        
+
+        // todo: add better names for these later
+        // Should be restricted to verbs
+        ruleList.add(new StdRule("いる", "", "teiru", DefTag.stem_te, DefTag.v1));
+        ruleList.add(new StdRule("る", "", "teru", DefTag.stem_te, DefTag.v1)); // common colloquial form drops the い entirely
+        // Not sure if these should be restricted to verbs but probably
+        ruleList.add(new StdRule("いく", "", "teiku", DefTag.stem_te, DefTag.v5k_s));
+        ruleList.add(new StdRule("くる", "", "tekuru", DefTag.stem_te, DefTag.vk));
+        // Should form differently on adjectives than verbs
+        ruleList.add(new StdRule("ある", "", "tearu", DefTag.stem_te, DefTag.v5aru));
+
         // te form
         // verbs
         ruleList.add(new StdRule("で", "", "(te form)", DefTag.stem_ren_less_v, DefTag.stem_te));
