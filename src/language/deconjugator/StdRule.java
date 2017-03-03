@@ -50,7 +50,7 @@ public class StdRule implements DeconRule
             return null;
         }
         //rule matches
-        boolean deconjugates = false;
+        boolean deconjugates;
         if(word.getConjugationTags().size() > 0)
             deconjugates = word.getConjugationTags().get(word.getConjugationTags().size()-1).equals(impliedTag);
         else
@@ -59,7 +59,6 @@ public class StdRule implements DeconRule
         {
             //add tag and return
             HashSet<DefTag> tags = new HashSet<>();
-            HashSet<DefTag> impliedTags = new HashSet<>(word.getImpliedTags());
             ArrayList<DefTag> conjugationTags = new ArrayList<>(word.getConjugationTags());
             
             if(neededTag != null)
@@ -67,8 +66,6 @@ public class StdRule implements DeconRule
                 tags.add(neededTag);
                 conjugationTags.add(neededTag);
             }
-            if(impliedTag != null)
-                impliedTags.add(impliedTag);
             
             String newProcess = word.getProcess();
             if(newProcess.equals(""))
@@ -76,7 +73,7 @@ public class StdRule implements DeconRule
             else
                 newProcess = newProcess + " " + change;
 
-            return new ValidWord(word.getNumConjugations()+1, word.getOriginalWord(), word.getWord().substring(0, word.getWord().length() - ending.length()) + replace, tags, impliedTags, conjugationTags, newProcess);
+            return new ValidWord(word.getNumConjugations()+1, word.getOriginalWord(), word.getWord().substring(0, word.getWord().length() - ending.length()) + replace, tags, conjugationTags, newProcess);
         }
         //doesn't match, don't add new word
         return null;

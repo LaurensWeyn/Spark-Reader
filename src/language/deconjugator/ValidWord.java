@@ -30,19 +30,18 @@ import java.util.Set;
 public class ValidWord
 {
     private String word, originalWord;
-    private Set<DefTag> neededTags, impliedTags;
+    private Set<DefTag> neededTags;
     private ArrayList<DefTag> conjugationTags;
     private String process;
     private Integer conjugations;
 
-    public ValidWord(Integer conjugations, String originalWord, String word, Set<DefTag> neededTags, Set<DefTag> impliedTags, ArrayList<DefTag> conjugationTags, String process)
+    public ValidWord(Integer conjugations, String originalWord, String word, Set<DefTag> neededTags, ArrayList<DefTag> conjugationTags, String process)
     {
         this.conjugations = conjugations;
         this.originalWord = originalWord;
         this.conjugationTags = conjugationTags;
         this.word = word;
         this.neededTags = neededTags;
-        this.impliedTags = impliedTags;
         this.process = process.trim();
     }
     public ValidWord(String word, String process)
@@ -51,7 +50,6 @@ public class ValidWord
         this.originalWord = word;
         this.word = word;
         neededTags = new HashSet<>();
-        impliedTags = new HashSet<>();
         conjugationTags = new ArrayList<>();
         this.process = process;
     }
@@ -71,11 +69,6 @@ public class ValidWord
     public Set<DefTag> getNeededTags()
     {
         return neededTags;
-    }
-
-    public Set<DefTag> getImpliedTags()
-    {
-        return impliedTags;
     }
 
     public ArrayList<DefTag> getConjugationTags()
