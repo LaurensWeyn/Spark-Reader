@@ -30,33 +30,41 @@ public class StdRule implements DeconRule
     }
 
     @Override
-    // Adds an inner-more conjugation
+    // Verifies and adds this rule as an inner-more conjugation in a deconjugated word
     public ValidWord process(ValidWord word)
     {
-        if(word.equals("")) return null; // can't deconjugate emptiness
+        if(word.getWord().equals("")) return null; // can't deconjugate emptiness
+        if(!word.getWord().endsWith(ending)) return null; // can't possibly be valid
+
         // these numbers can probably be reduced a lot with no harm at all. however the first one has to be at least +1 and the second one is subjective.
-        // don't allow the deconjugation to become too much longer than the original text
+
         if(word.getWord().length() > word.getOriginalWord().length()+10)
-        {
-            System.out.println("bogus length");
-            System.out.println(word.getProcess());
+        {   // don't allow the deconjugation to become too much longer than the original text
+            //System.out.println("bogus length");
+            //System.out.println(word.getProcess());
             return null;
         }
-        // don't allow the deconjugator to make impos sibly information-dense conjugations
+
         if(word.getNumConjugations() > word.getOriginalWord().length()+6)
-        {
-            System.out.println("bogus complexity");
-            System.out.println(word.getProcess());
+        {   // don't allow the deconjugator to make impossibly information-dense conjugations
+            //System.out.println("bogus complexity");
+            //System.out.println(word.getProcess());
             return null;
         }
-        //rule matches
+
+        //whether rule matches relevant tags
         boolean deconjugates;
         if(word.getConjugationTags().size() > 0)
-            deconjugates = word.getConjugationTags().get(word.getConjugationTags().size()-1).equals(impliedTag);
+            deconjugates = (word.getConjugationTags().get(word.getConjugationTags().size()-1)).equals(impliedTag);
         else
             deconjugates = true;
-        if(word.getWord().endsWith(ending) && deconjugates)
+
+        if(deconjugates)
         {
+            String newForm = word.getWord().substring(0, word.getWord().length() - ending.length()) + replace;
+            // short circuit process if it would make a lexical form we've already seen in this deconjugation tree
+            if(word.hasSeenForm(newForm)) return null;
+
             //add tag and return
             HashSet<DefTag> tags = new HashSet<>();
             ArrayList<DefTag> conjugationTags = new ArrayList<>(word.getConjugationTags());
@@ -73,9 +81,13 @@ public class StdRule implements DeconRule
             else
                 newProcess = newProcess + " " + change;
 
-            return new ValidWord(word.getNumConjugations()+1, word.getOriginalWord(), word.getWord().substring(0, word.getWord().length() - ending.length()) + replace, tags, conjugationTags, newProcess);
+            HashSet<String> forms = new HashSet<>(word.getSeenForms());
+            forms.add(newForm);
+
+            return new ValidWord(word.getNumConjugations()+1, word.getOriginalWord(), newForm, forms, tags, conjugationTags, newProcess);
         }
         //doesn't match, don't add new word
+        //System.out.println("-Doesn't work");
         return null;
     }
 }

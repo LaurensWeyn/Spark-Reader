@@ -74,6 +74,7 @@ public class WordSplitter
                 if(matchedWord.getDefinitionCount() == 0 && UI.options.getOptionBool("automaticallyParse"))
                 {
                     matchedWord = null;
+                    System.out.println("--->Trying a shorter deconjugation");
                     pos--;//try shorter word
                 }
                 else//found a word

@@ -18,6 +18,9 @@ package language.deconjugator;
 
 import language.dictionary.DefTag;
 import language.dictionary.Japanese;
+
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 /**
@@ -47,16 +50,21 @@ public class WordScanner
                 return null;
             }
         });
-        
-        // collapse these at will because they're dumb and long
-        ruleList.add(new StdRule("なければいけない", "", "must", DefTag.stem_a, DefTag.adj_i));
-        ruleList.add(new StdRule("なければならない", "", "must", DefTag.stem_a, DefTag.adj_i));
-        ruleList.add(new StdRule("なくてはいけない", "", "must", DefTag.stem_a, DefTag.adj_i));
-        ruleList.add(new StdRule("なくてはならない", "", "must", DefTag.stem_a, DefTag.adj_i));
-        ruleList.add(new StdRule("なければいけない", "", "must", DefTag.stem_ku, DefTag.adj_i));
-        ruleList.add(new StdRule("なければならない", "", "must", DefTag.stem_ku, DefTag.adj_i));
-        ruleList.add(new StdRule("なくてはいけない", "", "must", DefTag.stem_ku, DefTag.adj_i));
-        ruleList.add(new StdRule("なくてはならない", "", "must", DefTag.stem_ku, DefTag.adj_i));
+
+        // handle "must" in a single block because it's dumb and long
+        // todo: add a type of rule that allows A/B matches in conjugated ending
+        // todo: or allow conjugation display to substitute sequences "process" text for others
+        // todo: (so that this isn't needed to make "must" look like "must"
+        ruleList.add(new StdRule("いけない", "", "must", DefTag.stem_must_first_half, DefTag.adj_i));
+        ruleList.add(new StdRule("いけぬ", "", "must", DefTag.stem_must_first_half, DefTag.adj_i));
+        ruleList.add(new StdRule("ならない", "", "must", DefTag.stem_must_first_half, DefTag.adj_i));
+        ruleList.add(new StdRule("ならぬ", "", "must", DefTag.stem_must_first_half, DefTag.adj_i));
+        ruleList.add(new StdRule("ねば", "", "(negative condition)", DefTag.stem_a, DefTag.stem_must_first_half));
+        ruleList.add(new StdRule("ねば", "", "(negative condition)", DefTag.stem_ku, DefTag.stem_must_first_half));
+        ruleList.add(new StdRule("なければ", "", "(negative condition)", DefTag.stem_a, DefTag.stem_must_first_half));
+        ruleList.add(new StdRule("なければ", "", "(negative condition)", DefTag.stem_ku, DefTag.stem_must_first_half));
+        ruleList.add(new StdRule("なくては", "", "(negative condition)", DefTag.stem_a, DefTag.stem_must_first_half));
+        ruleList.add(new StdRule("なくては", "", "(negative condition)", DefTag.stem_ku, DefTag.stem_must_first_half));
         
         ruleList.add(new StdRule("たい", "", "want", DefTag.stem_ren, DefTag.adj_i));
         ruleList.add(new StdRule("ください", "", "polite request", DefTag.stem_te, DefTag.adj_i));
@@ -103,23 +111,24 @@ public class WordScanner
         ruleList.add(new StdRule("った", "", "past", DefTag.stem_ka, DefTag.uninflectable));
         
         // passive (godan)
-        // pattern: areru
+        ruleList.add(new StdRule("れる", "", "potential/passive nexus", DefTag.stem_a, DefTag.v1));
         
-        // potential (godan)
-        // pattern: eru
-        
-        // passive-potential and potential (ichidan)
-        // passive-potential: rareru; potential: reru
+        // passive-potential (ichidan)
+        ruleList.add(new StdRule("られる", "る", "potential/passive nexus", DefTag.v1, DefTag.v1));
+
+        // potential
+        // pattern is the same for ichidan and godan verbs; the ichidan one is PROscribed, but still real.
+        ruleList.add(new StdRule("る", "", "potential", DefTag.stem_e, DefTag.v1));
         
         // nasai
         // technically an i-adjective, but again, letting the deconjugator use it like that would cause more problems than it's worth
-        ruleList.add(new StdRule("なさい",         "", "kind request", DefTag.stem_ren, DefTag.uninflectable));
-        ruleList.add(new StdRule("な",         "", "casual kind request", DefTag.stem_ren, DefTag.uninflectable));
+        ruleList.add(new StdRule("なさい", "", "kind request", DefTag.stem_ren, DefTag.uninflectable));
+        ruleList.add(new StdRule("な", "", "casual kind request", DefTag.stem_ren, DefTag.uninflectable));
         
         // ます inflects, but does so entirely irregularly.
-        ruleList.add(new StdRule("ます",         "", "polite", DefTag.stem_ren, DefTag.uninflectable));
-        ruleList.add(new StdRule("ません",       "", "negative polite", DefTag.stem_ren, DefTag.uninflectable));
-        ruleList.add(new StdRule("ました",       "", "past polite", DefTag.stem_ren, DefTag.uninflectable));
+        ruleList.add(new StdRule("ます", "", "polite", DefTag.stem_ren, DefTag.uninflectable));
+        ruleList.add(new StdRule("ません", "", "negative polite", DefTag.stem_ren, DefTag.uninflectable));
+        ruleList.add(new StdRule("ました", "", "past polite", DefTag.stem_ren, DefTag.uninflectable));
         ruleList.add(new StdRule("ませんでした", "", "past negative polite", DefTag.stem_ren, DefTag.uninflectable));
         
         // part-of-speech roles
@@ -134,10 +143,14 @@ public class WordScanner
         
         // negative
         // verbs
-        ruleList.add(new StdRule("ない", "", "negative", DefTag.stem_a, DefTag.adj_i));
+        ruleList.add(new StdRule("ない", "", "negative", DefTag.stem_mizenkei, DefTag.adj_i));
         // i-adjectives
         ruleList.add(new StdRule("ない", "", "negative", DefTag.stem_ku, DefTag.adj_i));
-        
+
+        // fixme: having multiple conjugations with the same form makes the ui display bogus extra definitions
+        ruleList.add(new StdRule("", "", "(mizenkei)", DefTag.stem_a, DefTag.stem_mizenkei));
+        ruleList.add(new StdRule("", "る", "(mizenkei)", DefTag.v1, DefTag.stem_mizenkei));
+
         // potential stem (and stem of some conjunctions)
         ruleList.add(new StdRule("け", "く", "(izenkei)", DefTag.v5k, DefTag.stem_e));
         ruleList.add(new StdRule("せ", "す", "(izenkei)", DefTag.v5s, DefTag.stem_e));
@@ -150,22 +163,20 @@ public class WordScanner
         ruleList.add(new StdRule("め", "む", "(izenkei)", DefTag.v5m, DefTag.stem_e));
         ruleList.add(new StdRule("れ", "る", "(izenkei)", DefTag.v1,  DefTag.stem_e)); // not a copy/paste mistake
         // marginal categories
-        ruleList.add(new StdRule("え", "う", "(izenkei)", DefTag.v5u_s, DefTag.stem_a));
+        ruleList.add(new StdRule("え", "う", "(izenkei)", DefTag.v5u_s, DefTag.stem_e));
         
-        // negative stem (and stem of some conjunctions)
-        ruleList.add(new StdRule("か", "く", "(mizenkei)", DefTag.v5k, DefTag.stem_a));
-        ruleList.add(new StdRule("さ", "す", "(mizenkei)", DefTag.v5s, DefTag.stem_a));
-        ruleList.add(new StdRule("た", "つ", "(mizenkei)", DefTag.v5t, DefTag.stem_a));
-        ruleList.add(new StdRule("わ", "う", "(mizenkei)", DefTag.v5u, DefTag.stem_a));
-        ruleList.add(new StdRule("ら", "る", "(mizenkei)", DefTag.v5r, DefTag.stem_a));
-        ruleList.add(new StdRule("が", "ぐ", "(mizenkei)", DefTag.v5g, DefTag.stem_a));
-        ruleList.add(new StdRule("ば", "ぶ", "(mizenkei)", DefTag.v5b, DefTag.stem_a));
-        ruleList.add(new StdRule("な", "ぬ", "(mizenkei)", DefTag.v5n, DefTag.stem_a));
-        ruleList.add(new StdRule("ま", "む", "(mizenkei)", DefTag.v5m, DefTag.stem_a));
-        // fixme: having multiple conjugations with the same form makes the ui display bogus extra definitions
-        ruleList.add(new StdRule(""  , "る", "(mizenkei)", DefTag.v1,  DefTag.stem_a));
+        // "a" stem used by godan verbs
+        ruleList.add(new StdRule("か", "く", "('a' stem)", DefTag.v5k, DefTag.stem_a));
+        ruleList.add(new StdRule("さ", "す", "('a' stem)", DefTag.v5s, DefTag.stem_a));
+        ruleList.add(new StdRule("た", "つ", "('a' stem)", DefTag.v5t, DefTag.stem_a));
+        ruleList.add(new StdRule("わ", "う", "('a' stem)", DefTag.v5u, DefTag.stem_a));
+        ruleList.add(new StdRule("ら", "る", "('a' stem)", DefTag.v5r, DefTag.stem_a));
+        ruleList.add(new StdRule("が", "ぐ", "('a' stem)", DefTag.v5g, DefTag.stem_a));
+        ruleList.add(new StdRule("ば", "ぶ", "('a' stem)", DefTag.v5b, DefTag.stem_a));
+        ruleList.add(new StdRule("な", "ぬ", "('a' stem)", DefTag.v5n, DefTag.stem_a));
+        ruleList.add(new StdRule("ま", "む", "('a' stem)", DefTag.v5m, DefTag.stem_a));
         // marginal categories
-        ruleList.add(new StdRule("わ", "う", "(mizenkei)", DefTag.v5u_s, DefTag.stem_a));
+        ruleList.add(new StdRule("わ", "う", "('a' stem)", DefTag.v5u_s, DefTag.stem_a));
         
         // past stem
         ruleList.add(new StdRule("い", "く", "(unstressed infinitive)", DefTag.v5k, DefTag.stem_ren_less));
@@ -198,7 +209,6 @@ public class WordScanner
         // irregulars
         ruleList.add(new StdRule("し", "する", "(te form)", DefTag.vs_i, DefTag.stem_ren));
         ruleList.add(new StdRule("し", "する", "(te form)", DefTag.vs_i, DefTag.stem_ren_less));
-
     }
     
     public WordScanner(String word)
@@ -213,7 +223,7 @@ public class WordScanner
         int iters = 0;
         while(true)
         {
-            int temp = matches.size();
+            int matches_before_testing = matches.size();
             int number_of_new_matches = test_rules(fully_covered_matches, word);
             
             // the safeguards in process() should be enough, but in case they're not, or they break...
@@ -230,7 +240,7 @@ public class WordScanner
             iters++;
             
             if(number_of_new_matches > 0)
-                fully_covered_matches += number_of_new_matches;
+                fully_covered_matches = matches_before_testing;
             else
                 break;
         }
@@ -238,32 +248,29 @@ public class WordScanner
     
     private int test_rules(int starting_match, String word)
     {
-        //if(starting_match > 3) return false;
         int new_matches = 0;
+
         //attempt all deconjugation rules in order
+        int size = matches.size();//don't scan matches added during iteration
+        if(starting_match >= size) return 0; // shouldn't happen but just in case it does we should also save the cpu
+
+        // Iterating on rules outside allows each match to be deconjugated more than once per iteration in some cases
+        // which makes WordScanner require fewer iterations before exhausting all possible deconjugations
         for(DeconRule rule:ruleList)
         {
-            //check if any of our possible matches can be deconjugated by this rule
-            new_matches += test_matches(starting_match, rule);
-        }
-        return new_matches;
-    }
-    
-    private int test_matches(int starting_match, DeconRule rule)
-    {
-        int size = matches.size();//don't scan matches added during iteration
-        int good_matches = 0;
-        if(starting_match >= size) return 0; // shouldn't happen but just in case it does we should also save the cpu
-        for(int i = starting_match; i < size; i++)
-        {
-            ValidWord gotten = rule.process(matches.get(i));
-            if(gotten != null)
+            for(int i = starting_match; i < size; i++)
             {
-                matches.add(gotten);
-                good_matches += 1;
+                //check if any of our possible matches can be deconjugated by this rule
+                ValidWord gotten = rule.process(matches.get(i));
+                if(gotten != null)
+                {
+                    System.out.println("match");
+                    matches.add(gotten);
+                    new_matches++;
+                }
             }
         }
-        return good_matches;
+        return new_matches;
     }
 
     public ArrayList<ValidWord> getMatches()

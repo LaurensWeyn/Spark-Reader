@@ -31,14 +31,16 @@ public class ValidWord
 {
     private String word, originalWord;
     private Set<DefTag> neededTags;
+    private HashSet<String> seenForms;
     private ArrayList<DefTag> conjugationTags;
     private String process;
     private Integer conjugations;
 
-    public ValidWord(Integer conjugations, String originalWord, String word, Set<DefTag> neededTags, ArrayList<DefTag> conjugationTags, String process)
+    public ValidWord(Integer conjugations, String originalWord, String word, HashSet<String> seenForms, Set<DefTag> neededTags, ArrayList<DefTag> conjugationTags, String process)
     {
         this.conjugations = conjugations;
         this.originalWord = originalWord;
+        this.seenForms = seenForms;
         this.conjugationTags = conjugationTags;
         this.word = word;
         this.neededTags = neededTags;
@@ -49,8 +51,9 @@ public class ValidWord
         this.conjugations = 0;
         this.originalWord = word;
         this.word = word;
-        neededTags = new HashSet<>();
-        conjugationTags = new ArrayList<>();
+        this.neededTags = new HashSet<>();
+        this.seenForms = new HashSet<>();
+        this.conjugationTags = new ArrayList<>();
         this.process = process;
     }
     public Integer getNumConjugations()
@@ -70,10 +73,18 @@ public class ValidWord
     {
         return neededTags;
     }
-
+    public HashSet<String> getSeenForms()
+    {
+        return seenForms;
+    }
     public ArrayList<DefTag> getConjugationTags()
     {
         return conjugationTags;
+    }
+
+    boolean hasSeenForm(String test)
+    {
+        return seenForms.contains(test);
     }
 
     /**
@@ -89,15 +100,9 @@ public class ValidWord
 
         for(DefTag needed:getNeededTags())
         {
-            if(!def.getTags().contains(needed) && !needed.toString().equals(""))
+            if(needed.toString().equals("")) return false;
+            if(!def.getTags().contains(needed))
             {
-                /*
-                System.out.println("Tag mismatch");
-                System.out.println("Definition: " + def.getFurigana());
-                System.out.println("Inherent: " + def.getTags());
-                System.out.println("Implied: " + getImpliedTags());
-                System.out.println("Needed: " + needed);
-                */
                 return false;
             }
         }
