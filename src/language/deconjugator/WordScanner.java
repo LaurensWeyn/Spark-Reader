@@ -168,18 +168,18 @@ public class WordScanner
         ruleList.add(new StdRule("わ", "う", "(mizenkei)", DefTag.v5u_s, DefTag.stem_a));
         
         // past stem
-        ruleList.add(new StdRule("い", "く", "(other infinitive)", DefTag.v5k, DefTag.stem_ren_less));
-        ruleList.add(new StdRule("し", "す", "(other infinitive)", DefTag.v5s, DefTag.stem_ren_less));
-        ruleList.add(new StdRule("っ", "つ", "(other infinitive)", DefTag.v5t, DefTag.stem_ren_less));
-        ruleList.add(new StdRule("っ", "う", "(other infinitive)", DefTag.v5u, DefTag.stem_ren_less));
-        ruleList.add(new StdRule("っ", "る", "(other infinitive)", DefTag.v5r, DefTag.stem_ren_less));
-        ruleList.add(new StdRule("い", "ぐ", "(other infinitive)", DefTag.v5g, DefTag.stem_ren_less_v));
-        ruleList.add(new StdRule("ん", "ぶ", "(other infinitive)", DefTag.v5b, DefTag.stem_ren_less_v));
-        ruleList.add(new StdRule("ん", "ぬ", "(other infinitive)", DefTag.v5n, DefTag.stem_ren_less_v));
-        ruleList.add(new StdRule("ん", "む", "(other infinitive)", DefTag.v5m, DefTag.stem_ren_less_v));
-        ruleList.add(new StdRule(""  , "る", "(other infinitive)", DefTag.v1,  DefTag.stem_ren_less));
+        ruleList.add(new StdRule("い", "く", "(unstressed infinitive)", DefTag.v5k, DefTag.stem_ren_less));
+        ruleList.add(new StdRule("し", "す", "(unstressed infinitive)", DefTag.v5s, DefTag.stem_ren_less));
+        ruleList.add(new StdRule("っ", "つ", "(unstressed infinitive)", DefTag.v5t, DefTag.stem_ren_less));
+        ruleList.add(new StdRule("っ", "う", "(unstressed infinitive)", DefTag.v5u, DefTag.stem_ren_less));
+        ruleList.add(new StdRule("っ", "る", "(unstressed infinitive)", DefTag.v5r, DefTag.stem_ren_less));
+        ruleList.add(new StdRule("い", "ぐ", "(unstressed infinitive)", DefTag.v5g, DefTag.stem_ren_less_v));
+        ruleList.add(new StdRule("ん", "ぶ", "(unstressed infinitive)", DefTag.v5b, DefTag.stem_ren_less_v));
+        ruleList.add(new StdRule("ん", "ぬ", "(unstressed infinitive)", DefTag.v5n, DefTag.stem_ren_less_v));
+        ruleList.add(new StdRule("ん", "む", "(unstressed infinitive)", DefTag.v5m, DefTag.stem_ren_less_v));
+        ruleList.add(new StdRule(""  , "る", "(unstressed infinitive)", DefTag.v1,  DefTag.stem_ren_less));
         // marginal categories
-        ruleList.add(new StdRule("う", "う", "(other infinitive)", DefTag.v5u_s, DefTag.stem_ren_less));
+        ruleList.add(new StdRule("う", "う", "(unstressed infinitive)", DefTag.v5u_s, DefTag.stem_ren_less));
         
         // masu stem
         ruleList.add(new StdRule("き", "く", "(infinitive)", DefTag.v5k, DefTag.stem_ren));
@@ -196,9 +196,8 @@ public class WordScanner
         ruleList.add(new StdRule("い", "う", "(infinitive)", DefTag.v5u_s, DefTag.stem_ren));
 
         // irregulars
-        ruleList.add(new StdRule("した", "する", "(te form)", DefTag.vs_i, DefTag.uninflectable));
-        ruleList.add(new StdRule("して", "する", "(te form)", DefTag.vs_i, DefTag.stem_te));
         ruleList.add(new StdRule("し", "する", "(te form)", DefTag.vs_i, DefTag.stem_ren));
+        ruleList.add(new StdRule("し", "する", "(te form)", DefTag.vs_i, DefTag.stem_ren_less));
 
     }
     

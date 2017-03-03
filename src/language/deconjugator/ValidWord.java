@@ -31,13 +31,15 @@ public class ValidWord
 {
     private String word, originalWord;
     private Set<DefTag> neededTags, impliedTags;
+    private ArrayList<DefTag> conjugationTags;
     private String process;
     private Integer conjugations;
 
-    public ValidWord(Integer conjugations, String originalWord, String word, Set<DefTag> neededTags, Set<DefTag> impliedTags, String process)
+    public ValidWord(Integer conjugations, String originalWord, String word, Set<DefTag> neededTags, Set<DefTag> impliedTags, ArrayList<DefTag> conjugationTags, String process)
     {
         this.conjugations = conjugations;
         this.originalWord = originalWord;
+        this.conjugationTags = conjugationTags;
         this.word = word;
         this.neededTags = neededTags;
         this.impliedTags = impliedTags;
@@ -50,6 +52,7 @@ public class ValidWord
         this.word = word;
         neededTags = new HashSet<>();
         impliedTags = new HashSet<>();
+        conjugationTags = new ArrayList<>();
         this.process = process;
     }
     public Integer getNumConjugations()
@@ -73,6 +76,11 @@ public class ValidWord
     public Set<DefTag> getImpliedTags()
     {
         return impliedTags;
+    }
+
+    public ArrayList<DefTag> getConjugationTags()
+    {
+        return conjugationTags;
     }
 
     /**

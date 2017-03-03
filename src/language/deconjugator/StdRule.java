@@ -2,6 +2,7 @@ package language.deconjugator;
 
 import language.dictionary.DefTag;
 import java.util.HashSet;
+import java.util.ArrayList;
 
 /**
  * Original (legacy) deconjugation rule.
@@ -29,30 +30,45 @@ public class StdRule implements DeconRule
     }
 
     @Override
-    // Adds inner-more (closer to base) meaning tag
-    // So, "(infinitive)" will get added after "past"
+    // Adds an inner-more conjugation
     public ValidWord process(ValidWord word)
     {
+        if(word.equals("")) return null; // can't deconjugate emptiness
         // these numbers can probably be reduced a lot with no harm at all. however the first one has to be at least +1 and the second one is subjective.
         // don't allow the deconjugation to become too much longer than the original text
         if(word.getWord().length() > word.getOriginalWord().length()+10)
         {
+            System.out.println("bogus length");
+            System.out.println(word.getProcess());
             return null;
         }
-        // don't allow the deconjugator to make impossibly information-dense conjugations
+        // don't allow the deconjugator to make impos sibly information-dense conjugations
         if(word.getNumConjugations() > word.getOriginalWord().length()+6)
         {
+            System.out.println("bogus complexity");
+            System.out.println(word.getProcess());
             return null;
         }
-        //ending matches:
-        if(word.getWord().endsWith(ending))
+        //rule matches
+        boolean deconjugates = false;
+        if(word.getConjugationTags().size() > 0)
+            deconjugates = word.getConjugationTags().get(word.getConjugationTags().size()-1).equals(impliedTag);
+        else
+            deconjugates = true;
+        if(word.getWord().endsWith(ending) && deconjugates)
         {
             //add tag and return
-            HashSet<DefTag> tags = new HashSet<DefTag>(word.getNeededTags());
-            HashSet<DefTag> impliedTags = new HashSet<DefTag>(word.getImpliedTags());
+            HashSet<DefTag> tags = new HashSet<>(word.getNeededTags());
+            HashSet<DefTag> impliedTags = new HashSet<>(word.getImpliedTags());
+            ArrayList<DefTag> conjugationTags = new ArrayList<>(word.getConjugationTags());
             
-            if(neededTag != null)tags.add(neededTag);
-            if(impliedTag != null)impliedTags.add(impliedTag);
+            if(neededTag != null)
+            {
+                tags.add(neededTag);
+                conjugationTags.add(neededTag);
+            }
+            if(impliedTag != null)
+                impliedTags.add(impliedTag);
             
             String newProcess = word.getProcess();
             if(newProcess.equals(""))
@@ -60,7 +76,7 @@ public class StdRule implements DeconRule
             else
                 newProcess = newProcess + " " + change;
 
-            return new ValidWord(word.getNumConjugations()+1, word.getOriginalWord(), word.getWord().substring(0, word.getWord().length() - ending.length()) + replace, tags, impliedTags, newProcess);
+            return new ValidWord(word.getNumConjugations()+1, word.getOriginalWord(), word.getWord().substring(0, word.getWord().length() - ending.length()) + replace, tags, impliedTags, conjugationTags, newProcess);
         }
         //doesn't match, don't add new word
         return null;
