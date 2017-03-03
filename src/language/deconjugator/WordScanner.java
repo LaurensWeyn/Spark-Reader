@@ -195,6 +195,11 @@ public class WordScanner
         // marginal categories
         ruleList.add(new StdRule("い", "う", "(infinitive)", DefTag.v5u_s, DefTag.stem_ren));
 
+        // irregulars
+        ruleList.add(new StdRule("した", "する", "(te form)", DefTag.vs_i, DefTag.uninflectable));
+        ruleList.add(new StdRule("して", "する", "(te form)", DefTag.vs_i, DefTag.stem_te));
+        ruleList.add(new StdRule("し", "する", "(te form)", DefTag.vs_i, DefTag.stem_ren));
+
     }
     
     public WordScanner(String word)
