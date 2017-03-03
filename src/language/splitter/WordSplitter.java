@@ -115,6 +115,7 @@ public class WordSplitter
     public List<FoundWord> split(String text, Set<Integer> breaks)
     {
         ArrayList<FoundWord> words = new ArrayList<>();
+        if(text.equals("")) return words;
         int pos = 0;
         int start = 0;
         breaks.add(0);
