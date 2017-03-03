@@ -40,7 +40,7 @@ public class StdRule implements DeconRule
             return null;
         }
         // don't allow the deconjugator to make impossibly information-dense conjugations
-        if(word.getNeededTags().size() > word.getOriginalWord().length()+6)
+        if(word.getNumConjugations() > word.getOriginalWord().length()+6)
         {
             return null;
         }
@@ -60,7 +60,7 @@ public class StdRule implements DeconRule
             else
                 newProcess = newProcess + " " + change;
 
-            return new ValidWord(word.getOriginalWord(), word.getWord().substring(0, word.getWord().length() - ending.length()) + replace, tags, impliedTags, newProcess);
+            return new ValidWord(word.getNumConjugations()+1, word.getOriginalWord(), word.getWord().substring(0, word.getWord().length() - ending.length()) + replace, tags, impliedTags, newProcess);
         }
         //doesn't match, don't add new word
         return null;

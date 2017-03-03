@@ -162,7 +162,7 @@ public class WordScanner
         ruleList.add(new StdRule("ば", "ぶ", "(mizenkei)", DefTag.v5b, DefTag.stem_a));
         ruleList.add(new StdRule("な", "ぬ", "(mizenkei)", DefTag.v5n, DefTag.stem_a));
         ruleList.add(new StdRule("ま", "む", "(mizenkei)", DefTag.v5m, DefTag.stem_a));
-        // fixme: having multiple conjugations with the same form can make the ui display bogus extra definitions
+        // fixme: having multiple conjugations with the same form makes the ui display bogus extra definitions
         ruleList.add(new StdRule(""  , "る", "(mizenkei)", DefTag.v1,  DefTag.stem_a));
         // marginal categories
         ruleList.add(new StdRule("わ", "う", "(mizenkei)", DefTag.v5u_s, DefTag.stem_a));
@@ -194,6 +194,7 @@ public class WordScanner
         ruleList.add(new StdRule(""  , "る", "(infinitive)", DefTag.v1,  DefTag.stem_ren));
         // marginal categories
         ruleList.add(new StdRule("い", "う", "(infinitive)", DefTag.v5u_s, DefTag.stem_ren));
+
     }
     
     public WordScanner(String word)
@@ -215,6 +216,9 @@ public class WordScanner
             if(iters > 32)
             {
                 System.out.println("bailing out from deconjugation");
+                System.out.println("needed: " + matches.get(matches.size()-1).getNeededTags());
+                System.out.println("original: " +  matches.get(matches.size()-1).getOriginalWord());
+                System.out.println("iteration " + Integer.toString(iters));
                 break;
             }
             
