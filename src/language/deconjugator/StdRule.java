@@ -58,7 +58,7 @@ public class StdRule implements DeconRule
         if(word.getWord().endsWith(ending) && deconjugates)
         {
             //add tag and return
-            HashSet<DefTag> tags = new HashSet<>(word.getNeededTags());
+            HashSet<DefTag> tags = new HashSet<>();
             HashSet<DefTag> impliedTags = new HashSet<>(word.getImpliedTags());
             ArrayList<DefTag> conjugationTags = new ArrayList<>(word.getConjugationTags());
             

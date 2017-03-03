@@ -220,7 +220,8 @@ public class WordScanner
             if(iters > 32)
             {
                 System.out.println("bailing out from deconjugation");
-                System.out.println("needed: " + matches.get(matches.size()-1).getNeededTags());
+                System.out.println("conjugation tags: " + matches.get(matches.size()-1).getConjugationTags());
+                System.out.println("conjugation path: " + matches.get(matches.size()-1).getProcess());
                 System.out.println("original: " +  matches.get(matches.size()-1).getOriginalWord());
                 System.out.println("iteration " + Integer.toString(iters));
                 break;

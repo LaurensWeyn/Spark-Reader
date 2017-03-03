@@ -96,7 +96,7 @@ public class ValidWord
 
         for(DefTag needed:getNeededTags())
         {
-            if(!def.getTags().contains(needed) && !getImpliedTags().contains(needed) && !needed.toString().equals(""))
+            if(!def.getTags().contains(needed) && !needed.toString().equals(""))
             {
                 /*
                 System.out.println("Tag mismatch");
