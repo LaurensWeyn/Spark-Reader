@@ -51,6 +51,7 @@ public class WordScanner
             }
         });
 
+        /*
         // handle "must" in a single block because it's dumb and long
         // todo: add a type of rule that allows A/B matches in conjugated ending
         // todo: or allow conjugation display to substitute sequences "process" text for others
@@ -65,7 +66,11 @@ public class WordScanner
         ruleList.add(new StdRule("なければ", "", "(negative condition)", DefTag.stem_ku, DefTag.stem_must_first_half));
         ruleList.add(new StdRule("なくては", "", "(negative condition)", DefTag.stem_a, DefTag.stem_must_first_half));
         ruleList.add(new StdRule("なくては", "", "(negative condition)", DefTag.stem_ku, DefTag.stem_must_first_half));
-        
+        // fixme: can this use たら instead of ば as well? are certain combinations forbidden?
+        // fixme: なかったら? ないと?
+        // fixme: なりません? いけません?
+        */
+
         ruleList.add(new StdRule("たい", "", "want", DefTag.stem_ren, DefTag.adj_i));
         ruleList.add(new StdRule("ください", "", "polite request", DefTag.stem_te, DefTag.adj_i));
 
@@ -93,9 +98,12 @@ public class WordScanner
         // verbs
         ruleList.add(new StdRule("たら", "", "conditional", DefTag.stem_ren_less, DefTag.uninflectable));
         ruleList.add(new StdRule("たらば", "", "formal conditional", DefTag.stem_ren_less, DefTag.uninflectable));
-        // i-adjectives
+        // (voiced)
         ruleList.add(new StdRule("だら", "", "conditional", DefTag.stem_ren_less_v, DefTag.uninflectable));
         ruleList.add(new StdRule("だらば", "", "formal conditional", DefTag.stem_ren_less_v, DefTag.uninflectable));
+        // i-adjectives
+        ruleList.add(new StdRule("ったら", "", "conditional", DefTag.stem_ka, DefTag.uninflectable));
+        ruleList.add(new StdRule("ったらば", "", "formal conditional", DefTag.stem_ka, DefTag.uninflectable));
         
         // ば, the provisional conditional
         // verbs
@@ -111,7 +119,7 @@ public class WordScanner
         ruleList.add(new StdRule("った", "", "past", DefTag.stem_ka, DefTag.uninflectable));
         
         // passive (godan)
-        ruleList.add(new StdRule("れる", "", "potential/passive nexus", DefTag.stem_a, DefTag.v1));
+        ruleList.add(new StdRule("れる", "", "passive", DefTag.stem_a, DefTag.v1)); // ichidan cannot conjugate to "stem_a"
         
         // passive-potential (ichidan)
         ruleList.add(new StdRule("られる", "る", "potential/passive nexus", DefTag.v1, DefTag.v1));
@@ -119,6 +127,10 @@ public class WordScanner
         // potential
         // pattern is the same for ichidan and godan verbs; the ichidan one is PROscribed, but still real.
         ruleList.add(new StdRule("る", "", "potential", DefTag.stem_e, DefTag.v1));
+
+        // causative
+        ruleList.add(new StdRule("させる", "る", "causative", DefTag.v1, DefTag.v1));
+        ruleList.add(new StdRule("せる", "", "causative", DefTag.stem_a, DefTag.v1)); // ichidan cannot conjugate to "stem_a"
         
         // nasai
         // technically an i-adjective, but again, letting the deconjugator use it like that would cause more problems than it's worth
@@ -132,13 +144,14 @@ public class WordScanner
         ruleList.add(new StdRule("ませんでした", "", "past negative polite", DefTag.stem_ren, DefTag.uninflectable));
         
         // part-of-speech roles
+        ruleList.add(new StdRule("に", "", "adverb", DefTag.adj_na));
         ruleList.add(new StdRule("な", "", "adjective", DefTag.adj_na));
         ruleList.add(new StdRule("の", "", "adjective", DefTag.adj_no));
         
         // i-adjective stems
         ruleList.add(new StdRule("く", "い", "(adverb)", DefTag.adj_i, DefTag.stem_ku));
-        ruleList.add(new StdRule("か", "い", "ka stem", DefTag.adj_i, DefTag.stem_ka));
-        ruleList.add(new StdRule("け", "い", "ke stem", DefTag.adj_i, DefTag.stem_ke));
+        ruleList.add(new StdRule("か", "い", "(ka stem)", DefTag.adj_i, DefTag.stem_ka));
+        ruleList.add(new StdRule("け", "い", "(ke stem)", DefTag.adj_i, DefTag.stem_ke));
         ruleList.add(new StdRule("さ", "い", "noun form", DefTag.adj_i, DefTag.n));
         
         // negative
