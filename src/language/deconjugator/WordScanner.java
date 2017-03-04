@@ -222,6 +222,8 @@ public class WordScanner
         // irregulars
         ruleList.add(new StdRule("し", "する", "(infinitive)", DefTag.vs_i, DefTag.stem_ren));
         ruleList.add(new StdRule("し", "する", "(unstressed infinitive)", DefTag.vs_i, DefTag.stem_ren_less));
+
+        // todo: imperatives (clashes with e-stem), volitional
     }
     
     public WordScanner(String word)
