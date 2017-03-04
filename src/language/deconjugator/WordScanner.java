@@ -207,8 +207,8 @@ public class WordScanner
         ruleList.add(new StdRule("い", "う", "(infinitive)", DefTag.v5u_s, DefTag.stem_ren));
 
         // irregulars
-        ruleList.add(new StdRule("し", "する", "(te form)", DefTag.vs_i, DefTag.stem_ren));
-        ruleList.add(new StdRule("し", "する", "(te form)", DefTag.vs_i, DefTag.stem_ren_less));
+        ruleList.add(new StdRule("し", "する", "(infinitive)", DefTag.vs_i, DefTag.stem_ren));
+        ruleList.add(new StdRule("し", "する", "(unstressed infinitive)", DefTag.vs_i, DefTag.stem_ren_less));
     }
     
     public WordScanner(String word)
