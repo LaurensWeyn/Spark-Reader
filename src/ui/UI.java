@@ -231,8 +231,8 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             options.getFont(g, "furiFont");
             String cog = "三";
             g.setColor(Color.white);
-            buttonStartX = options.getOptionInt("windowWidth") - optionsButtonWidth;
-            g.drawString(cog, buttonStartX, g.getFontMetrics().getAscent() + furiganaStartY);
+            buttonStartX = options.getOptionInt("windowWidth") - optionsButtonWidth - 1;
+            g.drawString(cog, buttonStartX, g.getFontMetrics().getAscent() + furiganaStartY - 1);
         }
         disp.refresh();
     }

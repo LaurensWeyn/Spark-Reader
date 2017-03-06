@@ -25,22 +25,22 @@ import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 
 /**
- *
+ * The TreeModel used for the options window's option page selection
  * @author Laurens Weyn
  */
 public class OptionTree implements TreeModel
 {
-    public final Page ROOT;
+    private final Page root;
 
-    public OptionTree(Page ROOT)
+    public OptionTree(Page root)
     {
-        this.ROOT = ROOT;
+        this.root = root;
     }
     
     @Override
     public Object getRoot()
     {
-        return ROOT;
+        return root;
     }
 
     @Override
@@ -68,8 +68,7 @@ public class OptionTree implements TreeModel
     @Override
     public boolean isLeaf(Object node)
     {
-        if(node instanceof PageGroup)return false;
-        else return true;
+        return !(node instanceof PageGroup);
     }
 
     @Override
@@ -89,7 +88,8 @@ public class OptionTree implements TreeModel
         return 0;
     }
     
-    ArrayList<TreeModelListener> listeners = new ArrayList<>();
+    private ArrayList<TreeModelListener> listeners = new ArrayList<>();
+
     @Override
     public void addTreeModelListener(TreeModelListener l)
     {

@@ -43,6 +43,8 @@ public class Options implements Cloneable
         //all default settings hardcoded here//
         ///////////////////////////////////////
         
+        //TODO update default colors to the actual default colours (these ones are still from before 0.1!)
+        
         options.put("textFont", "Meiryo, A, 30");
         options.put("furiFont", "Meiryo,, 15");
         options.put("defFont", "Meiryo,, 15");

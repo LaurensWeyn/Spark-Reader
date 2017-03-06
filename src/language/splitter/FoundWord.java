@@ -17,8 +17,6 @@
 package language.splitter;
 
 import language.deconjugator.ValidWord;
-import language.deconjugator.WordScanner;
-import language.dictionary.DefTag;
 import language.dictionary.Dictionary;
 import language.dictionary.EPWINGDefinition;
 import language.dictionary.Japanese;
@@ -60,7 +58,7 @@ public class FoundWord
         hasKanji = Japanese.hasKanji(text);
         this.definitions = definitions;
         this.startX = startX;
-        
+
         if(definitions != null)definitions.sort(null);
     }
     public FoundWord(String text, List<FoundDef> definitions)

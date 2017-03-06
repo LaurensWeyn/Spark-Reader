@@ -85,6 +85,14 @@ public class Japanese
         }
         return false;
     }
+    public static boolean hasOnlyKana(String text)
+    {
+        for (int i = 0; i < text.length(); i++)
+        {
+            if(!isKana(text.charAt(i)))return false;
+        }
+        return true;
+    }
     public static boolean isKana(char c)
     {
         return 0x3040 <= c && c <= 0x30ff;
