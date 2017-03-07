@@ -18,7 +18,7 @@ package options;
 
 import language.dictionary.Definition;
 import language.splitter.FoundDef;
-import ui.UI;
+import main.Main;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -81,7 +81,7 @@ public class PrefDef
         table.put(spelling, def.getDefinition().getID());
         dueChanges++;
         
-        if(dueChanges > saveThreshold || !UI.options.getOptionBool("reduceSave"))
+        if(dueChanges > saveThreshold || !Main.options.getOptionBool("reduceSave"))
         {
             try
             {

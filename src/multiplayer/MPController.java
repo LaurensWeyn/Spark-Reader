@@ -1,6 +1,6 @@
 package multiplayer;
 
-import ui.UI;
+import main.Main;
 
 /**
  * Created by Laurens on 2/12/2017.
@@ -18,10 +18,10 @@ public abstract class MPController implements Runnable
 
     protected static String currentLine()
     {
-        return UI.log.mostRecent().replace("\n", "\\n");
+        return Main.log.mostRecent().replace("\n", "\\n");
     }
     protected static int positionOf(String line)
     {
-        return UI.log.linePos(line.replace("\\n","\n"));
+        return Main.log.linePos(line.replace("\\n","\n"));
     }
 }

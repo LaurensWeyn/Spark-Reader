@@ -16,30 +16,22 @@
  */
 package ui;
 
-import hooker.ClipboardHook;
-import hooker.Hook;
-import hooker.Log;
-import language.dictionary.Dictionary;
-import language.dictionary.EPWINGDefinition;
-import language.dictionary.Kanji;
 import language.splitter.FoundWord;
 import language.splitter.WordSplitter;
-import multiplayer.MPController;
-import options.Known;
-import options.Options;
-import options.PrefDef;
+import main.Main;
 import ui.popup.DefPopup;
 import ui.popup.MenuPopup;
 import ui.popup.WordPopup;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+
+import static main.Main.*;
+import static main.Main.options;
+import static main.Main.text;
 
 /**
  * Main Spark Reader UI
@@ -47,18 +39,15 @@ import java.util.Set;
  */
 public class UI implements MouseListener, MouseMotionListener, MouseWheelListener
 {
-    public static final String VERSION = "Beta 0.6";
-    
-    public static UI instance;
-    
 
-    public static MPController mpManager;
-    public static Thread mpThread;
-    public static String mpText;
-    
+
+
     public static boolean hidden = false;
-    
-    
+
+
+    public static String mpStatusText;
+
+
     public Overlay disp;
     public Tray tray;
     
@@ -86,63 +75,19 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     
     public static final Color CLEAR = new Color(0, 0, 0, 0);
 
-    public static String text = "";
     public static String userComment;
-    public static Log log;
-    public static Hook hook;
-    
-    public static WordSplitter splitter;
-    public static Dictionary dict;
-    
-    public static Known known;
-    public static PrefDef prefDef;
-    public static Options options;
-    
+
     public static int optionsButtonWidth = 10;
     public static boolean renderBackground = true;
     public static boolean tempIgnoreMouseExit = false;
 
-    public void loadDictionaries()
-    {
-        try
-        {
-            Set<Character> blacklist = new HashSet<>();
-            blacklist.add('・');
-            EPWINGDefinition.setBlacklist(blacklist);
 
-            dict = new Dictionary(new File(options.getOption("dictionaryPath")));
-            System.out.println("loaded dictionaries");
-        }catch(IOException e)
-        {
-            JOptionPane.showMessageDialog(disp.getFrame(), "Error loading dictionaries: " + e, "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
     public UI()
     {
         lines = new ArrayList<>();
         lines.add(new Line());
-        
-        try
-        {
-            //load config
-            options = new Options(Options.SETTINGS_FILE);
-            hook = new ClipboardHook();
-            known = new Known(options.getFile("knownWordsPath"));
-            prefDef = new PrefDef(options.getFile("preferredDefsPath"));
-            disp = new Overlay(options.getOptionInt("windowWidth") + options.getOptionInt("defWidth"), options.getOptionInt("maxHeight"));
-            log = new Log(50);
-            
-            loadDictionaries();
-            splitter = new WordSplitter(dict);
-            
-            
-            //textFont = new Font("Meiryo", Font.PLAIN, 30);
-            
-        }catch(Exception e)
-        {
-            System.out.println("error init UI");
-            e.printStackTrace();
-        }
+        disp = new Overlay(options.getOptionInt("windowWidth") + options.getOptionInt("defWidth"),
+                options.getOptionInt("maxHeight"));
     }
     private void registerListeners()
     {
@@ -216,13 +161,13 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
 
             //render MP text (if running, there's text and no def's open)
             //TODO ensure this works for reversed text
-            if(mpThread != null && mpText != null && selectedWord == null)
+            if(mpThread != null && mpStatusText != null && selectedWord == null)
             {
                 options.getFont(g, "furiFont");
                 g.setColor(options.getColor("furiBackCol"));
-                g.fillRect(0, defStartY, g.getFontMetrics().stringWidth(mpText), g.getFontMetrics().getHeight());
+                g.fillRect(0, defStartY, g.getFontMetrics().stringWidth(mpStatusText), g.getFontMetrics().getHeight());
                 g.setColor(options.getColor("furiCol"));
-                g.drawString(mpText, 0, defStartY + g.getFontMetrics().getAscent());
+                g.drawString(mpStatusText, 0, defStartY + g.getFontMetrics().getAscent());
 
             }
             
@@ -298,9 +243,9 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         newLine.addWord(word);
     }
 
-    public static void main(String[] args)throws Exception
+    public static void runUI()throws Exception
     {
-        System.out.println(VERSION);
+
         
         try
         {
@@ -310,8 +255,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             //fall back to default if this fails
         }
         
-        UI ui = new UI();
-        instance = ui;
+        ui = new UI();
         ui.registerListeners();
         //random sample text to copy for testing
         System.out.println("ひかり「暁斗たちと遊んでて夕飯のギョーザを食べ損ねて、\n悔しかったから、星座にしてやったんだよね」");
@@ -357,9 +301,9 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             if(mpManager != null)
             {
                 String newText = mpManager.getStatusText();
-                if(!newText.equals(mpText))
+                if(!newText.equals(mpStatusText))
                 {
-                    mpText = newText;
+                    mpStatusText = newText;
                     ui.render();//refresh mp status
                 }
                 if(!mpManager.running)
@@ -368,7 +312,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
                     mpThread = null;
                 }
             }
-            else mpText = null;
+            else mpStatusText = null;
             try
             {
                 Thread.sleep(100);

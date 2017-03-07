@@ -16,6 +16,7 @@
  */
 package ui.popup;
 
+import main.Main;
 import options.OptionsUI;
 import ui.UI;
 
@@ -49,8 +50,8 @@ public class TrayPopup extends JPopupMenu
             {
                 try
                 {
-                    UI.known.save();
-                    UI.prefDef.save();
+                    Main.known.save();
+                    Main.prefDef.save();
                 }catch(IOException err)
                 {
                     JOptionPane.showMessageDialog(ui.disp.getFrame(), "Error while saving changes");
@@ -77,7 +78,7 @@ public class TrayPopup extends JPopupMenu
             {
                 try
                 {
-                    OptionsUI.showOptions(UI.options);
+                    OptionsUI.showOptions(Main.options);
                 }catch(IOException err)
                 {
                     JOptionPane.showMessageDialog(ui.disp.getFrame(), "Error editing configuration: " + e);

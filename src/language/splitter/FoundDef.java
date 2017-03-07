@@ -18,13 +18,13 @@ package language.splitter;
 
 import language.deconjugator.ValidWord;
 import language.dictionary.*;
+import main.Main;
 import ui.TextBlockRenderer;
-import ui.UI;
 
 import java.awt.*;
 import java.util.*;
 
-import static ui.UI.options;
+import static main.Main.options;
 
 /**
  * Holds and renders a found definition of a FoundWord
@@ -143,7 +143,7 @@ public class FoundDef implements Comparable<FoundDef>
         int score = 0;
 
         score += foundDef.getSource().getPriority() * 100;
-        if (UI.prefDef.isPreferred(foundDef)) score += 1000;//HIGHLY favour definitions the user preferred
+        if (Main.prefDef.isPreferred(foundDef)) score += 1000;//HIGHLY favour definitions the user preferred
 
         Set<DefTag> tags = foundDef.getTags();
         if (tags != null)

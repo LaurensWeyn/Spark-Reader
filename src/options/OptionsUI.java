@@ -17,12 +17,12 @@
 package options;
 
 import language.dictionary.DefSource;
+import main.Main;
 import options.option.*;
 import options.page.OptionPage;
 import options.page.Page;
 import options.page.PageGroup;
 import options.page.UserDefPage;
-import ui.UI;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -176,15 +176,15 @@ public class OptionsUI extends JFrame
                 try
                 {
                     changedOptions.save();
-                    if(UI.options != null)UI.options.load();
+                    if(Main.options != null) Main.options.load();
                 }catch(IOException err)
                 {
                     //TODO deal with this error
                 }
-                if(UI.instance != null)
+                if(Main.ui != null)
                 {
-                    UI.instance.render();//update settings
-                    UI.instance.render();//twice to ensure things render correctly
+                    Main.ui.render();//update settings
+                    Main.ui.render();//twice to ensure things render correctly
                 }
             }
         }));

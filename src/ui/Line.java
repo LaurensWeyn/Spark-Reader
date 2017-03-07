@@ -17,6 +17,7 @@
 package ui;
 
 import language.splitter.FoundWord;
+import main.Main;
 
 import java.awt.*;
 import java.util.*;
@@ -63,13 +64,13 @@ public class Line
         {
             splitPoints.add(word.startX());
         }
-        g.setClip(0, 0, UI.options.getOptionInt("windowWidth"), UI.options.getOptionInt("maxHeight"));//render only over window
+        g.setClip(0, 0, Main.options.getOptionInt("windowWidth"), Main.options.getOptionInt("maxHeight"));//render only over window
         //render markers
-        for (int i = 0; i < text.length(); i++)
+        for (int i = 0; i < Main.text.length(); i++)
         {
             if(markers.contains(i) || splitPoints.contains(i))//only draw on actual points
             {
-                g.setColor(markers.contains(i)?options.getColor("markerCol"):options.getColor("noMarkerCol"));
+                g.setColor(markers.contains(i)? Main.options.getColor("markerCol"): Main.options.getColor("noMarkerCol"));
 
                 g.clearRect(xOff + i * mainFontSize - 1, yOff + textStartY, 2, UI.textHeight);
                 g.fillRect (xOff + i * mainFontSize - 1, yOff + textStartY, 2, UI.textHeight);//TODO make markers variable size
@@ -77,7 +78,7 @@ public class Line
         }
 
         //render words
-        options.getFont("textFont");
+        Main.options.getFont("textFont");
 
         int lastX = 0;
         for(FoundWord word:words)

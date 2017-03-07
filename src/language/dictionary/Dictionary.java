@@ -17,7 +17,7 @@
 package language.dictionary;
 
 import fuku.eb4j.*;
-import ui.UI;
+import main.Main;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -64,7 +64,7 @@ public class Dictionary
             }
             else if(file.getName().equals("kanji.txt"))
             {
-                Kanji.load(file, UI.options.getOptionBool("addKanjiAsDef")?this:null, DefSource.getSource("Kanji deck"));
+                Kanji.load(file, Main.options.getOptionBool("addKanjiAsDef")?this:null, DefSource.getSource("Kanji deck"));
             }
             else if(file.getName().equalsIgnoreCase("edict2"))
             {

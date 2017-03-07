@@ -4,7 +4,7 @@ import java.awt.*;
 import java.util.Deque;
 import java.util.LinkedList;
 
-import static ui.UI.options;
+import static main.Main.options;
 
 /**
  * Renders blocks of text on the overlay. Used for rendering definitions.

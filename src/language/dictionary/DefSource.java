@@ -1,6 +1,6 @@
 package language.dictionary;
 
-import ui.UI;
+import main.Main;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -36,7 +36,7 @@ public class DefSource
         int priority = 0;
         try
         {
-            priority = UI.options.getOptionInt(sourceName.toLowerCase().replace(" ", "") + "SourcePriority");
+            priority = Main.options.getOptionInt(sourceName.toLowerCase().replace(" ", "") + "SourcePriority");
         }catch(IllegalArgumentException | NullPointerException ignored)
         {
             System.out.println("WARN: source priority for " + sourceName + " not known, assuming 0");
