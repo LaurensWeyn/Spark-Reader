@@ -27,7 +27,7 @@ import java.util.Set;
  *
  * @author Laurens Weyn
  */
-public class Options implements Cloneable
+public class Options
 {
     private HashMap<String, String> options;
     private File file;
@@ -198,7 +198,7 @@ public class Options implements Cloneable
                 case 'I':
                     mods |= Font.ITALIC;
                     break;
-                    //Anti-Alisasing isn't applied to Font object, applied seperately
+                    //Anti-Aliasing isn't applied to Font object, applied separately
             }
             
         }
@@ -244,16 +244,6 @@ public class Options implements Cloneable
             line = br.readLine();
         }
         br.close();
-    }
-
-    @Override
-    protected Object clone() throws CloneNotSupportedException
-    {
-        super.clone();
-        Options c = new Options();
-        c.options = (HashMap<String, String>)options.clone();
-        c.file = file;
-        return c;
     }
 
     /**

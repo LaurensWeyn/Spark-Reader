@@ -97,12 +97,9 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         
         tray = new Tray(this);//manages tray icon
     }
-    public void render()
+
+    public void calculateSizes(Graphics2D g)
     {
-        Graphics2D g = disp.getGraphics();
-        g.setBackground(CLEAR);
-        disp.getFrame().setVisible(!hidden);
-        
         textHeight = g.getFontMetrics(options.getFont("textFont")).getHeight();
         furiHeight = g.getFontMetrics(options.getFont("furiFont")).getHeight();
         lineHeight = textHeight + furiHeight;
@@ -122,6 +119,15 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             textEndY = textStartY + lineHeight * lines.size() - furiHeight;
             defStartY = textEndY;
         }
+        buttonStartX = options.getOptionInt("windowWidth") - optionsButtonWidth - 1;
+    }
+    public void render()
+    {
+        Graphics2D g = disp.getGraphics();
+        g.setBackground(CLEAR);
+        disp.getFrame().setVisible(!hidden);
+        
+        calculateSizes(g);
 
 
         if(!hidden)
@@ -176,7 +182,6 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             options.getFont(g, "furiFont");
             String cog = "三";
             g.setColor(Color.white);
-            buttonStartX = options.getOptionInt("windowWidth") - optionsButtonWidth - 1;
             g.drawString(cog, buttonStartX, g.getFontMetrics().getAscent() + furiganaStartY - 1);
         }
         disp.refresh();

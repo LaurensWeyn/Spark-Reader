@@ -55,6 +55,7 @@ public class OptionsUI extends JFrame
     {
         super("Spark Reader options");
         root = new PageGroup("Root", "");
+        //TODO load this mess from an XML file or something instead of hardcoding it all
         
         OptionPage display = new OptionPage("General");
             display.add(new OptionLabel("Window properties:", null));
@@ -66,7 +67,6 @@ public class OptionsUI extends JFrame
             display.add(new ToggleOption("startInTray", "Start in tray if there's no Japanese text on startup", "By default, the window will be visible after startup even if there is no text to display."));
             display.add(new OptionLabel("Other:", null));
             display.add(new ToggleOption("reduceSave", "Reduce file I/O", "<html>If ticked, writing to files is avoided until the program is closed or a lot of changes have been made.<br>Turning this on will improve performance, but if the program crashes some progress may be lost"));
-            display.add(new ToggleOption("addKanjiAsDef", "Add Kanji to definitions", "<html>If you have a heisig Kanji file loaded, this will also add those individial characters as 'definitions'"));
         PageGroup window = new PageGroup("Overlay", "Graphical settings related to the on-screen overlay window");
 
             OptionPage furigana = new OptionPage("Furigana");
@@ -117,6 +117,15 @@ public class OptionsUI extends JFrame
             defWindow.add(new ColourOption("defReadingCol", "Reading colour", "Colour of readings and dictionary form"));
             defWindow.add(new ColourOption("defKanjiCol", "Kanji colour", "(Heisig mode) for Kanji reference in popup"));
             defs.add(defWindow);
+            OptionPage defSources = new OptionPage("Sources");
+            defSources.add(new TextOption("dictionaryPath", "Dictionary folder", "path to the folder containing dictionaries.", true));
+            defSources.add(new ToggleOption("addKanjiAsDef", "Add Kanji to definitions", "<html>If you have a heisig Kanji file in the dictionary folder, this will also add those individual characters as 'definitions'<br>If disabled but kanji.txt is found, they will still show up on other definitions"));
+            defSources.add(new OptionLabel("Priority:", "Higher numbers will appear at the top when displaying definitions"));
+            defSources.add(new NumberOption("customSourcePriority", "Custom dictionary" ,"<html>The priority of the custom dictionary.<br>Set this higher than the rest to have your definitions appear at the top", NumberOption.NumberPreset.posNeg));
+            defSources.add(new NumberOption("edictSourcePriority", "Edict" ,"<html>The priority of the 'stock' dictionary.<br>Default is 0 (neutral)", NumberOption.NumberPreset.posNeg));
+            defSources.add(new NumberOption("epwingSourcePriority", "Epwing (if available)" ,"<html>The priority of all epwing dictionaries.<br>Ignored if none are present.", NumberOption.NumberPreset.posNeg));
+            defSources.add(new NumberOption("kanjideckSourcePriority", "Kanji deck (if enabled)" ,"<html>The priority of kanji definitions.<br>Ignored if there is no kanji file or if disabled above.", NumberOption.NumberPreset.posNeg));
+            defs.add(defSources);
             defs.add(new UserDefPage(DefSource.getSource("Custom")));
 
         root.add(defs);
@@ -213,18 +222,13 @@ public class OptionsUI extends JFrame
                 optionScroll.setPreferredSize(new Dimension(optionWidth - SPACING * 2, getHeight() - lowerButtons.getHeight()));
             }
         });
-        leftMenu.addTreeSelectionListener(new TreeSelectionListener()
+        leftMenu.addTreeSelectionListener(e ->
         {
-            @Override
-            public void valueChanged(TreeSelectionEvent e)
-            {
-                Page page = (Page)e.getPath().getLastPathComponent();
-                System.out.println("selected " + page);
-                optionScroll.setViewportView(page.getComponent());
-            }
+            Page page = (Page)e.getPath().getLastPathComponent();
+            optionScroll.setViewportView(page.getComponent());
         });
     }
-    Options changedOptions;
+    private Options changedOptions;
     public static void showOptions(Options options) throws IOException
     {
         Options ops = new Options(Options.SETTINGS_FILE);
