@@ -54,6 +54,13 @@ public class WordSplitter
         while(start < text.length())
         {
             int pos = text.length();
+
+            // limit segment length: in practice, single segments will never get this long, and this speeds up worst-case-scenarios a lot
+            // todo: there should be a faster way of selecting the intial "overly long" segment for deconjugation
+            // todo: looking for strings of hiragana, perhaps?
+            // todo: worst case scenario, the deconjugator could be replaced with a conjugator instead, somehow
+            if(pos-start > 32) pos = 32+start;
+
             FoundWord matchedWord = null;
             //until we've tried all lengths and failed
             while(pos > start)
@@ -75,7 +82,7 @@ public class WordSplitter
                 if(matchedWord.getDefinitionCount() == 0 && options.getOptionBool("automaticallyParse"))
                 {
                     matchedWord = null;
-                    System.out.println("--->Trying a shorter deconjugation");
+                    //System.out.println("--->Trying a shorter deconjugation");
                     pos--;//try shorter word
                 }
                 else//found a word

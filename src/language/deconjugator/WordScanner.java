@@ -17,11 +17,15 @@
 package language.deconjugator;
 
 import language.dictionary.DefTag;
+import language.dictionary.Definition;
 import language.dictionary.Japanese;
 
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.List;
+
+import static main.Main.dict;
 
 /**
  * Produces all possible deconjugations of a word for lookup in dictionaries
@@ -222,6 +226,16 @@ public class WordScanner
         // irregulars
         ruleList.add(new StdRule("し", "する", "(infinitive)", DefTag.vs_i, DefTag.stem_ren));
         ruleList.add(new StdRule("し", "する", "(unstressed infinitive)", DefTag.vs_i, DefTag.stem_ren_less));
+        ruleList.add(new StdRule("し", "する", "(mizenkei)", DefTag.vs_i, DefTag.stem_mizenkei)); // actually irregular itself but this will do for now
+        ruleList.add(new StdRule("すれ", "する", "(izenkei)", DefTag.vs_i, DefTag.stem_mizenkei));
+        ruleList.add(new StdRule("しろ", "する", "imperative", DefTag.vs_i, DefTag.uninflectable));
+        ruleList.add(new StdRule("せよ", "する", "imperative", DefTag.vs_i, DefTag.uninflectable));
+
+        ruleList.add(new StdRule("き", "くる", "(infinitive)", DefTag.vk, DefTag.stem_ren));
+        ruleList.add(new StdRule("き", "くる", "(unstressed infinitive)", DefTag.vk, DefTag.stem_ren_less));
+        ruleList.add(new StdRule("こ", "くる", "(mizenkei)", DefTag.vk, DefTag.stem_mizenkei));
+        ruleList.add(new StdRule("くれ", "くる", "(izenkei)", DefTag.vk, DefTag.stem_mizenkei));
+        ruleList.add(new StdRule("こい", "くる", "imperative", DefTag.vk, DefTag.uninflectable));
 
         // todo: imperatives (clashes with e-stem), volitional
     }
@@ -240,9 +254,9 @@ public class WordScanner
         {
             int matches_before_testing = matches.size();
             int number_of_new_matches = test_rules(fully_covered_matches, word);
-            
+
             // the safeguards in process() should be enough, but in case they're not, or they break...
-            if(iters > 32)
+            if(iters > 24)
             {
                 System.out.println("bailing out from deconjugation");
                 System.out.println("conjugation tags: " + matches.get(matches.size()-1).getConjugationTags());
@@ -261,25 +275,25 @@ public class WordScanner
         }
     }
     
-    private int test_rules(int starting_match, String word)
+    private int test_rules(int start, String word)
     {
         int new_matches = 0;
 
         //attempt all deconjugation rules in order
         int size = matches.size();//don't scan matches added during iteration
-        if(starting_match >= size) return 0; // shouldn't happen but just in case it does we should also save the cpu
+        if(start == size) return 0;
 
         // Iterating on rules outside allows each match to be deconjugated more than once per iteration in some cases
         // which makes WordScanner require fewer iterations before exhausting all possible deconjugations
         for(DeconRule rule:ruleList)
         {
-            for(int i = starting_match; i < size; i++)
+            for(int i = start; i < size; i++)
             {
                 //check if any of our possible matches can be deconjugated by this rule
                 ValidWord gotten = rule.process(matches.get(i));
                 if(gotten != null)
                 {
-                    System.out.println("match");
+                    //System.out.println("match");
                     matches.add(gotten);
                     new_matches++;
                 }
