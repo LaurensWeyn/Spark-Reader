@@ -20,11 +20,10 @@ import language.dictionary.Definition;
 import language.dictionary.Japanese;
 import language.splitter.FoundDef;
 import language.splitter.FoundWord;
-import ui.UI;
+import main.Main;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -83,7 +82,7 @@ public class Known
     }
     private void addWord(String word)
     {
-        List<Definition> defs = UI.dict.find(word);
+        List<Definition> defs = Main.dict.find(word);
         if(defs != null)//if this word isn't known, don't bother adding it as a known word
         {
             for(String match:defs.get(0).getSpellings())
@@ -115,7 +114,7 @@ public class Known
             if(!table.contains(def.getDictForm()))dueChanges++;
             table.add(def.getDictForm());            
         }
-        if(dueChanges > saveThreshold || UI.options.getOptionBool("reduceSave") == false)
+        if(dueChanges > saveThreshold || !Main.options.getOptionBool("reduceSave"))
         {
             try
             {
@@ -133,7 +132,7 @@ public class Known
             if(table.contains(def.getDictForm()))dueChanges++;
             table.remove(def.getDictForm());            
         }
-        if(dueChanges > saveThreshold || UI.options.getOptionBool("reduceSave") == false)
+        if(dueChanges > saveThreshold || !Main.options.getOptionBool("reduceSave"))
         {
             try
             {

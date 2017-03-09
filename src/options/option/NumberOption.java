@@ -28,11 +28,12 @@ public class NumberOption extends UIOption
 {
     JSpinner spinner;
     JPanel panel;
-    public NumberOption(String tag, String name, String tip)
+    public NumberOption(String tag, String name, String tip, SpinnerModel model)
     {
         super(tag, name, tip);
-        
-        spinner = new JSpinner(new SpinnerNumberModel(Integer.parseInt(getValue()), 0, Integer.MAX_VALUE, 10));
+
+        spinner = new JSpinner(model);
+        spinner.setValue(Integer.parseInt(getValue()));
         JLabel label = new JLabel(name);
         label.setToolTipText(tip);
         spinner.addChangeListener(new ChangeListener(){
@@ -51,6 +52,30 @@ public class NumberOption extends UIOption
         panel.add(label);
         ((JSpinner.DefaultEditor)spinner.getEditor()).getTextField().setColumns(5);
         spinner.setMaximumSize(spinner.getPreferredSize());
+    }
+    public NumberOption(String tag, String name, String tip)
+    {
+        this(tag, name, tip, makeModel(NumberPreset.resolution));
+    }
+    public NumberOption(String tag, String name, String tip, NumberPreset preset)
+    {
+        this(tag, name, tip, makeModel(preset));
+    }
+    private static SpinnerNumberModel makeModel(NumberPreset preset)
+    {
+        switch(preset)
+        {
+            case posNeg: return new SpinnerNumberModel(0, Integer.MIN_VALUE, Integer.MAX_VALUE, 1);
+            case posOnly:return new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1);
+            case resolution:return new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 10);
+        }
+        throw new IllegalArgumentException("Unsupported preset " + preset);
+    }
+    public static enum NumberPreset
+    {
+        resolution,
+        posNeg,
+        posOnly,
     }
     @Override
     public JComponent getComponent()

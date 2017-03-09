@@ -17,6 +17,7 @@
 package hooker;
 
 import language.dictionary.Japanese;
+import main.Main;
 import ui.UI;
 
 import java.awt.*;
@@ -41,7 +42,7 @@ public class ClipboardHook implements Hook
         {
             lastClip = "";//never mind, update anyway (don't immediately hide on English text)
         }
-        if(UI.options.getOptionBool("startInTray"))
+        if(Main.options.getOptionBool("startInTray"))
         {
             lastClip = "";//allow immediately hiding on English text
         }
@@ -59,13 +60,13 @@ public class ClipboardHook implements Hook
             {
                 return clip;
             }
-            if(!isJapanese && UI.options.getOptionBool("hideOnOtherText"))
+            if(!isJapanese && Main.options.getOptionBool("hideOnOtherText"))
             {
                 UI.hidden = true;
-                if(UI.instance != null)
+                if(Main.ui != null)
                 {
-                    UI.instance.tray.showTray();
-                    UI.instance.render();
+                    Main.ui.tray.showTray();
+                    Main.ui.render();
                 }
             }
             ignoreNextLine = false;//line passed

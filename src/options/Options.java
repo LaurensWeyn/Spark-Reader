@@ -27,7 +27,7 @@ import java.util.Set;
  *
  * @author Laurens Weyn
  */
-public class Options implements Cloneable
+public class Options
 {
     private HashMap<String, String> options;
     private File file;
@@ -42,21 +42,21 @@ public class Options implements Cloneable
         ///////////////////////////////////////
         //all default settings hardcoded here//
         ///////////////////////////////////////
-        
+
         options.put("textFont", "Meiryo, A, 30");
-        options.put("furiFont", "Meiryo,, 15");
+        options.put("furiFont", "MS Gothic,, 12");
         options.put("defFont", "Meiryo,, 15");
 
         options.put("markerCol", "255, 255, 0, 200");
-        options.put("noMarkerCol", "255, 255, 0, 1");
+        options.put("noMarkerCol", "50, 50, 50, 150");
         options.put("furiCol", "0, 255, 255, 255");
         options.put("furiBackCol", "0, 0, 0, 128");
-        options.put("windowBackCol", "0, 0, 0, 100");
+        options.put("windowBackCol", "0, 0, 0, 175");
 
-        options.put("textBackCol", "0, 0, 255, 128");
-        options.put("knownTextBackCol", "0, 0, 255, 200");
+        options.put("textBackCol", "0, 0, 0, 200");
+        options.put("knownTextBackCol", "0, 0, 100, 200");
         options.put("clickedTextBackCol", "0, 100, 0, 200");
-        options.put("textCol", "255, 0, 0, 255");
+        options.put("textCol", "255, 255, 255, 255");
 
         options.put("defReadingCol", "0, 255, 255, 255");
         options.put("defKanjiCol", "255, 255, 255, 255");
@@ -198,7 +198,7 @@ public class Options implements Cloneable
                 case 'I':
                     mods |= Font.ITALIC;
                     break;
-                    //Anti-Alisasing isn't applied to Font object, applied seperately
+                    //Anti-Aliasing isn't applied to Font object, applied separately
             }
             
         }
@@ -244,16 +244,6 @@ public class Options implements Cloneable
             line = br.readLine();
         }
         br.close();
-    }
-
-    @Override
-    protected Object clone() throws CloneNotSupportedException
-    {
-        super.clone();
-        Options c = new Options();
-        c.options = (HashMap<String, String>)options.clone();
-        c.file = file;
-        return c;
     }
 
     /**

@@ -2,7 +2,7 @@ package options.page;
 
 import language.dictionary.DefSource;
 import language.dictionary.UserDefinition;
-import ui.UI;
+import main.Main;
 import ui.WordEditUI;
 
 import javax.swing.*;
@@ -54,7 +54,7 @@ public class UserDefPage implements Page
             {
                 for(UserDefinition definition:definitionList.getSelectedValuesList())
                 {
-                    UI.dict.removeDefinition(definition);
+                    Main.dict.removeDefinition(definition);
                     source.getDefinitions().remove(definition);
                     listModel.update();
                 }

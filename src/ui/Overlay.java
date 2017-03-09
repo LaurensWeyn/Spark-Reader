@@ -16,6 +16,8 @@
  */
 package ui;
 
+import main.Main;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -51,7 +53,7 @@ public class Overlay
 
         setSize(width, height);//build components with given size
 
-        frame.setFocusableWindowState(UI.options.getOptionBool("takeFocus"));//set the focus mode
+        frame.setFocusableWindowState(Main.options.getOptionBool("takeFocus"));//set the focus mode
         //frame.pack();
         frame.setVisible(true);
         frame.setFocusable(false);

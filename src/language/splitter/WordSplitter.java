@@ -22,7 +22,8 @@ import language.dictionary.*;
 import language.dictionary.Dictionary;
 import java.util.*;
 
-import ui.UI;
+import static main.Main.options;
+
 
 /**
  * Takes in text and splits it into individual words
@@ -71,7 +72,7 @@ public class WordSplitter
                     }
                 }
 
-                if(matchedWord.getDefinitionCount() == 0 && UI.options.getOptionBool("automaticallyParse"))
+                if(matchedWord.getDefinitionCount() == 0 && options.getOptionBool("automaticallyParse"))
                 {
                     matchedWord = null;
                     System.out.println("--->Trying a shorter deconjugation");

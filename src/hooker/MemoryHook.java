@@ -16,10 +16,9 @@
  */
 package hooker;
 
-import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import main.Main;
 import ui.LineSelectUI;
-import ui.UI;
 
 import javax.swing.*;
 import java.awt.*;
@@ -43,7 +42,7 @@ public class MemoryHook implements Hook
     public MemoryHook()
     {
         Component parent = null;
-        if(UI.instance != null)parent = UI.instance.disp.getFrame();
+        if(Main.ui != null)parent = Main.ui.disp.getFrame();
         String response = JOptionPane.showInputDialog(parent, START_MESSAGE);
         if(response == null)return;
         process = null;

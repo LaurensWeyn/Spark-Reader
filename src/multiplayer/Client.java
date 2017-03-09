@@ -16,7 +16,7 @@
  */
 package multiplayer;
 
-import ui.UI;
+import main.Main;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -107,7 +107,7 @@ public class Client extends MPController
         }catch(IOException e)
         {
             //disconnect from server
-            JOptionPane.showMessageDialog(UI.instance.disp.getFrame(), "Disconnected from server:\n" + e);
+            JOptionPane.showMessageDialog(Main.ui.disp.getFrame(), "Disconnected from server:\n" + e);
         }
         running = false;
     }

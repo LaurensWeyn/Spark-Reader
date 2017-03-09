@@ -17,11 +17,10 @@
 package language.splitter;
 
 import language.deconjugator.ValidWord;
-import language.deconjugator.WordScanner;
-import language.dictionary.DefTag;
 import language.dictionary.Dictionary;
 import language.dictionary.EPWINGDefinition;
 import language.dictionary.Japanese;
+import main.Main;
 import ui.UI;
 
 import java.awt.*;
@@ -30,7 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static ui.UI.options;
+import static main.Main.options;
 
 /**
  * Holds a word from the text and definitions that match it
@@ -60,7 +59,7 @@ public class FoundWord
         hasKanji = Japanese.hasKanji(text);
         this.definitions = definitions;
         this.startX = startX;
-        
+
         if(definitions != null)definitions.sort(null);
     }
     public FoundWord(String text, List<FoundDef> definitions)
@@ -125,7 +124,7 @@ public class FoundWord
 
         if(showDef && !hasOpened)
         {
-            attachEpwingDefinitions(UI.dict);//load these in only when needed
+            attachEpwingDefinitions(Main.dict);//load these in only when needed
             sortDefs();
             hasOpened = true;
         }
@@ -152,7 +151,7 @@ public class FoundWord
         if(showDef)
         {
             g.setClip(null);//render this anywhere
-            UI.options.getFont(g, "defFont");
+            options.getFont(g, "defFont");
             int y = UI.defStartY + g.getFontMetrics().getAscent();
             definitions.get(currentDef).render(g, startPos, Math.max(width, options.getOptionInt("defWidth")), y);
         }
@@ -201,7 +200,7 @@ public class FoundWord
     }
     public boolean isKnown()
     {
-        return UI.known.isKnown(this);
+        return Main.known.isKnown(this);
     }
     public boolean isShowingDef()
     {

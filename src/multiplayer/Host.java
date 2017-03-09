@@ -16,7 +16,7 @@
  */
 package multiplayer;
 
-import ui.UI;
+import main.Main;
 
 import javax.swing.*;
 import java.awt.*;
@@ -58,7 +58,7 @@ public class Host extends MPController
         catch(IOException e)
         {
             Component parent = null;
-            if(UI.instance != null)parent = UI.instance.disp.getFrame();
+            if(Main.ui != null)parent = Main.ui.disp.getFrame();
 
             if(parent != null)JOptionPane.showMessageDialog(parent, "Error receiving clients:\n" + e);
             else e.printStackTrace();//headless

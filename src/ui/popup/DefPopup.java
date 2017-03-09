@@ -21,6 +21,7 @@ import language.dictionary.DefTag;
 import language.dictionary.Kanji;
 import language.splitter.FoundDef;
 import language.splitter.FoundWord;
+import main.Main;
 import ui.UI;
 
 import javax.swing.*;
@@ -51,7 +52,7 @@ public class DefPopup extends JPopupMenu
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                UI.prefDef.setPreferred(def);
+                Main.prefDef.setPreferred(def);
                 word.sortDefs();
                 word.resetScroll();
                 ui.render();
@@ -115,13 +116,13 @@ public class DefPopup extends JPopupMenu
     public static void ankiExport(FoundWord word)
     {
         JFrame UIParent =  null;
-        if(UI.instance != null)
+        if(Main.ui != null)
         {
-            UI.instance.disp.getFrame();
+            Main.ui.disp.getFrame();
         }
         try
         {
-            File file = new File(UI.options.getOption("ankiExportPath"));
+            File file = new File(Main.options.getOption("ankiExportPath"));
             boolean newFile = !file.exists();
             Writer fr = new OutputStreamWriter(new FileOutputStream(file, true), Charset.forName("UTF-8"));
 
@@ -156,7 +157,7 @@ public class DefPopup extends JPopupMenu
 
             String note = "";
 
-            if(UI.options.getOptionBool("commentOnExport"))
+            if(Main.options.getOptionBool("commentOnExport"))
             {
                 note = (String)JOptionPane.showInputDialog(UIParent,
                                             "Enter comment\n(You may also leave this blank)",
@@ -174,16 +175,16 @@ public class DefPopup extends JPopupMenu
                     + reading + "\t"
                     + definition +"\t"
                     + tagList + "\t"
-                    + UI.text.replace("\n", "<br>") + "\t"
+                    + Main.text.replace("\n", "<br>") + "\t"
                     + kanjiDetails + "\t"
                     + note + "\n");
 
             fr.close();
 
-            if(UI.options.getOptionBool("exportMarksKnown"))
+            if(Main.options.getOptionBool("exportMarksKnown"))
             {
-                UI.known.setKnown(word);
-                UI.instance.render();//show change
+                Main.known.setKnown(word);
+                Main.ui.render();//show change
             }
         }catch(IOException err)
         {

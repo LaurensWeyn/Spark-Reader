@@ -16,7 +16,7 @@
  */
 package multiplayer;
 
-import ui.UI;
+import main.Main;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -40,7 +40,7 @@ public class ClientManager extends Thread
         this.socket = socket;
         this.host = host;
         this.clientNum = clientNum;
-        lastText = UI.text;
+        lastText = Main.text;
     }
     
     @Override

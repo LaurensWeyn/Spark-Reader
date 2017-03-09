@@ -17,15 +17,14 @@
 package language.splitter;
 
 import language.deconjugator.ValidWord;
-import language.deconjugator.WordScanner;
 import language.dictionary.*;
-import ui.TextStream;
-import ui.UI;
+import main.Main;
+import ui.TextBlockRenderer;
 
 import java.awt.*;
 import java.util.*;
 
-import static ui.UI.options;
+import static main.Main.options;
 
 /**
  * Holds and renders a found definition of a FoundWord
@@ -36,44 +35,41 @@ public class FoundDef implements Comparable<FoundDef>
     private final ValidWord foundForm;
     private final Definition foundDef;
     
-    private int defLines = 0;
-    private int startLine = 0;
 
     private int score = Integer.MIN_VALUE;
-    
-    
+
+    TextBlockRenderer defText;
+
     public FoundDef(ValidWord foundForm, Definition foundDef)
     {
         this.foundForm = foundForm;
         this.foundDef = foundDef;
     }
-    
-    
-    public void render(Graphics g, int xPos, int maxWidth, int y)
-    {
-        g.setColor(new Color(0,0,0,1));
-        g.fillRect(xPos, y, maxWidth, 1);//let mouse move through 1 pixel space
-        y++;//slight spacer
-        if(!options.getOptionBool("defsShowUpwards"))y -= g.getFontMetrics().getHeight() * 1;
-        defLines = 0;//will be recounted
 
+    private void generateText(int width)
+    {
+        defText = new TextBlockRenderer(options.getOptionBool("defsShowUpwards"), width);
         //output source name TODO custom color for this
-        y = renderText(g, options.getColor("defReadingCol"), options.getColor("defBackCol"), xPos, y, foundDef.getSource().getName(), maxWidth);
+        defText.addText(foundDef.getSource().getName(), options.getColor("defReadingCol"), options.getColor("defBackCol"));
 
         //output original form if processed
         if(!foundForm.getProcess().equals(""))
-            y = renderText(g, options.getColor("defReadingCol"), options.getColor("defBackCol"), xPos, y, foundForm.toString(), maxWidth);
-        
-        //output tags
+        {
+            defText.addText(foundForm.toString(), options.getColor("defReadingCol"), options.getColor("defBackCol"));
+        }
 
-        y = renderText(g, options.getColor("defTagCol"), options.getColor("defBackCol"), xPos, y, foundDef.getTagLine(), maxWidth);
-        
+        //output tags
+        defText.addText(foundDef.getTagLine(), options.getColor("defTagCol"), options.getColor("defBackCol"));
+
         String[] readings = foundDef.getSpellings();
         for(String reading:readings)
         {
             if(Japanese.hasKanji(reading) && !options.getOptionBool("showAllKanji"))continue;
             //output readings if not in this form already
-            if(!reading.equals(foundForm.getWord()))y = renderText(g, options.getColor("defReadingCol"), options.getColor("defBackCol"), xPos, y, reading, maxWidth);
+            if(!reading.equals(foundForm.getWord()))
+            {
+                defText.addText(reading, options.getColor("defReadingCol"), options.getColor("defBackCol"));
+            }
         }
         if(!(foundDef instanceof KanjiDefinition))
         {
@@ -84,110 +80,44 @@ public class FoundDef implements Comparable<FoundDef>
                 String lookup = Kanji.lookup(c);
                 if (lookup != null)
                 {
-                    y = renderText(g, options.getColor("defKanjiCol"), options.getColor("defBackCol"), xPos, y, c + "【" + lookup + "】", maxWidth);
+                    defText.addText(c + "【" + lookup + "】", options.getColor("defKanjiCol"), options.getColor("defBackCol"));
                 }
             }
         }
         for(String def:foundDef.getMeaning())
         {
             //output non-empty definitions
-            if(!def.equals("") && !def.equals("(P)"))y = renderText(g, options.getColor("defCol"), options.getColor("defBackCol"), xPos, y, def, maxWidth);
+            if(!def.equals("") && !def.equals("(P)"))
+            {
+                defText.addText(def, options.getColor("defCol"), options.getColor("defBackCol"));
+            }
         }
-        
-        capturePoint = 0;//disable for next iteration
     }
     
-    private int capturePoint = 0;
-    private String capture = "";
-    /**
-     * 0=disable, -1=all, y=line
-     * @param pos 
-     */
+    public void render(Graphics g, int xPos, int maxWidth, int y)
+    {
+        if(defText == null)generateText(maxWidth);
+        defText.render(g, xPos, y);
+    }
+
+    //passthrough methods for TextBlockRenderer
+    
     public void setCapturePoint(int pos)
     {
-        capturePoint = pos;
-        capture = "";
+        defText.setCapturePoint(pos);
     }
     public String getCapture()
     {
-        return capture;
+        return defText.getCapturedText();
     }
-    
-    private int renderText(Graphics g, Color fore, Color back, int x, int y, String text, int width)
-    {
-        if(text == null)return y;//don't render null text
-        text = text.trim();
-        int startY = y;
-        FontMetrics font = g.getFontMetrics();
-        TextStream stream = new TextStream(text);
-        String line = "";
-        Deque<String> lines = new LinkedList<>();
-        while(!stream.isDone())
-        {
-            String nextBit = stream.nextWord();
-            if(font.stringWidth(line + nextBit) > width)//too much for this line, wrap over
-            {
-                lines.add(line);//add line for rendering
-                line = nextBit.trim();//put word on new line
-            }
-            else
-            {
-                line += nextBit;
-            }
-        }
-        if(!line.equals(""))lines.add(line);//add last line
-        //draw lines
-        while(!lines.isEmpty())
-        {
-            if(options.getOptionBool("defsShowUpwards"))line = lines.pollLast();
-            else line = lines.pollFirst();
-            //draw line
-            defLines++;
-            if(startLine <= defLines)
-            {
-                if(options.getOptionBool("defsShowUpwards"))y -= font.getHeight();
-                if(!options.getOptionBool("defsShowUpwards")) y += font.getHeight();
 
-                //print background
-                g.setColor(back);
-                g.fillRect(x, y - font.getAscent(), width, font.getHeight());
-
-                //print text
-                g.setColor(fore);
-                g.drawString(line, x, y);
-
-            }
-        }
-        //'gap' between def lines
-        g.setColor(new Color(0, 0, 0, 1));
-        g.clearRect(x, y - font.getAscent() + (options.getOptionBool("defsShowUpwards")?0:font.getHeight() - 1), width,1);//clear this last line
-        g.fillRect (x, y - font.getAscent() + (options.getOptionBool("defsShowUpwards")?0:font.getHeight() - 1), width,1);//add a dim line here so scrolling still works
-
-        //capture if in this
-        if(capturePoint <= -1 || (options.getOptionBool("defsShowUpwards")?
-             (capturePoint <= startY - font.getHeight() + font.getDescent() && capturePoint > y - font.getHeight() + font.getDescent()):
-             (capturePoint > startY + font.getDescent() && capturePoint <= y + font.getDescent())))
-        {
-            //TODO allow export with HTML color info perhaps?
-            if(capture.equals(""))
-            {
-                capture = text;
-            }
-            else
-            {
-                capture += "\n" + text;
-            }
-        }
-        
-        return y;
-    }
     public void scrollDown()
     {
-        startLine = Math.min(startLine + 1, defLines - 2);
+        defText.scrollDown();
     }
     public void scrollUp()
     {
-        startLine = Math.max(startLine - 1, 0);
+        defText.scrollUp();
     }
     @Override
     public String toString()
@@ -213,7 +143,7 @@ public class FoundDef implements Comparable<FoundDef>
         int score = 0;
 
         score += foundDef.getSource().getPriority() * 100;
-        if (UI.prefDef.isPreferred(foundDef)) score += 1000;//HIGHLY favour definitions the user preferred
+        if (Main.prefDef.isPreferred(foundDef)) score += 1000;//HIGHLY favour definitions the user preferred
 
         Set<DefTag> tags = foundDef.getTags();
         if (tags != null)
@@ -222,7 +152,7 @@ public class FoundDef implements Comparable<FoundDef>
                 score -= 50;//obscure penalty
 
             if (tags.contains(DefTag.uk) && !Japanese.hasKana(foundForm.getWord())) score -= 10;//usually kana without kana
-            if (tags.contains(DefTag.uK) && Japanese.hasKana(foundForm.getWord())) score -= 10;//usually Kanji, only kana
+            if (tags.contains(DefTag.uK) && Japanese.hasOnlyKana(foundForm.getWord())) score -= 10;//usually Kanji, only kana
 
             if (tags.contains(DefTag.suf) || tags.contains(DefTag.pref))
                 score -= 3;//suf/prefixes _usually_ caught with the whole word
@@ -237,7 +167,11 @@ public class FoundDef implements Comparable<FoundDef>
         //System.out.println("score for " + foundDef + " is " + score);
         return score;
     }
-    
+
+    /**
+     * Get the score of this definition for this word. Higher scored definitions are considered more relevant.
+     * @return This definition's score
+     */
     public int getScore()
     {
         if(score == Integer.MIN_VALUE)score = genScore();

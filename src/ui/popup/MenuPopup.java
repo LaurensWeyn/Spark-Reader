@@ -18,6 +18,7 @@ package ui.popup;
 
 import hooker.ClipboardHook;
 import hooker.MemoryHook;
+import main.Main;
 import multiplayer.Client;
 import multiplayer.Host;
 import options.OptionsUI;
@@ -31,7 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 
-import static ui.UI.options;
+import static main.Main.options;
 
 /**
  *
@@ -66,9 +67,9 @@ public class MenuPopup extends JPopupMenu
                     if(portStr.length() > 0)port = Integer.parseInt(portStr);
                 }catch(NumberFormatException ignored){}
 
-                UI.mpManager = new Host(port);
-                UI.mpThread = new Thread(UI.mpManager);
-                UI.mpThread.start();
+                Main.mpManager = new Host(port);
+                Main.mpThread = new Thread(Main.mpManager);
+                Main.mpThread.start();
                 JOptionPane.showMessageDialog(ui.disp.getFrame(), "Server running. Other users with Spark Reader can now connect to your IP.\nIf you want people to connect outside of your LAN, please port forward port " + port);
                 options.setOption("hideOnOtherText", oldIgnoreState);
             }
@@ -91,9 +92,9 @@ public class MenuPopup extends JPopupMenu
                         port = bits[1];
                     }
                     Socket s = new Socket(addr, Integer.parseInt(port));
-                    UI.mpManager = new Client(s);
-                    UI.mpThread = new Thread(UI.mpManager);
-                    UI.mpThread.start();
+                    Main.mpManager = new Client(s);
+                    Main.mpThread = new Thread(Main.mpManager);
+                    Main.mpThread.start();
                 } catch (IOException ex)
                 {
                     JOptionPane.showMessageDialog(ui.disp.getFrame(), "Error connecting to host: " + ex, "Error", JOptionPane.ERROR_MESSAGE);
@@ -106,15 +107,15 @@ public class MenuPopup extends JPopupMenu
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                if(UI.mpManager != null)
+                if(Main.mpManager != null)
                 {
-                    UI.mpManager.running = false;
+                    Main.mpManager.running = false;
                 }
-                UI.mpThread = null;
+                Main.mpThread = null;
                 ui.render();//remove MP text from screen on disconnect
             }
         });
-        if(UI.mpThread == null)
+        if(Main.mpThread == null)
         {
             mpDisconnect.setEnabled(false);
         }
@@ -137,8 +138,8 @@ public class MenuPopup extends JPopupMenu
             {
                 try
                 {
-                    UI.known.save();
-                    UI.prefDef.save();
+                    Main.known.save();
+                    Main.prefDef.save();
                 }catch(IOException err)
                 {
                     JOptionPane.showMessageDialog(ui.disp.getFrame(), "Error while saving changes");
@@ -175,7 +176,7 @@ public class MenuPopup extends JPopupMenu
             {
                 try
                 {
-                    OptionsUI.showOptions(UI.options);
+                    OptionsUI.showOptions(Main.options);
                 }catch(IOException err)
                 {
                     JOptionPane.showMessageDialog(ui.disp.getFrame(), "Error editing configuration: " + e);
@@ -191,7 +192,7 @@ public class MenuPopup extends JPopupMenu
                 MemoryHook newHook = new MemoryHook();
                 if(newHook.isRunning())
                 {
-                    UI.hook = newHook;
+                    Main.hook = newHook;
                 }
             }
         });
@@ -200,7 +201,7 @@ public class MenuPopup extends JPopupMenu
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                UI.hook = new ClipboardHook();
+                Main.hook = new ClipboardHook();
             }
         });
         memoryHookRefine = new JMenuItem((new AbstractAction("Rescan memory")
@@ -208,7 +209,7 @@ public class MenuPopup extends JPopupMenu
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                MemoryHook hook = (MemoryHook)UI.hook;
+                MemoryHook hook = (MemoryHook) Main.hook;
                 hook.refine();
             }
         }));
@@ -243,7 +244,7 @@ public class MenuPopup extends JPopupMenu
             File chosen = fileChooser.getSelectedFile();
             try
             {
-                UI.known.importCsv(chosen.getAbsoluteFile(), "\t");
+                Main.known.importCsv(chosen.getAbsoluteFile(), "\t");
                 JOptionPane.showMessageDialog(parent, "Import successful!");
             }catch(Exception e)
             {
