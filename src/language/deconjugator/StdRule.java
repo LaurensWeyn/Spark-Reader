@@ -63,7 +63,7 @@ public class StdRule implements DeconRule
         {
             String newForm = word.getWord().substring(0, word.getWord().length() - ending.length()) + replace;
             // short circuit process if it would make a lexical form we've already seen in this deconjugation tree
-            if(word.hasSeenForm(newForm)) return null;
+            if(word.hasSeenForm(newForm + impliedTag)) return null;
 
             //add tag and return
             HashSet<DefTag> tags = new HashSet<>();
@@ -82,7 +82,7 @@ public class StdRule implements DeconRule
                 newProcess = newProcess + " " + change;
 
             HashSet<String> forms = new HashSet<>(word.getSeenForms());
-            forms.add(newForm);
+            forms.add(newForm + impliedTag);
 
             return new ValidWord(word.getNumConjugations()+1, word.getOriginalWord(), newForm, forms, tags, conjugationTags, newProcess);
         }
