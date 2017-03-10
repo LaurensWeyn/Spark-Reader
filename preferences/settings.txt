@@ -57,22 +57,22 @@ showFurigana = true
 splitLines = true
 
 #if true, auto-unhides the UI when a new line of Japanese text is detected in the clipboard
-showOnNewLine = true
+showOnNewLine = false
 
 #If true, focus is stolen from other windows when clicked.
 #If clicks are going through the window, try setting this to true
-takeFocus = false
+takeFocus = true
 
 
 commentOnExport = true
 showAllKanji = false
 exportMarksKnown = false
 reduceSave = true
-hideOnOtherText = true
+hideOnOtherText = false
 showDefOnMouseover = false
 addKanjiAsDef = true
 hideDefOnMouseLeave = true
-startInTray = true
+startInTray = false
 unknownFuriMode = always
 knownFuriMode = mouseover
 lagText = false
@@ -86,7 +86,7 @@ commentOnExportLine = true
 defsShowUpwards = true
 expectedLineCount = 4
 dictionaryPath = dictionaries/
-automaticallyParse = true
+automaticallyParse = partial
 kanjideckSourcePriority = -5
 customSourcePriority = 1
 edictSourcePriority = 0

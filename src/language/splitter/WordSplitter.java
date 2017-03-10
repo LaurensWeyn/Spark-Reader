@@ -67,12 +67,15 @@ public class WordSplitter
                 pos--;
             }
             // extend it until extending it picks up things other than just kana
-            while(pos < text.length())
+            if(!options.getOption("automaticallyParse").equals("none")) // (unless parsing is disabled)
             {
-                if(isKana(text.charAt(pos))) // character past the end of substr start...pos
-                    pos++;
-                else
-                    break;
+                while(pos < text.length())
+                {
+                    if(isKana(text.charAt(pos))) // character past the end of substr start...pos
+                        pos++;
+                    else
+                        break;
+                }
             }
 
             FoundWord matchedWord = null;
@@ -93,7 +96,7 @@ public class WordSplitter
                     }
                 }
 
-                if(matchedWord.getDefinitionCount() == 0 && options.getOptionBool("automaticallyParse"))
+                if(matchedWord.getDefinitionCount() == 0 && options.getOption("automaticallyParse").equals("full")) // (only if full parsing is enabled)
                 {
                     matchedWord = null;
                     //System.out.println("--->Trying a shorter segment");
