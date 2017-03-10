@@ -29,6 +29,11 @@ public class StdRule implements DeconRule
         this(ending, replace, change, null);
     }
 
+    public String getReplace()
+    {
+        return replace;
+    }
+
     @Override
     // Verifies and adds this rule as an inner-more conjugation in a deconjugated word
     public ValidWord process(ValidWord word)

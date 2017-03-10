@@ -24,6 +24,7 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
 import static main.Main.dict;
 
@@ -238,6 +239,24 @@ public class WordScanner
         ruleList.add(new StdRule("こい", "くる", "imperative", DefTag.vk, DefTag.uninflectable));
 
         // todo: imperatives (clashes with e-stem), volitional
+    }
+
+    // build and return a list of the possible "original" endings for conjugations
+    public static TreeSet<String> possibleEndings()
+    {
+        TreeSet<String> ret = new TreeSet<>();
+        init();
+        for(DeconRule rule:ruleList)
+        {
+            if(rule.getClass() == StdRule.class)
+            {
+                StdRule cast_rule = ((StdRule) rule);
+                String ending = cast_rule.getReplace();
+                if(!ending.equals(""))
+                    ret.add(ending);
+            }
+        }
+        return ret;
     }
     
     public WordScanner(String word)

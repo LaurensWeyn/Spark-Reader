@@ -62,9 +62,24 @@ public class WordSplitter
             while(pos > start)
             {
                 String string_at = text.substring(start, pos);
-                if(dict.find(string_at) != null || dict.hasEpwingDef(string_at))
-                    break;
-                pos--;
+                if(dict.find(string_at) == null && !dict.hasEpwingDef(string_at))
+                {
+                    // not in dictionary, see if adding possible deconjugation match endings to it gives us a dictionary entry (fixes 振り返ります etc)
+                    string_at = string_at.substring(0, string_at.length()-1);
+                    boolean good_match = false;
+                    for(String ending:WordScanner.possibleEndings())
+                    {
+                        String attempt = string_at+ending;
+                        if(dict.find(attempt) != null || dict.hasEpwingDef(attempt))
+                            good_match = true;
+                    }
+                    if(!good_match)
+                    {
+                        pos--;
+                        continue; // don't fall through to "break;"
+                    }
+                }
+                break;
             }
             // extend it until extending it picks up things other than just kana
             if(!options.getOption("automaticallyParse").equals("none")) // (unless parsing is disabled)

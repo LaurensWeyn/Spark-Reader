@@ -16,23 +16,23 @@ public enum DefTag
     
     // custom (internal to deconjugator)
     // verbs
-    stem_e(0, "izenkei stem"), // izenkei, as-if-so
-    stem_o(0, "volitional stem"), // tentative form
-    stem_a(0, "stem ending in a"), // the "a" stem of godan verbs
-    stem_mizenkei(0, "mizenkei stem"), // same as stem_a, but parted in deconjugator for simplicity
-    stem_te(0, "te form"), // te form; comes from stem_i_reduced plus te/de
-    stem_ren(0, "renyoukei (masu stem)"), // verb renyoukei; the masu stem infinitive
-    stem_ren_less(0, "reduced renyoukei (past stem)"), // phonologically reduced masu stem infinitive
-    stem_ren_less_v(0, "reduced renyoukei (past stem)"), // voiced
+    stem_e(-1, "izenkei stem"), // izenkei, as-if-so
+    stem_o(-1, "volitional stem"), // tentative form
+    stem_a(-1, "stem ending in a"), // the "a" stem of godan verbs
+    stem_mizenkei(-1, "mizenkei stem"), // same as stem_a, but parted in deconjugator for simplicity
+    stem_te(-1, "te form"), // te form; comes from stem_i_reduced plus te/de
+    stem_ren(-1, "renyoukei (masu stem)"), // verb renyoukei; the masu stem infinitive
+    stem_ren_less(-1, "reduced renyoukei (past stem)"), // phonologically reduced masu stem infinitive
+    stem_ren_less_v(-1, "reduced renyoukei (past stem)"), // voiced
     // i-adj
     // i-adjectives have two renyoukei-like infinitives, but only this one is useful as a tag
-    stem_ku(0, "adjective ku form"), // e.g. nakute
-    stem_ka(0, "adjective ka form"), // e.g. nakatta
-    stem_ke(0, "adjective ke form"), // e.g. nakereba
-    stem_must_first_half(0, "first half of a 'must' form"), // to reduce the number of rules in WordScanner
-    stem_te_defective(0, "adjective te form (defective syntax)"), // adjectives have a defective te form that does not work the same morphologically as the verbal one; for example なくてください is wrong, but ないでください is fine.
+    stem_ku(-1, "adjective ku form"), // e.g. nakute
+    stem_ka(-1, "adjective ka form"), // e.g. nakatta
+    stem_ke(-1, "adjective ke form"), // e.g. nakereba
+    stem_must_first_half(-1, "first half of a 'must' form"), // to reduce the number of rules in WordScanner
+    stem_te_defective(-1, "adjective te form (defective syntax)"), // adjectives have a defective te form that does not work the same morphologically as the verbal one; for example なくてください is wrong, but ないでください is fine.
     // dummy tag for organization purposes (might do something later, or might get removed)
-    uninflectable(0, "uninflectable"), // does not further inflect
+    uninflectable(-1, "uninflectable"), // does not further inflect
     
     // non-custom
     adj_i(0, "adjective (keiyoushi)"),
