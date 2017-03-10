@@ -167,6 +167,10 @@ public enum DefTag
     {
         return name;
     }
+    public int getGroup()
+    {
+        return group;
+    }
     public static DefTag toTag(String text)
     {
         //System.out.println("tagging " + text);

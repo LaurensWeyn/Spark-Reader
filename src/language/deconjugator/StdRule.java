@@ -34,6 +34,11 @@ public class StdRule implements DeconRule
         return replace;
     }
 
+    public DefTag getNeededTag()
+    {
+        return neededTag;
+    }
+
     @Override
     // Verifies and adds this rule as an inner-more conjugation in a deconjugated word
     public ValidWord process(ValidWord word)

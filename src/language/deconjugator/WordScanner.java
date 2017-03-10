@@ -252,7 +252,7 @@ public class WordScanner
             {
                 StdRule cast_rule = ((StdRule) rule);
                 String ending = cast_rule.getReplace();
-                if(!ending.equals(""))
+                if(!ending.equals("") && cast_rule.getNeededTag().getGroup() != -1)
                     ret.add(ending);
             }
         }
