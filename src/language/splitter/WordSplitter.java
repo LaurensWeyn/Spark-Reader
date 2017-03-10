@@ -22,6 +22,7 @@ import language.dictionary.*;
 import language.dictionary.Dictionary;
 import java.util.*;
 
+import static language.dictionary.Japanese.isKana;
 import static main.Main.options;
 
 
@@ -55,11 +56,24 @@ public class WordSplitter
         {
             int pos = text.length();
 
-            // limit segment length: in practice, single segments will never get this long, and this speeds up worst-case-scenarios a lot
-            // todo: there should be a faster way of selecting the intial "overly long" segment for deconjugation
-            // todo: looking for strings of hiragana, perhaps?
-            // todo: worst case scenario, the deconjugator could be replaced with a conjugator instead, somehow
-            if(pos-start > 32) pos = 32+start;
+            // select the initial "overly long and certainly bogus" segment for deconjugation
+
+            // look for the longest segment covered as-is in the dictionary
+            while(pos > start)
+            {
+                String string_at = text.substring(start, pos);
+                if(dict.find(string_at) != null || dict.hasEpwingDef(string_at))
+                    break;
+                pos--;
+            }
+            // extend it until extending it picks up things other than just kana
+            while(pos < text.length())
+            {
+                if(isKana(text.charAt(pos))) // character past the end of substr start...pos
+                    pos++;
+                else
+                    break;
+            }
 
             FoundWord matchedWord = null;
             //until we've tried all lengths and failed
@@ -82,7 +96,7 @@ public class WordSplitter
                 if(matchedWord.getDefinitionCount() == 0 && options.getOptionBool("automaticallyParse"))
                 {
                     matchedWord = null;
-                    //System.out.println("--->Trying a shorter deconjugation");
+                    //System.out.println("--->Trying a shorter segment");
                     pos--;//try shorter word
                 }
                 else//found a word

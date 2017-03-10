@@ -265,6 +265,8 @@ public class WordScanner
                 System.out.println("iteration " + Integer.toString(iters));
                 break;
             }
+            //System.out.println("Matches: " + matches.size());
+            //System.out.println("New matches: " + number_of_new_matches);
             
             iters++;
             
