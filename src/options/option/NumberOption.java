@@ -34,7 +34,7 @@ public class NumberOption extends UIOption
 
         spinner = new JSpinner(model);
         spinner.setValue(Integer.parseInt(getValue()));
-        JLabel label = new JLabel(name);
+        JLabel label = new JLabel(" " + name);
         label.setToolTipText(tip);
         spinner.addChangeListener(new ChangeListener(){
 

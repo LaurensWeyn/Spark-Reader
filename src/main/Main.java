@@ -15,8 +15,6 @@ import ui.UI;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by Laurens on 2/19/2017.
@@ -77,10 +75,7 @@ public class Main
     }
     private static void loadDictionaries()throws IOException
     {
-
-        Set<Character> blacklist = new HashSet<>();
-        blacklist.add('・');
-        EPWINGDefinition.setBlacklist(blacklist);
+        EPWINGDefinition.loadBlacklist();
 
         //TODO show some sort of progress bar during this operation
         dict = new Dictionary(new File(Main.options.getOption("dictionaryPath")));

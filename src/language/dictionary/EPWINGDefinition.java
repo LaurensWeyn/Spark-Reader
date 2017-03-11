@@ -20,6 +20,7 @@ import fuku.eb4j.EBException;
 import fuku.eb4j.Result;
 import fuku.eb4j.SubBook;
 import fuku.eb4j.hook.Hook;
+import main.Main;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -43,39 +44,44 @@ public class EPWINGDefinition extends Definition
         EPWINGDefinition.blacklist = blacklist;
     }
 
+    public static void loadBlacklist()
+    {
+        String option = Main.options.getOption("epwingStartBlacklist");
+        blacklist = new HashSet<>();
+        for(int i = 0; i < option.length(); i++)
+        {
+            blacklist.add(option.charAt(i));
+        }
+    }
+
     public EPWINGDefinition(Result result, SubBook book, DefSource source)throws EBException
     {
         this.book = book;
         this.source = source;
         id = result.getTextPosition();//guaranteed to be unique within book at least
         
-        Hook hook = new EpwingAdapter(book, blacklist);
+        Hook hook = new EpwingAdapter(book, new HashSet<>());
         result.getText(hook);
         String lines[] = (String[])hook.getObject();
-        if(lines.length < 2)
+        if(lines.length >= Main.options.getOptionInt("epwingBlacklistMinLines"))//safe to filter
         {
             //Blacklist must've blocked the only text. Re-parse without blacklist
-            hook = new EpwingAdapter(book, new HashSet<>());
+            hook = new EpwingAdapter(book, blacklist);
             result.getText(hook);
             lines = (String[])hook.getObject();
-            if(lines.length == 0)
-            {
-                throw new Error("EPWING dictionary gave no text in response");
-            }
         }
-        if(lines.length == 1)
+
+        if(lines.length == 0)
         {
-            //still only 1 line, alright then. That line'll have to double as the definition
-            defLines = new String[]{lines[0]};
-            spellings = Japanese.splitJapaneseWriting(lines[0]);
+            throw new Error("EPWING dictionary gave no text in response");
         }
         else
         {
-            //multiple lines, take out the first and use for spellings
+            defLines = lines;
+            //first line presumably contains spellings
             spellings = Japanese.splitJapaneseWriting(lines[0]);
-            defLines = new String[lines.length - 1];
-            System.arraycopy(lines, 1, defLines, 0, defLines.length);
         }
+
     }
     @Override
     public String getFurigana()
@@ -90,7 +96,7 @@ public class EPWINGDefinition extends Definition
     @Override
     public long getID()
     {
-        return id;//TODO encode source here?
+        return id ^ (long)book.getTitle().hashCode();
     }
 
     @Override

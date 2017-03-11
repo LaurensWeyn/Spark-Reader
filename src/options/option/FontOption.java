@@ -29,15 +29,15 @@ import java.awt.event.ActionListener;
  */
 public class FontOption extends UIOption
 {
-    Font font;
-    Updater updater;
-    boolean AA;
-    
-    JPanel mainPanel = new JPanel();
-    JComboBox<String> cmbFontName = new JComboBox<>();
-    JLabel example = new JLabel("ひらがな、漢字、カタカナ, Romaji");
-    JSpinner size = new JSpinner(new SpinnerNumberModel(0, 0, 500, 1));
-    JLabel nameLabel = new JLabel();
+    private Font font;
+    private Updater updater;
+    private boolean AA;
+
+    private JPanel mainPanel = new JPanel();
+    private JComboBox<String> cmbFontName = new JComboBox<>();
+    private JLabel example = new JLabel("ひらがな、漢字、カタカナ, Romaji");
+    private JSpinner size = new JSpinner(new SpinnerNumberModel(0, 0, 500, 1));
+    private JLabel nameLabel = new JLabel();
     
     JCheckBox chkBold, chkItalic, chkAA;
     public FontOption(String tag, String name, String tip)
@@ -158,7 +158,6 @@ public class FontOption extends UIOption
         
         public void update()
         {
-            System.out.println("update");
             int style = 0;
             if(chkBold.isSelected())  style |= Font.BOLD;
             if(chkItalic.isSelected())style |= Font.ITALIC;

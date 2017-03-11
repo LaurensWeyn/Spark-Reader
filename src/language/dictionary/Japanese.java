@@ -63,7 +63,7 @@ public class Japanese
     }
     public static boolean isJapaneseWriting(char c)
     {
-        return isKana(c) || isKanji(c) || c == '々';
+        return isKana(c) || isKanji(c) || c == '々' || c == '○';
     }
     public static boolean hasKanji(String text)
     {

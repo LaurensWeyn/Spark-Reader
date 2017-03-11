@@ -18,6 +18,7 @@ package language.deconjugator;
 
 import language.dictionary.DefTag;
 import language.dictionary.Japanese;
+
 import java.util.ArrayList;
 
 /**
@@ -35,12 +36,31 @@ public class WordScanner
         if(ruleList != null)return;
         ruleList = new ArrayList<>();
 
+        //Hiragana->Katakana: words are often written in katakana for emphasis but won't be found in EDICT in that form
         ruleList.add(word ->
         {
             String hiragana = Japanese.toHiragana(word.getWord(), false);
             if(!word.getWord().equals(hiragana))
             {
                 return new ValidWord(hiragana, "hiragana");
+            }
+            else return null;
+        });
+
+        //Decensor: simple, but actually works well enough with a lot of 'censored' words
+        ruleList.add(word ->
+        {
+            if(word.getWord().contains("○"))
+            {
+                return new ValidWord(word.getWord().replace('○', 'っ'), (word.getProcess() + " " + "censored").trim());
+            }
+            else return null;
+        });
+        ruleList.add(word ->
+        {
+            if(word.getWord().contains("○"))
+            {
+                return new ValidWord(word.getWord().replace('○', 'ん'), (word.getProcess() + " " + "censored").trim());
             }
             else return null;
         });
