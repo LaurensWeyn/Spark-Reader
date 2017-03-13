@@ -77,7 +77,8 @@ public class WordScanner
         // todo: add better names for these later
         // Should be restricted to verbs
         ruleList.add(new StdRule("いる", "", "teiru", DefTag.stem_te, DefTag.v1));
-        ruleList.add(new StdRule("る", "", "teru", DefTag.stem_te, DefTag.v1)); // common colloquial form drops the い entirely
+        // -- common colloquial form drops the い entirely
+        ruleList.add(new StdRule("る", "", "teru", DefTag.stem_te, DefTag.v1)); // this causes so many problems...
         // Not sure if these should be restricted to verbs but probably
         ruleList.add(new StdRule("いく", "", "teiku", DefTag.stem_te, DefTag.v5k_s));
         ruleList.add(new StdRule("くる", "", "tekuru", DefTag.stem_te, DefTag.vk));
@@ -194,6 +195,20 @@ public class WordScanner
         ruleList.add(new StdRule(""  , "る", "(unstressed infinitive)", DefTag.v1,  DefTag.stem_ren_less));
         // marginal categories
         ruleList.add(new StdRule("う", "う", "(unstressed infinitive)", DefTag.v5u_s, DefTag.stem_ren_less));
+
+        // volitional stem
+        ruleList.add(new StdRule("こう", "く", "volitional", DefTag.v5k, DefTag.stem_ren_less));
+        ruleList.add(new StdRule("そう", "す", "volitional", DefTag.v5s, DefTag.stem_ren_less));
+        ruleList.add(new StdRule("とう", "つ", "volitional", DefTag.v5t, DefTag.stem_ren_less));
+        ruleList.add(new StdRule("おう", "う", "volitional", DefTag.v5u, DefTag.stem_ren_less));
+        ruleList.add(new StdRule("ろう", "る", "volitional", DefTag.v5r, DefTag.stem_ren_less));
+        ruleList.add(new StdRule("ごう", "ぐ", "volitional", DefTag.v5g, DefTag.stem_ren_less_v));
+        ruleList.add(new StdRule("ぼう", "ぶ", "volitional", DefTag.v5b, DefTag.stem_ren_less_v));
+        ruleList.add(new StdRule("のう", "ぬ", "volitional", DefTag.v5n, DefTag.stem_ren_less_v));
+        ruleList.add(new StdRule("もう", "む", "volitional", DefTag.v5m, DefTag.stem_ren_less_v));
+        ruleList.add(new StdRule("よう"  , "る", "volitional", DefTag.v1,  DefTag.stem_ren_less));
+        // marginal categories
+        ruleList.add(new StdRule("おう", "う", "volitional", DefTag.v5u_s, DefTag.stem_ren_less));
         
         // masu stem
         ruleList.add(new StdRule("き", "く", "(infinitive)", DefTag.v5k, DefTag.stem_ren));
