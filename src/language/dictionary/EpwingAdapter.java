@@ -124,14 +124,32 @@ public class EpwingAdapter extends HookAdapter<String[]>
             {
                 switch(code)
                 {
+                    case 0xA14B:
+                        str = "é";
+                        break;
+                    case 0xA226:
+                        str = "ï";
+                        break;
+                    case 0xA237:
+                        str = "ī";
+                        break;
                     case 0xA238:
                         str = "ō";
                         break;
                     case 0xA239:
                         str = "ū";
                         break;
+
+                    case 0xA568:
+                        str = "〚";
+                        break;
+                    case 0xA569:
+                        str = "〛";
+                        break;
+
                     case 0xA135:
-                        str = "*";
+                    case 0xA136:
+                        str = "";//ignored
                         break;
                     default:
                         System.out.println("Epwing adapter: unknown half width character " + HexUtil.toHexString(code));

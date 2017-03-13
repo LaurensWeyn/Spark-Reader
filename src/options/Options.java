@@ -71,7 +71,8 @@ public class Options
         options.put("epwingSourcePriority", "-1");
         options.put("kanjideckSourcePriority", "-5");
 
-
+        options.put("epwingStartBlacklist", "・");
+        options.put("epwingBlacklistMinLines", "10");
 
         options.put("ankiExportPath", "forAnki.csv");
         options.put("knownWordsPath", "preferences/knownWords");

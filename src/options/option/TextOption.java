@@ -31,17 +31,17 @@ public class TextOption extends UIOption
     private JPanel panel;
     public TextOption(String tag, String name, String tip)
     {
-        this(tag, name, tip, false);
+        this(tag, name, tip, 0);
     }
-    public TextOption(String tag, String name, String tip, boolean large)
+    public TextOption(String tag, String name, String tip, int size)
     {
         super(tag, name, tip);
 
         textField = new JTextField(getValue());
 
         JLabel label = new JLabel();
-        if(large)label.setText(name + ":");
-        else     label.setText(" " + name);
+        if(size == 0)label.setText(name + ":");
+        else label.setText(" " + name);
         label.setToolTipText(tip);
 
         textField.addKeyListener(new KeyListener()
@@ -60,7 +60,7 @@ public class TextOption extends UIOption
         label.setAlignmentX(Component.LEFT_ALIGNMENT);
         textField.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel = new JPanel();
-        if(large)
+        if(size == 0)
         {
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
             panel.add(label);
@@ -72,7 +72,7 @@ public class TextOption extends UIOption
             panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
             panel.add(textField);
             panel.add(label);
-            textField.setColumns(5);
+            textField.setColumns(size);
             textField.setMaximumSize(textField.getPreferredSize());
         }
     }

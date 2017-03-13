@@ -26,8 +26,6 @@ import options.page.UserDefPage;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
@@ -120,13 +118,16 @@ public class OptionsUI extends JFrame
             defWindow.add(new ColourOption("defKanjiCol", "Kanji colour", "(Heisig mode) for Kanji reference in popup"));
             defs.add(defWindow);
             OptionPage defSources = new OptionPage("Sources");
-            defSources.add(new TextOption("dictionaryPath", "Dictionary folder", "path to the folder containing dictionaries.", true));
-            defSources.add(new ToggleOption("addKanjiAsDef", "Add Kanji to definitions", "<html>If you have a heisig Kanji file in the dictionary folder, this will also add those individual characters as 'definitions'<br>If disabled but kanji.txt is found, they will still show up on other definitions"));
+            defSources.add(new TextOption("dictionaryPath", "Dictionary folder", "path to the folder containing dictionaries."));
+            defSources.add(new ToggleOption("addKanjiAsDef", "Add Kanji to definitions", "<html>If you have a heisig Kanji file in the dictionary folder, this will also add those individual characters as 'definitions'<br>If disabled but kanji.txt is found, they will still show up on other definitions."));
             defSources.add(new OptionLabel("Priority:", "Higher numbers will appear at the top when displaying definitions"));
-            defSources.add(new NumberOption("customSourcePriority", "Custom dictionary" ,"<html>The priority of the custom dictionary.<br>Set this higher than the rest to have your definitions appear at the top", NumberOption.NumberPreset.posNeg));
+            defSources.add(new NumberOption("customSourcePriority", "Custom dictionary" ,"<html>The priority of the custom dictionary.<br>Set this higher than the rest to have your definitions appear at the top.", NumberOption.NumberPreset.posNeg));
             defSources.add(new NumberOption("edictSourcePriority", "Edict" ,"<html>The priority of the 'stock' dictionary.<br>Default is 0 (neutral)", NumberOption.NumberPreset.posNeg));
             defSources.add(new NumberOption("epwingSourcePriority", "Epwing (if available)" ,"<html>The priority of all epwing dictionaries.<br>Ignored if none are present.", NumberOption.NumberPreset.posNeg));
             defSources.add(new NumberOption("kanjideckSourcePriority", "Kanji deck (if enabled)" ,"<html>The priority of kanji definitions.<br>Ignored if there is no kanji file or if disabled above.", NumberOption.NumberPreset.posNeg));
+            defSources.add(new OptionLabel("Epwing:", "Only relevant if Ewping dictionaries are installed, otherwise ignored."));
+            defSources.add(new TextOption("epwingStartBlacklist", "Blacklisted starting chracters", "Some dictionaries will give a lot of information/examples. If they start with some special kind of bullet, put them here to make the popup a bit less crowded.", 5));
+            defSources.add(new NumberOption("epwingBlacklistMinLines", "Apply blacklist when lines exceed this number", "Set to 0 to always apply. Useful to stop removing too much information.", NumberOption.NumberPreset.posOnly));
             defs.add(defSources);
             defs.add(new UserDefPage(DefSource.getSource("Custom")));
 
@@ -141,6 +142,7 @@ public class OptionsUI extends JFrame
                     + "<br>If unticked, this field is always left blank"));
             xport.add(new ToggleOption("exportImage", "Take screenshot along with the line", "Automatically takes a screenshot when a line is exported. The date code will match the one in the exported line field."));
             xport.add(new ToggleOption("fullscreenScreenshot", "Make a screenshot of the whole screen, not just the window", "<html>Spark Reader assumes it's placed on the top of the game window, with the width and max height being the window resolution.<br>Tick this if that is not the case or you want the whole screen captured"));
+            xport.add(new TextOption("timeStampFormat", "Timestamp format", "Timestamp used on cards and images to connect them. (Uses Java DateFormat syntax)", 15));
         root.add(xport);
 
         leftMenu = new JTree(new OptionTree(root));

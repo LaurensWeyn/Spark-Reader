@@ -20,8 +20,6 @@ import language.dictionary.DefTag;
 import language.dictionary.Definition;
 import language.dictionary.Japanese;
 
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
