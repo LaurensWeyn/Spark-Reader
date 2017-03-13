@@ -228,15 +228,27 @@ public class WordScanner
         ruleList.add(new StdRule("し", "する", "(infinitive)", DefTag.vs_i, DefTag.stem_ren));
         ruleList.add(new StdRule("し", "する", "(unstressed infinitive)", DefTag.vs_i, DefTag.stem_ren_less));
         ruleList.add(new StdRule("し", "する", "(mizenkei)", DefTag.vs_i, DefTag.stem_mizenkei)); // actually irregular itself but this will do for now
-        ruleList.add(new StdRule("すれ", "する", "(izenkei)", DefTag.vs_i, DefTag.stem_mizenkei));
+        ruleList.add(new StdRule("すれ", "する", "(izenkei)", DefTag.vs_i, DefTag.stem_e));
         ruleList.add(new StdRule("しろ", "する", "imperative", DefTag.vs_i, DefTag.uninflectable));
         ruleList.add(new StdRule("せよ", "する", "imperative", DefTag.vs_i, DefTag.uninflectable));
 
         ruleList.add(new StdRule("き", "くる", "(infinitive)", DefTag.vk, DefTag.stem_ren));
         ruleList.add(new StdRule("き", "くる", "(unstressed infinitive)", DefTag.vk, DefTag.stem_ren_less));
         ruleList.add(new StdRule("こ", "くる", "(mizenkei)", DefTag.vk, DefTag.stem_mizenkei));
-        ruleList.add(new StdRule("くれ", "くる", "(izenkei)", DefTag.vk, DefTag.stem_mizenkei));
+        ruleList.add(new StdRule("くれ", "くる", "(izenkei)", DefTag.vk, DefTag.stem_e));
         ruleList.add(new StdRule("こい", "くる", "imperative", DefTag.vk, DefTag.uninflectable));
+
+        ruleList.add(new StdRule("来", "来る", "(infinitive)", DefTag.vk, DefTag.stem_ren));
+        ruleList.add(new StdRule("来", "来る", "(unstressed infinitive)", DefTag.vk, DefTag.stem_ren_less));
+        ruleList.add(new StdRule("来", "来る", "(mizenkei)", DefTag.vk, DefTag.stem_mizenkei));
+        ruleList.add(new StdRule("来れ", "来る", "(izenkei)", DefTag.vk, DefTag.stem_e));
+        ruleList.add(new StdRule("来い", "来る", "imperative", DefTag.vk, DefTag.uninflectable));
+
+        ruleList.add(new StdRule("あり", "ある", "(infinitive)", DefTag.v5r_i, DefTag.stem_ren));
+        ruleList.add(new StdRule("あっ", "ある", "(unstressed infinitive)", DefTag.v5r_i, DefTag.stem_ren_less));
+        //ruleList.add(new StdRule("", "ある", "(mizenkei)", DefTag.v5r_i, DefTag.stem_mizenkei)); // not used
+        ruleList.add(new StdRule("あれ", "ある", "(izenkei)", DefTag.v5r_i, DefTag.stem_e));
+        // ruleList.add(new StdRule("あれ", "ある", "imperative", DefTag.v5r_i, DefTag.uninflectable)); // rare and conflicts with あれ "that"
 
         // todo: imperatives (clashes with e-stem), volitional
     }
