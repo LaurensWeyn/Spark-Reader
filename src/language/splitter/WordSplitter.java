@@ -58,6 +58,7 @@ public class WordSplitter
 
             // select the initial "overly long and certainly bogus" segment for deconjugation
 
+            /*
             // look for the longest segment covered as-is in the dictionary
             while(pos > start)
             {
@@ -92,7 +93,7 @@ public class WordSplitter
                         break;
                 }
             }
-
+            */
             FoundWord matchedWord = null;
             //until we've tried all lengths and failed
             while(pos > start)

@@ -43,19 +43,6 @@ public class WordScanner
         if(ruleList != null)return;
         ruleList = new ArrayList<>();
 
-        ruleList.add(word ->
-        {
-            String hiragana = Japanese.toHiragana(word.getWord(), false);
-            if(!word.getWord().equals(hiragana))
-            {
-                return new ValidWord(hiragana, "hiragana");
-            }
-            else
-            {
-                return null;
-            }
-        });
-
         /*
         // handle "must" in a single block because it's dumb and long
         // todo: add a type of rule that allows A/B matches in conjugated ending
@@ -277,7 +264,15 @@ public class WordScanner
         
         matches = new ArrayList<>();
         this.word = word;
-        matches.add(new ValidWord(word, ""));//add initial undeconjugated word
+
+        //add initial undeconjugated word to match list
+        matches.add(new ValidWord(word, ""));
+
+        // convert to kana and add that too if it's not alread in hiragana
+        String hiragana = Japanese.toHiragana(word, false);
+        if(!word.equals(hiragana))
+            matches.add(new ValidWord(hiragana, ""));
+
         // start from the top of the list when we have a successful deconjugation
         int fully_covered_matches = 0;
         int iters = 0;
