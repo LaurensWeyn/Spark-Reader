@@ -22,7 +22,7 @@ import main.Main;
 import ui.TextBlockRenderer;
 
 import java.awt.*;
-import java.util.*;
+import java.util.Set;
 
 import static main.Main.options;
 
@@ -92,6 +92,7 @@ public class FoundDef implements Comparable<FoundDef>
                 defText.addText(def, options.getColor("defCol"), options.getColor("defBackCol"));
             }
         }
+        resetScroll();
     }
     
     public void render(Graphics g, int xPos, int maxWidth, int y)
@@ -118,6 +119,12 @@ public class FoundDef implements Comparable<FoundDef>
     public void scrollUp()
     {
         defText.scrollUp();
+    }
+    public void resetScroll()
+    {
+        if(defText == null)return;
+        //TODO if upwards, scroll such that the top is visible
+        defText.setScrollPosition(0);
     }
     @Override
     public String toString()

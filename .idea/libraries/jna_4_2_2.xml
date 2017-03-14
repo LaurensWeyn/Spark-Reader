@@ -5,8 +5,6 @@
       <root url="jar://$USER_HOME$/java libs/JNA/jna-platform-4.2.2.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES>
-      <root url="jar://$USER_HOME$/.ideaLibSources/jna-4.2.2-sources.jar!/" />
-    </SOURCES>
+    <SOURCES />
   </library>
 </component>

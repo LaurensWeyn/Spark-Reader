@@ -69,7 +69,7 @@ public class Options
         options.put("customSourcePriority", "1");
         options.put("edictSourcePriority", "0");
         options.put("epwingSourcePriority", "-1");
-        options.put("kanjideckSourcePriority", "-5");
+        options.put("kanjideckSourcePriority", "-2");
 
         options.put("epwingStartBlacklist", "・");
         options.put("epwingBlacklistMinLines", "10");
@@ -90,9 +90,8 @@ public class Options
         options.put("unknownFuriMode", "always");
 
         options.put("showOnNewLine", "true");
-        options.put("takeFocus", "true");
-        
-        
+        options.put("takeFocus", "false");
+
         options.put("commentOnExport", "true");
         options.put("commentOnExportLine", "true");
         options.put("exportMarksKnown", "false");
@@ -100,6 +99,7 @@ public class Options
         options.put("reduceSave", "true");
         options.put("hideOnOtherText", "false");
         options.put("showDefOnMouseover", "false");
+        options.put("resetDefScroll", "false");
         options.put("addKanjiAsDef", "true");
         options.put("startInTray", "false");
         options.put("hideDefOnMouseLeave", "true");
@@ -117,13 +117,18 @@ public class Options
         this.file = file;
         if(file.exists())
         {
-            load();
+            load();//load existing one
+        }
+        else
+        {
+            save();//make a new one
         }
     }
     public void save()throws IOException
     {
         Set<String> keysLeft = new HashSet<>(defaults.options.keySet());
-        String output = "";
+        Set<String> keysDone = new HashSet<>();//attempt to stop duplicate settings
+        StringBuilder output = new StringBuilder();
         if(file.exists())
         {
             FileInputStream is = new FileInputStream(file);
@@ -136,26 +141,33 @@ public class Options
                 if(bits.length == 2)//if this line has an option
                 {
                     String key = bits[0].trim();
-                    if(options.containsKey(bits[0].trim()))
+                    if(keysDone.contains(key))
                     {
-                        output += key + " = " + options.get(key) + "\n";//replace with new value
-                        keysLeft.remove(key);
+                        line = br.readLine();
+                        continue;//skip this one, it's a duplicate
                     }
-                    else output += line + "\n";//unknown option, keep it in I guess
+                    if(options.containsKey(key))
+                    {
+                        output.append(key).append(" = ").append(options.get(key)).append("\n");//replace with new value
+                        keysLeft.remove(key);
+                        keysDone.add(key);
+                    }
+                    else output.append(line).append("\n");//unknown option, keep it in I guess
                 }
-                else output += line + "\n";//keep comments and such the way it is
+                else output.append(line).append("\n");//keep comments and such the way it is
                 line = br.readLine();
             }
             br.close();
         }
         //now overwrite the file
+        file.getParentFile().mkdirs();//ensure the folder it's supposed to be in exists
         Writer fr = new OutputStreamWriter(new FileOutputStream(file, false), Charset.forName("UTF-8"));
-        fr.append(output.trim() + "\n");
+        fr.append(output.toString().trim()).append("\n");
         //add all leftover keys (or all keys if file does not exist)
         for(String key:keysLeft)
         {
-            System.out.println("appending lefover " + key);
-            fr.append(key + " = " + defaults.options.get(key) + "\n");
+            System.out.println("appending leftover option " + key);
+            fr.append(key).append(" = ").append(defaults.options.get(key)).append("\n");
         }
         fr.close();
     }
@@ -187,7 +199,7 @@ public class Options
     {
         //font format: name, tags, size
         String bits[] = getOption(tag).split(",");
-        int mods = 0;
+        int mods = Font.PLAIN;
         bits[1] = bits[1].trim().toUpperCase();
         for (int i = 0; i < bits[1].length(); i++)
         {

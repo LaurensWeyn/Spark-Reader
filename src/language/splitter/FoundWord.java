@@ -37,7 +37,7 @@ import static main.Main.options;
  */
 public class FoundWord
 {
-    private final String text;//text to show
+    private final String text;//text to display
     private List<FoundDef> definitions;//known meanings
     private int startX;//start point in sentence (for rendering)
     
@@ -145,6 +145,7 @@ public class FoundWord
         options.getFont(g, "furiFont");
         g.setColor(options.getColor("furiCol"));
         int furiX = startPos + width/2 - g.getFontMetrics().stringWidth(furiText)/2;
+        if(furiX < 0 &&Main.ui.xOffset == 0)furiX = 0;//ensure it's visible if scrolled to front
         g.drawString(furiText, furiX, UI.furiganaStartY + g.getFontMetrics().getAscent() + yOff);
         
         //not effected by Y offset
@@ -172,12 +173,17 @@ public class FoundWord
     {
         if(inBounds(pos))
         {
-            showDef = !showDef;
-        }else showDef = false;
+            showDef(!showDef);
+        }else showDef(false);
     }
     public void showDef(boolean mode)
     {
         showDef = mode;
+        if(definitions == null)return;//no point if there's no definition
+        if(!mode && Main.options.getOptionBool("resetDefScroll"))
+        {
+            definitions.get(currentDef).resetScroll();
+        }
     }
     public boolean inBounds(int xPos)
     {

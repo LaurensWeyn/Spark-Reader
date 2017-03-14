@@ -77,7 +77,7 @@ public class Main
     {
         EPWINGDefinition.loadBlacklist();
 
-        //TODO show some sort of progress bar during this operation
+        //TODO display some sort of progress bar during this operation
         dict = new Dictionary(new File(Main.options.getOption("dictionaryPath")));
         System.out.println("loaded dictionaries");
 

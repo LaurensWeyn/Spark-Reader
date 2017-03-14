@@ -17,8 +17,6 @@
 package ui;
 
 import language.splitter.FoundWord;
-import language.splitter.WordSplitter;
-import main.Main;
 import ui.popup.DefPopup;
 import ui.popup.MenuPopup;
 import ui.popup.WordPopup;
@@ -30,8 +28,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static main.Main.*;
-import static main.Main.options;
-import static main.Main.text;
 
 /**
  * Main Spark Reader UI
@@ -55,7 +51,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     int longestLine = 0;
     
     public static int mainFontSize = 1;//1 default to stop division by 0
-    int xOffset = 0;
+    public int xOffset = 0;
     boolean lMouseClick = false;
     boolean lMouseState = false;
     Point dragReference;
@@ -336,9 +332,19 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     //////////////////////////////
     //begin mouse event handlers//
     //////////////////////////////
+    private long lastClickTime = 0;
+    private static final long MAX_CLICK_DELAY = 1000;
     @Override
     public void mouseClicked(MouseEvent e)
     {
+        long clickTime = System.nanoTime();
+        if(clickTime - lastClickTime < MAX_CLICK_DELAY)
+        {
+            System.out.println("stop double event");
+            return;//[attempt to]stop accidental double click
+        }
+        lastClickTime = clickTime;
+
         if(e.getButton() == 1)lMouseState = false;
         
         if(e.getButton() == 1 && lMouseClick)//if left click (and wasn't drag)
@@ -346,7 +352,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             //settings button
             if(e.getY() < textStartY && e.getX() > buttonStartX)
             {
-                new MenuPopup(this).show();
+                new MenuPopup(this).display();
             }
             
             if(e.getY() >= textStartY && e.getY() <= textEndY)
@@ -389,7 +395,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             //settings button
             if(e.getY() > furiganaStartY && e.getY() < textStartY)
             {
-                new MenuPopup(this).show(e);//no longer requires button; right click anywhere on bar works
+                new MenuPopup(this).display(e);//no longer requires button; right click anywhere on bar works
             }
             //word
             else if(e.getY() >= textStartY && e.getY() <= textEndY)

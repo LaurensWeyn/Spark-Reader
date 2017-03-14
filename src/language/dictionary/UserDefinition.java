@@ -22,14 +22,6 @@ public class UserDefinition extends EDICTDefinition
     {
         return meaning;
     }
-    public String[] getSpellings()
-    {
-        return word;
-    }
-    public String[] getReadings()
-    {
-        return reading;
-    }
     public void setSpellings(String[] word)
     {
         this.word = word;

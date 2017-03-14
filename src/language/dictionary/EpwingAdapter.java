@@ -124,6 +124,9 @@ public class EpwingAdapter extends HookAdapter<String[]>
             {
                 switch(code)
                 {
+                    case 0xA235:
+                        str = "ā";
+                        break;
                     case 0xA14B:
                         str = "é";
                         break;

@@ -93,4 +93,4 @@ edictSourcePriority = 0
 epwingSourcePriority = -1
 epwingBlacklistMinLines = 10
 epwingStartBlacklist = ・
-epwingStartBlacklist = ・
+resetDefScroll = true

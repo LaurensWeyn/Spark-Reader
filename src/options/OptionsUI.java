@@ -55,6 +55,8 @@ public class OptionsUI extends JFrame
         super("Spark Reader options");
         root = new PageGroup("Root", "");
         //TODO load this mess from an XML file or something instead of hardcoding it all
+
+        //TODO have some consistency with the tip messages (capitalisation/full stop usage)
         
         OptionPage display = new OptionPage("General");
             display.add(new OptionLabel("Window properties:", null));
@@ -106,6 +108,7 @@ public class OptionsUI extends JFrame
         PageGroup defs = new PageGroup("Definitions", "Settings related to displaying and storing definitions");
             OptionPage defWindow = new OptionPage("Window");
             defWindow.add(new ToggleOption("defsShowUpwards", "Show definitions above text (requires restart)", "I'd reccomend this on if you prefer to keep Spark Reader on the lower half of your screen"));
+            defWindow.add(new ToggleOption("resetDefScroll", "Scroll to top when closing/changing definition", "If disabled, the scroll position is remembered until words are re-split."));
             defWindow.add(new NumberOption("defWidth", "Definition popup width", "Determines how wide the definition popup window is"));
             defWindow.add(new ToggleOption("hideDefOnMouseLeave", "Hide definition when mouse leaves the screen", "If unticked, the definition popup will remain visible until you manually close it"));
             defWindow.add(new ToggleOption("showAllKanji", "Show all possible Kanji for a word", "If unticked, only kana readings are shown"));
@@ -119,7 +122,7 @@ public class OptionsUI extends JFrame
             defs.add(defWindow);
             OptionPage defSources = new OptionPage("Sources");
             defSources.add(new TextOption("dictionaryPath", "Dictionary folder", "path to the folder containing dictionaries."));
-            defSources.add(new ToggleOption("addKanjiAsDef", "Add Kanji to definitions", "<html>If you have a heisig Kanji file in the dictionary folder, this will also add those individual characters as 'definitions'<br>If disabled but kanji.txt is found, they will still show up on other definitions."));
+            defSources.add(new ToggleOption("addKanjiAsDef", "Add Kanji to definitions", "<html>If you have a heisig Kanji file in the dictionary folder, this will also add those individual characters as 'definitions'<br>If disabled but kanji.txt is found, they will still display up on other definitions."));
             defSources.add(new OptionLabel("Priority:", "Higher numbers will appear at the top when displaying definitions"));
             defSources.add(new NumberOption("customSourcePriority", "Custom dictionary" ,"<html>The priority of the custom dictionary.<br>Set this higher than the rest to have your definitions appear at the top.", NumberOption.NumberPreset.posNeg));
             defSources.add(new NumberOption("edictSourcePriority", "Edict" ,"<html>The priority of the 'stock' dictionary.<br>Default is 0 (neutral)", NumberOption.NumberPreset.posNeg));
@@ -205,6 +208,7 @@ public class OptionsUI extends JFrame
     public void initComponents()
     {
         setSize(720, 480);
+        //TODO centre window on screen
         
         setLayout(new BorderLayout(SPACING, SPACING));
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
