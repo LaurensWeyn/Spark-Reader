@@ -168,6 +168,7 @@ public class WordScanner
         ruleList.add(new StdRule("れ", "る", "(izenkei)", DefTag.v1,  DefTag.stem_e)); // not a copy/paste mistake
         // marginal categories
         ruleList.add(new StdRule("え", "う", "(izenkei)", DefTag.v5u_s, DefTag.stem_e));
+        ruleList.add(new StdRule("け", "く", "(izenkei)", DefTag.v5k_s, DefTag.stem_e));
         
         // "a" stem used by godan verbs
         ruleList.add(new StdRule("か", "く", "('a' stem)", DefTag.v5k, DefTag.stem_a));
@@ -181,6 +182,7 @@ public class WordScanner
         ruleList.add(new StdRule("ま", "む", "('a' stem)", DefTag.v5m, DefTag.stem_a));
         // marginal categories
         ruleList.add(new StdRule("わ", "う", "('a' stem)", DefTag.v5u_s, DefTag.stem_a));
+        ruleList.add(new StdRule("か", "く", "('a' stem)", DefTag.v5k_s, DefTag.stem_a));
         
         // past stem
         ruleList.add(new StdRule("い", "く", "(unstressed infinitive)", DefTag.v5k, DefTag.stem_ren_less));
@@ -195,20 +197,7 @@ public class WordScanner
         ruleList.add(new StdRule(""  , "る", "(unstressed infinitive)", DefTag.v1,  DefTag.stem_ren_less));
         // marginal categories
         ruleList.add(new StdRule("う", "う", "(unstressed infinitive)", DefTag.v5u_s, DefTag.stem_ren_less));
-
-        // volitional stem
-        ruleList.add(new StdRule("こう", "く", "volitional", DefTag.v5k, DefTag.stem_ren_less));
-        ruleList.add(new StdRule("そう", "す", "volitional", DefTag.v5s, DefTag.stem_ren_less));
-        ruleList.add(new StdRule("とう", "つ", "volitional", DefTag.v5t, DefTag.stem_ren_less));
-        ruleList.add(new StdRule("おう", "う", "volitional", DefTag.v5u, DefTag.stem_ren_less));
-        ruleList.add(new StdRule("ろう", "る", "volitional", DefTag.v5r, DefTag.stem_ren_less));
-        ruleList.add(new StdRule("ごう", "ぐ", "volitional", DefTag.v5g, DefTag.stem_ren_less_v));
-        ruleList.add(new StdRule("ぼう", "ぶ", "volitional", DefTag.v5b, DefTag.stem_ren_less_v));
-        ruleList.add(new StdRule("のう", "ぬ", "volitional", DefTag.v5n, DefTag.stem_ren_less_v));
-        ruleList.add(new StdRule("もう", "む", "volitional", DefTag.v5m, DefTag.stem_ren_less_v));
-        ruleList.add(new StdRule("よう"  , "る", "volitional", DefTag.v1,  DefTag.stem_ren_less));
-        // marginal categories
-        ruleList.add(new StdRule("おう", "う", "volitional", DefTag.v5u_s, DefTag.stem_ren_less));
+        ruleList.add(new StdRule("っ", "く", "(unstressed infinitive)", DefTag.v5k_s, DefTag.stem_ren_less));
         
         // masu stem
         ruleList.add(new StdRule("き", "く", "(infinitive)", DefTag.v5k, DefTag.stem_ren));
@@ -223,6 +212,22 @@ public class WordScanner
         ruleList.add(new StdRule(""  , "る", "(infinitive)", DefTag.v1,  DefTag.stem_ren));
         // marginal categories
         ruleList.add(new StdRule("い", "う", "(infinitive)", DefTag.v5u_s, DefTag.stem_ren));
+        ruleList.add(new StdRule("き", "く", "(infinitive)", DefTag.v5k_s, DefTag.stem_ren));
+
+        // volitional stem
+        ruleList.add(new StdRule("こう", "く", "volitional", DefTag.v5k, DefTag.stem_ren_less));
+        ruleList.add(new StdRule("そう", "す", "volitional", DefTag.v5s, DefTag.stem_ren_less));
+        ruleList.add(new StdRule("とう", "つ", "volitional", DefTag.v5t, DefTag.stem_ren_less));
+        ruleList.add(new StdRule("おう", "う", "volitional", DefTag.v5u, DefTag.stem_ren_less));
+        ruleList.add(new StdRule("ろう", "る", "volitional", DefTag.v5r, DefTag.stem_ren_less));
+        ruleList.add(new StdRule("ごう", "ぐ", "volitional", DefTag.v5g, DefTag.stem_ren_less_v));
+        ruleList.add(new StdRule("ぼう", "ぶ", "volitional", DefTag.v5b, DefTag.stem_ren_less_v));
+        ruleList.add(new StdRule("のう", "ぬ", "volitional", DefTag.v5n, DefTag.stem_ren_less_v));
+        ruleList.add(new StdRule("もう", "む", "volitional", DefTag.v5m, DefTag.stem_ren_less_v));
+        ruleList.add(new StdRule("よう"  , "る", "volitional", DefTag.v1,  DefTag.stem_ren_less));
+        // marginal categories
+        ruleList.add(new StdRule("おう", "う", "volitional", DefTag.v5u_s, DefTag.stem_ren_less));
+        ruleList.add(new StdRule("こう", "く", "volitional", DefTag.v5k_s, DefTag.stem_ren_less));
 
         // irregulars
         ruleList.add(new StdRule("し", "する", "(infinitive)", DefTag.vs_i, DefTag.stem_ren));
