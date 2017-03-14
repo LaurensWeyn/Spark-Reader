@@ -127,12 +127,14 @@ public class WordScanner
         // technically an i-adjective, but again, letting the deconjugator use it like that would cause more problems than it's worth
         ruleList.add(new StdRule("なさい", "", "kind request", DefTag.stem_ren, DefTag.uninflectable));
         ruleList.add(new StdRule("な", "", "casual kind request", DefTag.stem_ren, DefTag.uninflectable));
+        ruleList.add(new StdRule("ながら", "", "while", DefTag.stem_ren, DefTag.uninflectable));
         
         // ます inflects, but does so entirely irregularly.
         ruleList.add(new StdRule("ます", "", "polite", DefTag.stem_ren, DefTag.uninflectable));
         ruleList.add(new StdRule("ません", "", "negative polite", DefTag.stem_ren, DefTag.uninflectable));
         ruleList.add(new StdRule("ました", "", "past polite", DefTag.stem_ren, DefTag.uninflectable));
         ruleList.add(new StdRule("ませんでした", "", "past negative polite", DefTag.stem_ren, DefTag.uninflectable));
+        ruleList.add(new StdRule("ましょう", "", "polite volitional", DefTag.stem_ren, DefTag.uninflectable));
         
         // part-of-speech roles
         ruleList.add(new StdRule("に", "", "adverb", DefTag.adj_na));
