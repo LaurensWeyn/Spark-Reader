@@ -138,14 +138,16 @@ public class WordScanner
         
         // part-of-speech roles
         ruleList.add(new StdRule("に", "", "adverb", DefTag.adj_na));
-        ruleList.add(new StdRule("な", "", "adjective", DefTag.adj_na));
-        ruleList.add(new StdRule("の", "", "adjective", DefTag.adj_no));
+        ruleList.add(new StdRule("な", "", "attributive", DefTag.adj_na));
+        ruleList.add(new StdRule("の", "", "attributive", DefTag.adj_no));
         
         // i-adjective stems
         ruleList.add(new StdRule("く", "い", "(adverb)", DefTag.adj_i, DefTag.stem_ku));
         ruleList.add(new StdRule("か", "い", "(ka stem)", DefTag.adj_i, DefTag.stem_ka));
         ruleList.add(new StdRule("け", "い", "(ke stem)", DefTag.adj_i, DefTag.stem_ke));
         ruleList.add(new StdRule("さ", "い", "noun form", DefTag.adj_i, DefTag.n));
+        // also applies to verbs
+        ruleList.add(new StdRule("そう", "い", "seemingness", DefTag.adj_i, DefTag.adj_na));
         
         // negative
         // verbs
