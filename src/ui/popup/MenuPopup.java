@@ -225,11 +225,13 @@ public class MenuPopup extends JPopupMenu
         add(minimise);
         add(exit);
     }
-    public void show()
+
+    public void display()
     {
         show(ui.disp.getFrame(), UI.buttonStartX, UI.textStartY);
     }
-    public void show(MouseEvent e)
+
+    public void display(MouseEvent e)
     {
         show(ui.disp.getFrame(), e.getX(), e.getY());
     }

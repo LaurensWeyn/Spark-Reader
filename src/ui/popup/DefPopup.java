@@ -184,7 +184,7 @@ public class DefPopup extends JPopupMenu
             if(Main.options.getOptionBool("exportMarksKnown"))
             {
                 Main.known.setKnown(word);
-                Main.ui.render();//show change
+                Main.ui.render();//display change
             }
         }catch(IOException err)
         {
