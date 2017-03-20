@@ -10,8 +10,8 @@ import java.util.ArrayList;
  */
 public class StdRule implements DeconRule
 {
-    private String ending, replace, change;
-    private DefTag neededTag, impliedTag;
+    protected String ending, replace, change;
+    protected DefTag neededTag, impliedTag;
     public StdRule(String ending, String replace, String change, DefTag neededTag)
     {
         this(ending, replace, change, neededTag, null);

@@ -122,8 +122,16 @@ public class WordScanner
         // causative
         ruleList.add(new StdRule("させる", "る", "causative", DefTag.v1, DefTag.v1));
         ruleList.add(new StdRule("せる", "", "causative", DefTag.stem_a, DefTag.v1)); // ichidan cannot conjugate to "stem_a"
-        ruleList.add(new StdRule("す", "", "short causative", DefTag.stem_a, DefTag.v5s)); // spoken language -- this also covers the "short causative passive" indirectly
-        
+        // spoken language -- this also covers the "short causative passive" indirectly
+        // Only allowed on non-す godan verbs.
+        ruleList.add(new ContextRule("す", "", "short causative", DefTag.stem_a, DefTag.v5s,(rule, word) -> {
+            if(word.getWord().equals("")) return false;
+            if(!word.getWord().endsWith(rule.ending)) return false;
+            String base = word.getWord().substring(0, word.getWord().length() - rule.ending.length());
+            if(base.endsWith("さ")) return false;
+            else return true;
+        }
+        ));
         // nasai
         // technically an i-adjective, but again, letting the deconjugator use it like that would cause more problems than it's worth
         ruleList.add(new StdRule("なさい", "", "kind request", DefTag.stem_ren, DefTag.uninflectable));
