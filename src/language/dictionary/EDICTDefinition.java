@@ -22,8 +22,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Holds a word's definition and other properties.
- * @author laure
+ * Holds a word's definition and other properties obtained from the dictionary file.
+ * @author Laurens Weyn
  */
 public class EDICTDefinition extends Definition
 {
@@ -62,7 +62,7 @@ public class EDICTDefinition extends Definition
                for(String subTag:tag.split(","))
                {
                     DefTag found = DefTag.toTag(subTag);
-                    if(found != null && tags.contains(found) == false)
+                    if(found != null && !tags.contains(found))
                     {
                         tags.add(found);
                         findCount++;
@@ -166,6 +166,7 @@ public class EDICTDefinition extends Definition
         String result = meaning.replace("/", ", ").replace(", (", "<br>(");
         if(result.startsWith("<br>"))result = result.replaceFirst("<br>", "");
         if(result.startsWith(", "))result = result.replaceFirst(", ", "");//TODO clean this up
+        if(result.endsWith(","))result = result.substring(0, result.length() - 1);
         return result;
     }
     public String[] getReadings()

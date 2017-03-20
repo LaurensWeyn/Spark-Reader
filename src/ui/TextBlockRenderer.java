@@ -8,7 +8,7 @@ import static main.Main.options;
 
 /**
  * Renders blocks of text on the overlay. Used for rendering definitions.
- * Allows for utilities like text capture and scrolling
+ * Allows for utilities like text capture and scrolling.
  * Created by Laurens on 3/3/2017.
  */
 public class TextBlockRenderer
@@ -59,7 +59,7 @@ public class TextBlockRenderer
         defLines = 0;//will be recounted
         capture = "";//will be recaptured
         g.setColor(new Color(0,0,0,1));
-        g.fillRect(x, y, width, 1);//let mouse move through 1 pixel space
+        g.fillRect(x, y - g.getFontMetrics().getAscent(), width, 1);//let mouse move through 1 pixel space
         y++;//slight spacer
         if(!options.getOptionBool("defsShowUpwards"))y -= g.getFontMetrics().getHeight();
 
@@ -241,6 +241,12 @@ public class TextBlockRenderer
         public Color getBackCol()
         {
             return backCol;
+        }
+
+        @Override
+        public String toString()
+        {
+            return text;
         }
     }
 }
