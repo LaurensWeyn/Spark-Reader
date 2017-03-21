@@ -17,6 +17,8 @@
 package ui;
 
 import language.splitter.FoundWord;
+import main.Main;
+import main.Utils;
 import ui.popup.DefPopup;
 import ui.popup.MenuPopup;
 import ui.popup.WordPopup;
@@ -268,7 +270,8 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         
         ui.render();//TODO make this not need 2 render calls to properly align stuff
         ui.render();
-        System.gc();//cleanup after loading in dictionaries and such
+
+        Main.doneLoading();
         //update loop
         while(true)
         {

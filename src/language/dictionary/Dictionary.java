@@ -34,6 +34,9 @@ public class Dictionary
     //can query for words
     private List<SubBook> books;
 
+
+    private static int loadedWordCount = 0;
+
     public Dictionary()throws IOException
     {
         lookup = new HashMap<>();
@@ -127,6 +130,7 @@ public class Dictionary
             //create if it doesn't exist
             List<Definition> meanings = lookup.computeIfAbsent(spelling, k -> new LinkedList<>());
             meanings.add(def);//add this definition for this spelling
+            loadedWordCount++;
         }
     }
 
@@ -140,8 +144,8 @@ public class Dictionary
         {
             List<Definition> meanings = lookup.get(spelling);
             if(meanings == null)continue;
-
             meanings.remove(def);
+            loadedWordCount--;
             if(meanings.isEmpty())lookup.remove(spelling);
         }
     }
@@ -189,5 +193,10 @@ public class Dictionary
             }catch(EBException ignored){}
         }
         return defs;
+    }
+
+    public static int getLoadedWordCount()
+    {
+        return loadedWordCount;
     }
 }

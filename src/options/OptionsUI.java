@@ -18,6 +18,7 @@ package options;
 
 import language.dictionary.DefSource;
 import main.Main;
+import main.Utils;
 import options.option.*;
 import options.page.OptionPage;
 import options.page.Page;
@@ -243,6 +244,7 @@ public class OptionsUI extends JFrame
         o.changedOptions = ops;
         o.initComponents();
         o.setIconImage(ImageIO.read(o.getClass().getResourceAsStream("/ui/icon.gif")));
+        Utils.centerWindow(o);
         o.setVisible(true);
     }
     public static void main(String[] args)throws Exception
