@@ -156,7 +156,10 @@ public class WordScanner
         ruleList.add(new StdRule("け", "い", "(ke stem)", DefTag.adj_i, DefTag.stem_ke));
         ruleList.add(new StdRule("さ", "い", "noun form", DefTag.adj_i, DefTag.n));
         // also applies to verbs
+        ruleList.add(new StdRule("すぎる", "い", "excess", DefTag.adj_i, DefTag.v1));
         ruleList.add(new StdRule("そう", "い", "seemingness", DefTag.adj_i, DefTag.adj_na));
+        ruleList.add(new StdRule("がる", "い", "~garu", DefTag.adj_i, DefTag.v5r));
+        ruleList.add(new StdRule("", "い", "(stem)", DefTag.adj_i, DefTag.uninflectable));
         
         // negative
         // verbs
