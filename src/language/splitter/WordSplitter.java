@@ -58,42 +58,40 @@ public class WordSplitter
 
             // select the initial "overly long and certainly bogus" segment for deconjugation
 
-            /*
-            // look for the longest segment covered as-is in the dictionary
-            while(pos > start)
-            {
-                String string_at = text.substring(start, pos);
-                if(dict.find(string_at) == null && !dict.hasEpwingDef(string_at))
-                {
-                    // not in dictionary, see if adding possible deconjugation match endings to it gives us a dictionary entry (fixes 振り返ります etc)
-                    string_at = string_at.substring(0, string_at.length()-1);
-                    boolean good_match = false;
-                    for(String ending:WordScanner.possibleEndings())
-                    {
-                        String attempt = string_at+ending;
-                        if(dict.find(attempt) != null || dict.hasEpwingDef(attempt))
-                            good_match = true;
-                    }
-                    if(!good_match)
-                    {
-                        pos--;
-                        continue; // don't fall through to "break;"
-                    }
-                }
-                break;
-            }
-            // extend it until extending it picks up things other than just kana
             if(!options.getOption("automaticallyParse").equals("none")) // (unless parsing is disabled)
             {
+                // look for the longest segment covered as-is in the dictionary
+                while(pos > start)
+                {
+                    String string_at = text.substring(start, pos);
+                    if(dict.find(string_at) == null && !dict.hasEpwingDef(string_at))
+                    {
+                        // not in dictionary, see if adding possible deconjugation match endings to it gives us a dictionary entry (fixes 振り返ります etc)
+                        string_at = string_at.substring(0, string_at.length()-1);
+                        boolean good_match = false;
+                        for(String ending:WordScanner.possibleEndings())
+                        {
+                            String attempt = string_at+ending;
+                            if(dict.find(attempt) != null || dict.hasEpwingDef(attempt))
+                                good_match = true;
+                        }
+                        if(!good_match)
+                        {
+                            pos--;
+                            continue; // don't fall through to "break;"
+                        }
+                    }
+                    break;
+                }
+                // extend it until it's about to pick up characters that aren't acceptable in conjugations
                 while(pos < text.length())
                 {
-                    if(isKana(text.charAt(pos))) // character past the end of substr start...pos
+                    if(WordScanner.isAcceptableCharacter(text.charAt(pos))) // character past the end of substr start...pos
                         pos++;
                     else
                         break;
                 }
             }
-            */
             FoundWord matchedWord = null;
             //until we've tried all lengths and failed
             while(pos > start)
@@ -115,7 +113,6 @@ public class WordSplitter
                 if(matchedWord.getDefinitionCount() == 0 && options.getOption("automaticallyParse").equals("full")) // (only if full parsing is enabled)
                 {
                     matchedWord = null;
-                    //System.out.println("--->Trying a shorter segment");
                     pos--;//try shorter word
                 }
                 else//found a word

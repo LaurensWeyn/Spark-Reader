@@ -127,6 +127,4 @@ public class ValidWord
         temp = temp.replaceAll("[(].*?[)]", "");
         return word + "―" + temp;
     }
-    
-    
 }
