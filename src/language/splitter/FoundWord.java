@@ -33,7 +33,7 @@ import static main.Main.options;
 
 /**
  * Holds a word from the text and definitions that match it
- * @author laure
+ * @author Laurens Weyn
  */
 public class FoundWord
 {
@@ -101,6 +101,14 @@ public class FoundWord
     public void sortDefs()
     {
         if(definitions != null)definitions.sort(null);
+    }
+    public void resortDefs()
+    {
+        if(definitions != null)
+        {
+            for(FoundDef def:definitions) def.resetScore();
+            sortDefs();
+        }
     }
     public int getDefinitionCount()
     {

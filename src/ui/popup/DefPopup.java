@@ -18,6 +18,7 @@ package ui.popup;
 
 import hooker.ClipboardHook;
 import language.dictionary.DefTag;
+import language.dictionary.Japanese;
 import language.dictionary.Kanji;
 import language.splitter.FoundDef;
 import language.splitter.FoundWord;
@@ -32,7 +33,7 @@ import java.nio.charset.Charset;
 import static language.dictionary.Japanese.isJapanese;
 
 /**
- *
+ * When right clicking on the definition window
  * @author Laurens Weyn
  */
 public class DefPopup extends JPopupMenu
@@ -41,6 +42,7 @@ public class DefPopup extends JPopupMenu
     private FoundDef def;
     private JMenuItem anki, copy, copyAll, lookup;
     private JCheckBoxMenuItem setDef;
+
     public DefPopup(FoundWord word, UI ui, int mouseY)
     {
         this.ui = ui;
@@ -53,7 +55,7 @@ public class DefPopup extends JPopupMenu
             public void actionPerformed(ActionEvent e)
             {
                 Main.prefDef.setPreferred(def);
-                word.sortDefs();
+                word.resortDefs();
                 word.resetScroll();
                 ui.render();
             }
@@ -81,7 +83,9 @@ public class DefPopup extends JPopupMenu
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                ClipboardHook.setClipBoardAndUpdate(defLine);
+                //remove all non-Japanese text (not relevant in lookup)
+                String defLineMin = String.join("…", Japanese.splitJapaneseWriting(defLine));
+                ClipboardHook.setClipBoardAndUpdate(defLineMin);
             }
         });
         copyAll = new JMenuItem(new AbstractAction("Copy full definition")
@@ -101,35 +105,33 @@ public class DefPopup extends JPopupMenu
         
         addPopupMenuListener(new IgnoreExitListener());
     }
+
     private String getDefText(int lineY)
     {
         def.setCapturePoint(lineY);
         ui.render();//needed to calculate where this is in the def text
         return def.getCapture();
     }
+
     public void show(int x, int y)
     {
         show(ui.disp.getFrame(), x, y);
 
     }
-    
+
+    private static int exportedThisSession = 0;
+
     public static void ankiExport(FoundWord word)
     {
         JFrame UIParent =  null;
         if(Main.ui != null)
         {
-            Main.ui.disp.getFrame();
+            UIParent = Main.ui.disp.getFrame();
         }
         try
         {
             File file = new File(Main.options.getOption("ankiExportPath"));
-            boolean newFile = !file.exists();
             Writer fr = new OutputStreamWriter(new FileOutputStream(file, true), Charset.forName("UTF-8"));
-
-            if(newFile)
-            {
-                //fr.append("Word\tReading\tDefinition\tTags\tContext\n");//Anki ignores this, no point in adding it
-            }
 
             FoundDef def = word.getCurrentDef();
             String kanji = def.getDictForm();
@@ -171,15 +173,17 @@ public class DefPopup extends JPopupMenu
 
             if(note == null)return;//cancel export on pressing cancel
 
-            fr.append(kanji + "\t"
-                    + reading + "\t"
-                    + definition +"\t"
-                    + tagList + "\t"
-                    + Main.text.replace("\n", "<br>") + "\t"
-                    + kanjiDetails + "\t"
-                    + note + "\n");
+            fr.append(kanji)
+                    .append("\t").append(reading)
+                    .append("\t").append(definition)
+                    .append("\t").append(tagList)
+                    .append("\t").append(Main.text.replace("\n", "<br>"))
+                    .append("\t").append(kanjiDetails)
+                    .append("\t").append(note)
+                    .append("\n");
 
             fr.close();
+            exportedThisSession++;
 
             if(Main.options.getOptionBool("exportMarksKnown"))
             {

@@ -89,7 +89,7 @@ public class PrefDef
             }catch(IOException e)
             {
                 System.out.println("Failed to write changes: " + e);
-                //if this fails, wel'll try again on the next change
+                //if this fails, we'll try again on the next change
             }
         }
     }

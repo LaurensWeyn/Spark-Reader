@@ -12,7 +12,10 @@ import options.Options;
 import options.PrefDef;
 import ui.UI;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
@@ -53,6 +56,7 @@ public class Main
     public static void main(String[] args)throws Exception
     {
         System.out.println(VERSION);
+        initLoadingScreen();
         try
         {
             //load in configuration
@@ -71,7 +75,9 @@ public class Main
             JOptionPane.showMessageDialog(null, "Error starting Spark Reader:\n" + err, "Error", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }
+        System.out.println("init done");
         UI.runUI();
+        System.out.println("UI done");
     }
     private static void loadDictionaries()throws IOException
     {
@@ -79,7 +85,56 @@ public class Main
 
         //TODO display some sort of progress bar during this operation
         dict = new Dictionary(new File(Main.options.getOption("dictionaryPath")));
-        System.out.println("loaded dictionaries");
+        System.out.println("loaded " + Dictionary.getLoadedWordCount() + " in total");
 
+    }
+
+    private static JDialog loadScreen;
+    private static JProgressBar loadProgress;
+    private static JLabel loadStatus;
+    private static boolean doneLoading = false;
+    private static volatile Timer loadUpdater;
+
+    public static void doneLoading()
+    {
+        doneLoading = true;
+    }
+
+    private static void initLoadingScreen()throws IOException
+    {
+        loadScreen = new JDialog((JFrame) null, "Starting Spark Reader");
+        loadProgress = new JProgressBar(0, 377089);//TODO don't hardcode this value, use last boot as estimate
+        loadStatus = new JLabel("Loading dictionaries...");
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        loadScreen.setContentPane(mainPanel);
+        mainPanel.add(loadStatus, BorderLayout.WEST);
+        mainPanel.add(new JLabel(VERSION), BorderLayout.EAST);
+        mainPanel.add(loadProgress, BorderLayout.SOUTH);
+        loadScreen.setSize(300,100);
+        Utils.centerWindow(loadScreen);
+        loadScreen.setIconImage(ImageIO.read(loadScreen.getClass().getResourceAsStream("/ui/icon.gif")));
+        //loadScreen.set
+        loadScreen.setVisible(true);
+
+        loadUpdater = new Timer(50, e ->
+        {
+            if(dict == null)
+            {
+                //still loading dictionaries
+                loadProgress.setValue(Dictionary.getLoadedWordCount());
+            }
+            else
+            {
+                loadProgress.setValue(loadProgress.getMaximum());
+                loadStatus.setText("Loading main UI...");
+            }
+            if(doneLoading)
+            {
+                loadUpdater.stop();
+                loadScreen.setVisible(false);
+            }
+        });
+        loadUpdater.setRepeats(true);
+        loadUpdater.start();
     }
 }

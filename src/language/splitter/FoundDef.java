@@ -27,8 +27,8 @@ import java.util.Set;
 import static main.Main.options;
 
 /**
- * Holds and renders a found definition of a FoundWord
- * @author laure
+ * Holds and renders a found definition of a FoundWord.
+ * @author Laurens Weyn
  */
 public class FoundDef implements Comparable<FoundDef>
 {
@@ -195,5 +195,10 @@ public class FoundDef implements Comparable<FoundDef>
     public ValidWord getFoundForm()
     {
         return foundForm;
+    }
+
+    public void resetScore()
+    {
+        score = Integer.MIN_VALUE;
     }
 }
