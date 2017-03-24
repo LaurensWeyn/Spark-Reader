@@ -51,7 +51,15 @@ public class WordScannerNew extends WordScanner implements SubScanner
         // fixme: なりません? いけません?
         */
 
-        ruleList.add(new StdRule("たい", "", "want", DefTag.stem_ren, DefTag.adj_i));
+        ruleList.add(new ContextRule("たい", "", "want", DefTag.stem_ren, DefTag.adj_i, (rule, word) -> {
+            if(word.getConjugationTags().size() < 2) return true;
+            DefTag tagOfInterest = word.getConjugationTags().get(word.getConjugationTags().size()-2);
+            //noinspection RedundantIfStatement
+            if(tagOfInterest == DefTag.stem_adj_base)
+                return false;
+            return true;
+        }));
+
         ruleList.add(new StdRule("ください", "", "polite request", DefTag.stem_te, DefTag.adj_i));
 
         // te form
@@ -79,8 +87,16 @@ public class WordScannerNew extends WordScanner implements SubScanner
         // todo: add better names for these later
         // Should be restricted to verbs
         ruleList.add(new StdRule("いる", "", "teiru", DefTag.stem_te, DefTag.v1));
-        // -- common colloquial form drops the い entirely
-        ruleList.add(new StdRule("る", "", "teru", DefTag.stem_te, DefTag.v1)); // this causes so many problems...
+        // -- common colloquial form drops the い entirely));
+        ruleList.add(new ContextRule("る", "", "teru", DefTag.stem_te, DefTag.v1, (rule, word) -> {
+            if(word.getConjugationTags().size() < 2) return true;
+            DefTag tagOfInterest = word.getConjugationTags().get(word.getConjugationTags().size()-2);
+            //noinspection RedundantIfStatement
+            if(tagOfInterest == DefTag.stem_ren
+            || tagOfInterest == DefTag.stem_ren_less)
+                return false;
+            return true;
+        }));
         // Not sure if these should be restricted to verbs but probably
         ruleList.add(new StdRule("いく", "", "teiku", DefTag.stem_te, DefTag.v5k_s));
         ruleList.add(new StdRule("くる", "", "tekuru", DefTag.stem_te, DefTag.vk));
@@ -136,15 +152,14 @@ public class WordScannerNew extends WordScanner implements SubScanner
         ruleList.add(new StdRule("せる", "", "causative", DefTag.stem_a, DefTag.v1)); // ichidan cannot conjugate to "stem_a"
         // spoken language -- this also covers the "short causative passive" indirectly
         // Only allowed on non-す godan verbs.
-        ruleList.add(new ContextRule("す", "", "short causative", DefTag.stem_a, DefTag.v5s,(rule, word) -> {
+        ruleList.add(new ContextRule("す", "", "short causative", DefTag.stem_a, DefTag.v5s, (rule, word) -> {
             if(word.getWord().equals("")) return false;
             if(!word.getWord().endsWith(rule.ending)) return false;
             String base = word.getWord().substring(0, word.getWord().length() - rule.ending.length());
             //noinspection RedundantIfStatement
             if(base.endsWith("さ")) return false;
             else return true;
-        }
-        ));
+        }));
         // nasai
         // technically an i-adjective, but again, letting the deconjugator use it like that would cause more problems than it's worth
         ruleList.add(new OnlyFinalRule("なさい", "", "kind request", DefTag.stem_ren, DefTag.uninflectable));
@@ -175,15 +190,31 @@ public class WordScannerNew extends WordScanner implements SubScanner
         ruleList.add(new StdRule("すぎる", "い", "excess", DefTag.adj_i, DefTag.v1));
         ruleList.add(new StdRule("そう", "い", "seemingness", DefTag.adj_i, DefTag.adj_na));
         ruleList.add(new StdRule("がる", "い", "~garu", DefTag.adj_i, DefTag.v5r));
-        ruleList.add(new StdRule("", "い", "(stem)", DefTag.adj_i, DefTag.uninflectable));
+        ruleList.add(new StdRule("", "い", "(stem)", DefTag.adj_i, DefTag.stem_adj_base));
 
         // negative
         // verbs
-        ruleList.add(new StdRule("ない", "", "negative", DefTag.stem_mizenkei, DefTag.adj_i));
+        ruleList.add(new ContextRule("ない", "", "negative", DefTag.stem_mizenkei, DefTag.adj_i, (rule, word) -> {
+            System.out.println(word.getConjugationTags());
+            if(word.getConjugationTags().size() < 2) return true;
+            DefTag tagOfInterest = word.getConjugationTags().get(word.getConjugationTags().size()-2);
+            //noinspection RedundantIfStatement
+            if(tagOfInterest == DefTag.stem_adj_base)
+                return false;
+            return true;
+        }));
         ruleList.add(new OnlyFinalRule("ず", "", "adverbial negative", DefTag.stem_mizenkei, DefTag.uninflectable)); // archaically, not adverbiall, but in modern japanese, almost always adverbial
         ruleList.add(new OnlyFinalRule("ずに", "", "without doing so", DefTag.stem_mizenkei, DefTag.uninflectable)); // exactly the same meaning, despite the difference in label
         // i-adjectives
-        ruleList.add(new StdRule("ない", "", "negative", DefTag.stem_ku, DefTag.adj_i));
+        ruleList.add(new ContextRule("ない", "", "negative", DefTag.stem_ku, DefTag.adj_i, (rule, word) -> {
+            System.out.println(word.getConjugationTags());
+            if(word.getConjugationTags().size() < 2) return true;
+            DefTag tagOfInterest = word.getConjugationTags().get(word.getConjugationTags().size()-2);
+            //noinspection RedundantIfStatement
+            if(tagOfInterest == DefTag.stem_adj_base)
+                return false;
+            return true;
+        }));
 
         ruleList.add(new NeverFinalRule("", "", "(mizenkei)", DefTag.stem_a, DefTag.stem_mizenkei));
         ruleList.add(new NeverFinalRule("", "る", "(mizenkei)", DefTag.v1, DefTag.stem_mizenkei));
@@ -249,7 +280,6 @@ public class WordScannerNew extends WordScanner implements SubScanner
 
         // masu stem
         ruleList.add(new StdRule("き", "く", "(infinitive)", DefTag.v5k, DefTag.stem_ren));
-        ruleList.add(new StdRule("し", "す", "(infinitive)", DefTag.v5s, DefTag.stem_ren));
         ruleList.add(new StdRule("ち", "つ", "(infinitive)", DefTag.v5t, DefTag.stem_ren));
         ruleList.add(new StdRule("い", "う", "(infinitive)", DefTag.v5u, DefTag.stem_ren));
         ruleList.add(new StdRule("り", "る", "(infinitive)", DefTag.v5r, DefTag.stem_ren));
@@ -257,10 +287,26 @@ public class WordScannerNew extends WordScanner implements SubScanner
         ruleList.add(new StdRule("び", "ぶ", "(infinitive)", DefTag.v5b, DefTag.stem_ren));
         ruleList.add(new StdRule("に", "ぬ", "(infinitive)", DefTag.v5n, DefTag.stem_ren));
         ruleList.add(new StdRule("み", "む", "(infinitive)", DefTag.v5m, DefTag.stem_ren));
-        ruleList.add(new StdRule(""  , "る", "(infinitive)", DefTag.v1,  DefTag.stem_ren));
         // marginal categories
         ruleList.add(new StdRule("い", "う", "(infinitive)", DefTag.v5u_s, DefTag.stem_ren));
         ruleList.add(new StdRule("き", "く", "(infinitive)", DefTag.v5k_s, DefTag.stem_ren));
+        // prevent bogus deconjugations
+        ruleList.add(new ContextRule("し", "す", "(infinitive)", DefTag.v5s, DefTag.stem_ren, (rule, word) -> {
+            if(word.getConjugationTags().size() < 2) return true;
+            DefTag tagOfInterest = word.getConjugationTags().get(word.getConjugationTags().size()-2);
+            //noinspection RedundantIfStatement
+            if(tagOfInterest == DefTag.stem_te)
+                return false;
+            return true;
+        }));
+        ruleList.add(new ContextRule(""  , "る", "(infinitive)", DefTag.v1,  DefTag.stem_ren, (rule, word) -> {
+            if(word.getConjugationTags().size() < 2) return true;
+            DefTag tagOfInterest = word.getConjugationTags().get(word.getConjugationTags().size()-2);
+            //noinspection RedundantIfStatement
+            if(tagOfInterest == DefTag.stem_te)
+                return false;
+            return true;
+        }));
 
         // volitional stem
         ruleList.add(new StdRule("こう", "く", "volitional", DefTag.v5k, DefTag.stem_ren_less));
@@ -306,7 +352,7 @@ public class WordScannerNew extends WordScanner implements SubScanner
         // rewrite rules
         ruleList.add(new RewriteRule("でした", "です", "past", DefTag.aux, DefTag.aux));
     }
-    protected int test_rules(int start)
+    private int test_rules(int start)
     {
         int new_matches = 0;
 

@@ -23,7 +23,7 @@ public enum DefTag
     stem_te(-1, "te form"), // te form; comes from stem_i_reduced plus te/de
     stem_ren(-1, "renyoukei (masu stem)"), // verb renyoukei; the masu stem infinitive
     stem_ren_less(-1, "reduced renyoukei (past stem)"), // phonologically reduced masu stem infinitive
-    stem_ren_less_v(-1, "reduced renyoukei (past stem)"), // voiced
+    stem_ren_less_v(-1, "reduced renyoukei (past stem) (voiced)"), // voiced
     // i-adj
     // i-adjectives have two renyoukei-like infinitives, but only this one is useful as a tag
     stem_ku(-1, "adjective ku form"), // e.g. nakute
@@ -33,6 +33,7 @@ public enum DefTag
     stem_te_defective(-1, "adjective te form (defective syntax)"), // adjectives have a defective te form that does not work the same morphologically as the verbal one; for example なくてください is wrong, but ないでください is fine.
     // dummy tag for organization purposes (might do something later, or might get removed)
     uninflectable(-1, "uninflectable"), // does not further inflect
+    stem_adj_base(-1, "adjective stem"),
     
     // non-custom
     adj_i(0, "adjective (keiyoushi)"),

@@ -64,6 +64,7 @@ public class StdRule implements DeconRule
 
         //whether rule matches relevant tags
         boolean deconjugates;
+        //noinspection SimplifiableIfStatement
         if(word.getConjugationTags().size() > 0)
             deconjugates = (word.getConjugationTags().get(word.getConjugationTags().size()-1)).equals(impliedTag);
         else
@@ -82,6 +83,8 @@ public class StdRule implements DeconRule
             if(neededTag != null)
             {
                 tags.add(neededTag);
+                if(conjugationTags.size()==0)
+                    conjugationTags.add(impliedTag);
                 conjugationTags.add(neededTag);
             }
             

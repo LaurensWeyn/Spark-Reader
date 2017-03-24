@@ -250,7 +250,7 @@ public class WordScannerOld extends WordScanner implements SubScanner
         //no stem for adjectives, but -sou sort-of uses a stem
         ruleList.add(new StdRule("そう", "い", "-sou", DefTag.adj_i));
     }
-    protected void test_rules(int start)
+    private  void test_rules()
     {
         //attempt all deconjugation rules in order
 
@@ -258,8 +258,8 @@ public class WordScannerOld extends WordScanner implements SubScanner
         for(DeconRule rule:ruleList)
         {
             int size = matches.size();//don't scan matches added during iteration
-            if(start == size) return;
-            for(int i = start; i < size; i++)
+            if(size == 0) return;
+            for(int i = 0; i < size; i++)
             {
                 //check if any of our possible matches can be deconjugated by this rule
                 ValidWord gotten = rule.process(matches.get(i));
@@ -273,6 +273,6 @@ public class WordScannerOld extends WordScanner implements SubScanner
     public void ScanWord(String word)
     {
         matches.add(new ValidWord(word, ""));//add initial unmodified word
-        test_rules(0);
+        test_rules();
     }
 }
