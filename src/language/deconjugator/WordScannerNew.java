@@ -314,7 +314,7 @@ public class WordScannerNew extends WordScanner implements SubScanner
         int size = matches.size();//don't scan matches added during iteration
         if(start == size) return 0;
 
-        // Have to iterate on matches outside of rules in order to prevent duplicates due to recursion
+        // Iterate matches outside of rules to reduce memory use (prevents making the same conjugation multiple ways)
         for(int i = start; i < size; i++)
         {
             for(DeconRule rule:ruleList)
@@ -357,7 +357,11 @@ public class WordScannerNew extends WordScanner implements SubScanner
                 break;
             }
             //System.out.println("Matches: " + matches.size());
-            //System.out.println("New matches: " + number_of_new_matches);
+            System.out.println("New matches: " + number_of_new_matches);
+            for(int i = matches_before_testing; i < matches.size(); i++)
+            {
+                System.out.println(matches.get(i).getSeenForms());
+            }
 
             iters++;
 
