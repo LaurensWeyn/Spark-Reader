@@ -22,9 +22,6 @@ import language.dictionary.Japanese;
 
 import java.util.ArrayList;
 
-/**
- * Created by wareya on 2017/03/23.
- */
 public class WordScannerOld extends WordScanner implements SubScanner
 {
     public void subinit()

@@ -24,9 +24,6 @@ import language.dictionary.Japanese;
 
 import java.util.ArrayList;
 
-/**
- * Created by wareya on 2017/03/23.
- */
 public class WordScannerNew extends WordScanner implements SubScanner
 {
     public void subinit()
@@ -129,6 +126,7 @@ public class WordScannerNew extends WordScanner implements SubScanner
             if(word.getWord().equals("")) return false;
             if(!word.getWord().endsWith(rule.ending)) return false;
             String base = word.getWord().substring(0, word.getWord().length() - rule.ending.length());
+            //noinspection RedundantIfStatement
             if(base.endsWith("さ")) return false;
             else return true;
         }
@@ -276,6 +274,9 @@ public class WordScannerNew extends WordScanner implements SubScanner
         // ruleList.add(new StdRule("あれ", "ある", "imperative", DefTag.v5r_i, DefTag.uninflectable)); // rare and conflicts with あれ "that"
         
         ruleList.add(new StdRule("ろ", "る", "imperative", DefTag.v1, DefTag.uninflectable));
+
+        // rewrite rules
+        ruleList.add(new RewriteRule("でした", "です", "past", DefTag.aux, DefTag.aux));
     }
     // nasty subroutine: make functional? how much overhead does passing data structures have in java?
     public void ScanWord(String word)
