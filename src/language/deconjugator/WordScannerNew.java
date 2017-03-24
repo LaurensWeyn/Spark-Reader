@@ -306,7 +306,30 @@ public class WordScannerNew extends WordScanner implements SubScanner
         // rewrite rules
         ruleList.add(new RewriteRule("でした", "です", "past", DefTag.aux, DefTag.aux));
     }
-    // nasty subroutine: make functional? how much overhead does passing data structures have in java?
+    protected int test_rules(int start)
+    {
+        int new_matches = 0;
+
+        //attempt all deconjugation rules in order
+        int size = matches.size();//don't scan matches added during iteration
+        if(start == size) return 0;
+
+        // Have to iterate on matches outside of rules in order to prevent duplicates due to recursion
+        for(int i = start; i < size; i++)
+        {
+            for(DeconRule rule:ruleList)
+            {
+                //check if any of our possible matches can be deconjugated by this rule
+                ValidWord gotten = rule.process(matches.get(i));
+                if(gotten != null)
+                {
+                    matches.add(gotten);
+                    new_matches++;
+                }
+            }
+        }
+        return new_matches;
+    }
     public void ScanWord(String word)
     {
         matches.add(new ValidWord(word, ""));//add initial unmodified word

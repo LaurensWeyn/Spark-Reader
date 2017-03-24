@@ -250,7 +250,26 @@ public class WordScannerOld extends WordScanner implements SubScanner
         //no stem for adjectives, but -sou sort-of uses a stem
         ruleList.add(new StdRule("そう", "い", "-sou", DefTag.adj_i));
     }
-    // nasty subroutine: make functional? how much overhead does passing data structures have in java?
+    protected void test_rules(int start)
+    {
+        //attempt all deconjugation rules in order
+
+        // Have to iterate on rules outside of matches because this deconjugator is non-recursive
+        for(DeconRule rule:ruleList)
+        {
+            int size = matches.size();//don't scan matches added during iteration
+            if(start == size) return;
+            for(int i = start; i < size; i++)
+            {
+                //check if any of our possible matches can be deconjugated by this rule
+                ValidWord gotten = rule.process(matches.get(i));
+                if(gotten != null)
+                {
+                    matches.add(gotten);
+                }
+            }
+        }
+    }
     public void ScanWord(String word)
     {
         matches.add(new ValidWord(word, ""));//add initial unmodified word
