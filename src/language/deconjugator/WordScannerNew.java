@@ -102,6 +102,14 @@ public class WordScannerNew extends WordScanner implements SubScanner
         // i-adjectives
         ruleList.add(new StdRule("った", "", "past", DefTag.stem_ka, DefTag.uninflectable));
 
+        // たり is its own morpheme, not た+り, and semgmenters (like kuromoji) should make たり an entire segment, so we have to deconjugate たり (it's also the right thing to do)
+        // * etymology: てあり; as in てある
+        ruleList.add(new StdRule("だり", "", "~tari", DefTag.stem_ren_less_v, DefTag.uninflectable));
+        ruleList.add(new StdRule("たり", "", "~tari", DefTag.stem_ren_less, DefTag.uninflectable));
+        // i-adjectives
+        ruleList.add(new StdRule("ったり", "", "~tari", DefTag.stem_ka, DefTag.uninflectable));
+
+
         // passive (godan)
         ruleList.add(new StdRule("れる", "", "passive", DefTag.stem_a, DefTag.v1)); // ichidan cannot conjugate to "stem_a"
 
