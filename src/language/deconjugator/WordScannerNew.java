@@ -274,6 +274,8 @@ public class WordScannerNew extends WordScanner implements SubScanner
         //ruleList.add(new StdRule("", "ある", "(mizenkei)", DefTag.v5r_i, DefTag.stem_mizenkei)); // not used
         ruleList.add(new StdRule("あれ", "ある", "(izenkei)", DefTag.v5r_i, DefTag.stem_e));
         // ruleList.add(new StdRule("あれ", "ある", "imperative", DefTag.v5r_i, DefTag.uninflectable)); // rare and conflicts with あれ "that"
+        
+        ruleList.add(new StdRule("ろ", "る", "imperative", DefTag.v1, DefTag.uninflectable));
     }
     // nasty subroutine: make functional? how much overhead does passing data structures have in java?
     public void ScanWord(String word)
