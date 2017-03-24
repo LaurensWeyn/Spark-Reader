@@ -64,6 +64,18 @@ public class WordScannerNew extends WordScanner implements SubScanner
         ruleList.add(new StdRule("で", "", "(te form)", DefTag.adj_i, DefTag.stem_te));
         ruleList.add(new StdRule("て", "", "(te form)", DefTag.stem_ku, DefTag.stem_te_defective));
 
+        // te-form auxiliaries that sometimes require rewrites after they eat て
+        ruleList.add(new StdRule("しまう", "", "completely", DefTag.stem_te, DefTag.v5u));
+        ruleList.add(new StdRule("ちゃう", "てしまう", "(reduced)", DefTag.v5u, DefTag.v5u));
+        ruleList.add(new StdRule("じゃう", "でしまう", "(reduced)", DefTag.v5u, DefTag.v5u));
+
+        // improves parsing. can be rewritten by ちゃ
+        ruleList.add(new StdRule("は", "", "(topic)", DefTag.stem_te, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("ちゃ", "ては", "(reduced)", DefTag.stem_te, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("じゃ", "では", "(reduced)", DefTag.stem_te, DefTag.uninflectable));
+
+        ruleList.add(new StdRule("は", "", "(topic)", DefTag.stem_te_defective, DefTag.uninflectable));
+
         // todo: add better names for these later
         // Should be restricted to verbs
         ruleList.add(new StdRule("いる", "", "teiru", DefTag.stem_te, DefTag.v1));
@@ -77,14 +89,14 @@ public class WordScannerNew extends WordScanner implements SubScanner
 
         // たら, the generic conditional
         // verbs
-        ruleList.add(new StdRule("たら", "", "conditional", DefTag.stem_ren_less, DefTag.uninflectable));
-        ruleList.add(new StdRule("たらば", "", "formal conditional", DefTag.stem_ren_less, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("たら", "", "conditional", DefTag.stem_ren_less, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("たらば", "", "formal conditional", DefTag.stem_ren_less, DefTag.uninflectable));
         // (voiced)
-        ruleList.add(new StdRule("だら", "", "conditional", DefTag.stem_ren_less_v, DefTag.uninflectable));
-        ruleList.add(new StdRule("だらば", "", "formal conditional", DefTag.stem_ren_less_v, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("だら", "", "conditional", DefTag.stem_ren_less_v, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("だらば", "", "formal conditional", DefTag.stem_ren_less_v, DefTag.uninflectable));
         // i-adjectives
-        ruleList.add(new StdRule("ったら", "", "conditional", DefTag.stem_ka, DefTag.uninflectable));
-        ruleList.add(new StdRule("ったらば", "", "formal conditional", DefTag.stem_ka, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("ったら", "", "conditional", DefTag.stem_ka, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("ったらば", "", "formal conditional", DefTag.stem_ka, DefTag.uninflectable));
 
         // ば, the provisional conditional
         // verbs
@@ -92,19 +104,21 @@ public class WordScannerNew extends WordScanner implements SubScanner
         // i-adjectives
         ruleList.add(new StdRule("れば", "", "provisional conditional", DefTag.stem_ke, DefTag.uninflectable));
 
+        ruleList.add(new OnlyFinalRule("きゃ", "ければ", "(reduced)", DefTag.uninflectable, DefTag.uninflectable));
+
         // past
         // verbs
-        ruleList.add(new StdRule("だ", "", "past", DefTag.stem_ren_less_v, DefTag.uninflectable));
-        ruleList.add(new StdRule("た", "", "past", DefTag.stem_ren_less, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("だ", "", "past", DefTag.stem_ren_less_v, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("た", "", "past", DefTag.stem_ren_less, DefTag.uninflectable));
         // i-adjectives
-        ruleList.add(new StdRule("った", "", "past", DefTag.stem_ka, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("った", "", "past", DefTag.stem_ka, DefTag.uninflectable));
 
         // たり is its own morpheme, not た+り, and semgmenters (like kuromoji) should make たり an entire segment, so we have to deconjugate たり (it's also the right thing to do)
         // * etymology: てあり; as in てある
-        ruleList.add(new StdRule("だり", "", "~tari", DefTag.stem_ren_less_v, DefTag.uninflectable));
-        ruleList.add(new StdRule("たり", "", "~tari", DefTag.stem_ren_less, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("だり", "", "~tari", DefTag.stem_ren_less_v, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("たり", "", "~tari", DefTag.stem_ren_less, DefTag.uninflectable));
         // i-adjectives
-        ruleList.add(new StdRule("ったり", "", "~tari", DefTag.stem_ka, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("ったり", "", "~tari", DefTag.stem_ka, DefTag.uninflectable));
 
 
         // passive (godan)
@@ -133,16 +147,18 @@ public class WordScannerNew extends WordScanner implements SubScanner
         ));
         // nasai
         // technically an i-adjective, but again, letting the deconjugator use it like that would cause more problems than it's worth
-        ruleList.add(new StdRule("なさい", "", "kind request", DefTag.stem_ren, DefTag.uninflectable));
-        ruleList.add(new StdRule("な", "", "casual kind request", DefTag.stem_ren, DefTag.uninflectable));
-        ruleList.add(new StdRule("ながら", "", "while", DefTag.stem_ren, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("なさい", "", "kind request", DefTag.stem_ren, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("な", "", "casual kind request", DefTag.stem_ren, DefTag.uninflectable));
+
+        // nagara, a "while" term
+        ruleList.add(new OnlyFinalRule("ながら", "", "while", DefTag.stem_ren, DefTag.uninflectable));
 
         // ます inflects, but does so entirely irregularly.
-        ruleList.add(new StdRule("ます", "", "polite", DefTag.stem_ren, DefTag.uninflectable));
-        ruleList.add(new StdRule("ません", "", "negative polite", DefTag.stem_ren, DefTag.uninflectable));
-        ruleList.add(new StdRule("ました", "", "past polite", DefTag.stem_ren, DefTag.uninflectable));
-        ruleList.add(new StdRule("ませんでした", "", "past negative polite", DefTag.stem_ren, DefTag.uninflectable));
-        ruleList.add(new StdRule("ましょう", "", "polite volitional", DefTag.stem_ren, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("ます", "", "polite", DefTag.stem_ren, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("ません", "", "negative polite", DefTag.stem_ren, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("ました", "", "past polite", DefTag.stem_ren, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("ませんでした", "", "past negative polite", DefTag.stem_ren, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("ましょう", "", "polite volitional", DefTag.stem_ren, DefTag.uninflectable));
 
         // part-of-speech roles
         ruleList.add(new StdRule("に", "", "adverb", DefTag.adj_na));
@@ -164,58 +180,72 @@ public class WordScannerNew extends WordScanner implements SubScanner
         // negative
         // verbs
         ruleList.add(new StdRule("ない", "", "negative", DefTag.stem_mizenkei, DefTag.adj_i));
-        ruleList.add(new StdRule("ず", "", "adverbial negative", DefTag.stem_mizenkei, DefTag.uninflectable)); // archaically, not adverbiall, but in modern japanese, almost always adverbial
-        ruleList.add(new StdRule("ずに", "", "without doing so", DefTag.stem_mizenkei, DefTag.uninflectable)); // exactly the same meaning, despite the difference in label
+        ruleList.add(new OnlyFinalRule("ず", "", "adverbial negative", DefTag.stem_mizenkei, DefTag.uninflectable)); // archaically, not adverbiall, but in modern japanese, almost always adverbial
+        ruleList.add(new OnlyFinalRule("ずに", "", "without doing so", DefTag.stem_mizenkei, DefTag.uninflectable)); // exactly the same meaning, despite the difference in label
         // i-adjectives
         ruleList.add(new StdRule("ない", "", "negative", DefTag.stem_ku, DefTag.adj_i));
 
-        // fixme: having multiple conjugations with the same form makes the ui display bogus extra definitions
-        ruleList.add(new StdRule("", "", "(mizenkei)", DefTag.stem_a, DefTag.stem_mizenkei));
-        ruleList.add(new StdRule("", "る", "(mizenkei)", DefTag.v1, DefTag.stem_mizenkei));
+        ruleList.add(new NeverFinalRule("", "", "(mizenkei)", DefTag.stem_a, DefTag.stem_mizenkei));
+        ruleList.add(new NeverFinalRule("", "る", "(mizenkei)", DefTag.v1, DefTag.stem_mizenkei));
 
         // potential stem (and stem of some conjunctions)
-        ruleList.add(new StdRule("け", "く", "(izenkei)", DefTag.v5k, DefTag.stem_e));
-        ruleList.add(new StdRule("せ", "す", "(izenkei)", DefTag.v5s, DefTag.stem_e));
-        ruleList.add(new StdRule("て", "つ", "(izenkei)", DefTag.v5t, DefTag.stem_e));
-        ruleList.add(new StdRule("え", "う", "(izenkei)", DefTag.v5u, DefTag.stem_e));
-        ruleList.add(new StdRule("れ", "る", "(izenkei)", DefTag.v5r, DefTag.stem_e));
-        ruleList.add(new StdRule("げ", "ぐ", "(izenkei)", DefTag.v5g, DefTag.stem_e));
-        ruleList.add(new StdRule("べ", "ぶ", "(izenkei)", DefTag.v5b, DefTag.stem_e));
-        ruleList.add(new StdRule("ね", "ぬ", "(izenkei)", DefTag.v5n, DefTag.stem_e));
-        ruleList.add(new StdRule("め", "む", "(izenkei)", DefTag.v5m, DefTag.stem_e));
-        ruleList.add(new StdRule("れ", "る", "(izenkei)", DefTag.v1,  DefTag.stem_e)); // not a copy/paste mistake
+        ruleList.add(new NeverFinalRule("け", "く", "(izenkei)", DefTag.v5k, DefTag.stem_e));
+        ruleList.add(new NeverFinalRule("せ", "す", "(izenkei)", DefTag.v5s, DefTag.stem_e));
+        ruleList.add(new NeverFinalRule("て", "つ", "(izenkei)", DefTag.v5t, DefTag.stem_e));
+        ruleList.add(new NeverFinalRule("え", "う", "(izenkei)", DefTag.v5u, DefTag.stem_e));
+        ruleList.add(new NeverFinalRule("れ", "る", "(izenkei)", DefTag.v5r, DefTag.stem_e));
+        ruleList.add(new NeverFinalRule("げ", "ぐ", "(izenkei)", DefTag.v5g, DefTag.stem_e));
+        ruleList.add(new NeverFinalRule("べ", "ぶ", "(izenkei)", DefTag.v5b, DefTag.stem_e));
+        ruleList.add(new NeverFinalRule("ね", "ぬ", "(izenkei)", DefTag.v5n, DefTag.stem_e));
+        ruleList.add(new NeverFinalRule("め", "む", "(izenkei)", DefTag.v5m, DefTag.stem_e));
+        ruleList.add(new NeverFinalRule("れ", "る", "(izenkei)", DefTag.v1,  DefTag.stem_e)); // not a copy/paste mistake
         // marginal categories
-        ruleList.add(new StdRule("え", "う", "(izenkei)", DefTag.v5u_s, DefTag.stem_e));
-        ruleList.add(new StdRule("け", "く", "(izenkei)", DefTag.v5k_s, DefTag.stem_e));
+        ruleList.add(new NeverFinalRule("え", "う", "(izenkei)", DefTag.v5u_s, DefTag.stem_e));
+        ruleList.add(new NeverFinalRule("け", "く", "(izenkei)", DefTag.v5k_s, DefTag.stem_e));
+
+        // imperatives
+        ruleList.add(new OnlyFinalRule("け", "く", "imperative", DefTag.v5k, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("せ", "す", "imperative", DefTag.v5s, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("て", "つ", "imperative", DefTag.v5t, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("え", "う", "imperative", DefTag.v5u, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("れ", "る", "imperative", DefTag.v5r, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("げ", "ぐ", "imperative", DefTag.v5g, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("べ", "ぶ", "imperative", DefTag.v5b, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("ね", "ぬ", "imperative", DefTag.v5n, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("め", "む", "imperative", DefTag.v5m, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("ろ", "る", "imperative", DefTag.v1, DefTag.uninflectable));
+        // marginal categories
+        ruleList.add(new OnlyFinalRule("え", "う", "imperative", DefTag.v5u_s, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("け", "く", "imperative", DefTag.v5k_s, DefTag.uninflectable));
 
         // "a" stem used by godan verbs
-        ruleList.add(new StdRule("か", "く", "('a' stem)", DefTag.v5k, DefTag.stem_a));
-        ruleList.add(new StdRule("さ", "す", "('a' stem)", DefTag.v5s, DefTag.stem_a));
-        ruleList.add(new StdRule("た", "つ", "('a' stem)", DefTag.v5t, DefTag.stem_a));
-        ruleList.add(new StdRule("わ", "う", "('a' stem)", DefTag.v5u, DefTag.stem_a));
-        ruleList.add(new StdRule("ら", "る", "('a' stem)", DefTag.v5r, DefTag.stem_a));
-        ruleList.add(new StdRule("が", "ぐ", "('a' stem)", DefTag.v5g, DefTag.stem_a));
-        ruleList.add(new StdRule("ば", "ぶ", "('a' stem)", DefTag.v5b, DefTag.stem_a));
-        ruleList.add(new StdRule("な", "ぬ", "('a' stem)", DefTag.v5n, DefTag.stem_a));
-        ruleList.add(new StdRule("ま", "む", "('a' stem)", DefTag.v5m, DefTag.stem_a));
+        ruleList.add(new NeverFinalRule("か", "く", "('a' stem)", DefTag.v5k, DefTag.stem_a));
+        ruleList.add(new NeverFinalRule("さ", "す", "('a' stem)", DefTag.v5s, DefTag.stem_a));
+        ruleList.add(new NeverFinalRule("た", "つ", "('a' stem)", DefTag.v5t, DefTag.stem_a));
+        ruleList.add(new NeverFinalRule("わ", "う", "('a' stem)", DefTag.v5u, DefTag.stem_a));
+        ruleList.add(new NeverFinalRule("ら", "る", "('a' stem)", DefTag.v5r, DefTag.stem_a));
+        ruleList.add(new NeverFinalRule("が", "ぐ", "('a' stem)", DefTag.v5g, DefTag.stem_a));
+        ruleList.add(new NeverFinalRule("ば", "ぶ", "('a' stem)", DefTag.v5b, DefTag.stem_a));
+        ruleList.add(new NeverFinalRule("な", "ぬ", "('a' stem)", DefTag.v5n, DefTag.stem_a));
+        ruleList.add(new NeverFinalRule("ま", "む", "('a' stem)", DefTag.v5m, DefTag.stem_a));
         // marginal categories
-        ruleList.add(new StdRule("わ", "う", "('a' stem)", DefTag.v5u_s, DefTag.stem_a));
-        ruleList.add(new StdRule("か", "く", "('a' stem)", DefTag.v5k_s, DefTag.stem_a));
+        ruleList.add(new NeverFinalRule("わ", "う", "('a' stem)", DefTag.v5u_s, DefTag.stem_a));
+        ruleList.add(new NeverFinalRule("か", "く", "('a' stem)", DefTag.v5k_s, DefTag.stem_a));
 
         // past stem
-        ruleList.add(new StdRule("い", "く", "(unstressed infinitive)", DefTag.v5k, DefTag.stem_ren_less));
-        ruleList.add(new StdRule("し", "す", "(unstressed infinitive)", DefTag.v5s, DefTag.stem_ren_less));
-        ruleList.add(new StdRule("っ", "つ", "(unstressed infinitive)", DefTag.v5t, DefTag.stem_ren_less));
-        ruleList.add(new StdRule("っ", "う", "(unstressed infinitive)", DefTag.v5u, DefTag.stem_ren_less));
-        ruleList.add(new StdRule("っ", "る", "(unstressed infinitive)", DefTag.v5r, DefTag.stem_ren_less));
-        ruleList.add(new StdRule("い", "ぐ", "(unstressed infinitive)", DefTag.v5g, DefTag.stem_ren_less_v));
-        ruleList.add(new StdRule("ん", "ぶ", "(unstressed infinitive)", DefTag.v5b, DefTag.stem_ren_less_v));
-        ruleList.add(new StdRule("ん", "ぬ", "(unstressed infinitive)", DefTag.v5n, DefTag.stem_ren_less_v));
-        ruleList.add(new StdRule("ん", "む", "(unstressed infinitive)", DefTag.v5m, DefTag.stem_ren_less_v));
-        ruleList.add(new StdRule(""  , "る", "(unstressed infinitive)", DefTag.v1,  DefTag.stem_ren_less));
+        ruleList.add(new NeverFinalRule("い", "く", "(unstressed infinitive)", DefTag.v5k, DefTag.stem_ren_less));
+        ruleList.add(new NeverFinalRule("し", "す", "(unstressed infinitive)", DefTag.v5s, DefTag.stem_ren_less));
+        ruleList.add(new NeverFinalRule("っ", "つ", "(unstressed infinitive)", DefTag.v5t, DefTag.stem_ren_less));
+        ruleList.add(new NeverFinalRule("っ", "う", "(unstressed infinitive)", DefTag.v5u, DefTag.stem_ren_less));
+        ruleList.add(new NeverFinalRule("っ", "る", "(unstressed infinitive)", DefTag.v5r, DefTag.stem_ren_less));
+        ruleList.add(new NeverFinalRule("い", "ぐ", "(unstressed infinitive)", DefTag.v5g, DefTag.stem_ren_less_v));
+        ruleList.add(new NeverFinalRule("ん", "ぶ", "(unstressed infinitive)", DefTag.v5b, DefTag.stem_ren_less_v));
+        ruleList.add(new NeverFinalRule("ん", "ぬ", "(unstressed infinitive)", DefTag.v5n, DefTag.stem_ren_less_v));
+        ruleList.add(new NeverFinalRule("ん", "む", "(unstressed infinitive)", DefTag.v5m, DefTag.stem_ren_less_v));
+        ruleList.add(new NeverFinalRule(""  , "る", "(unstressed infinitive)", DefTag.v1,  DefTag.stem_ren_less));
         // marginal categories
-        ruleList.add(new StdRule("う", "う", "(unstressed infinitive)", DefTag.v5u_s, DefTag.stem_ren_less));
-        ruleList.add(new StdRule("っ", "く", "(unstressed infinitive)", DefTag.v5k_s, DefTag.stem_ren_less));
+        ruleList.add(new NeverFinalRule("う", "う", "(unstressed infinitive)", DefTag.v5u_s, DefTag.stem_ren_less));
+        ruleList.add(new NeverFinalRule("っ", "く", "(unstressed infinitive)", DefTag.v5k_s, DefTag.stem_ren_less));
 
         // masu stem
         ruleList.add(new StdRule("き", "く", "(infinitive)", DefTag.v5k, DefTag.stem_ren));
@@ -249,31 +279,29 @@ public class WordScannerNew extends WordScanner implements SubScanner
 
         // irregulars
         ruleList.add(new StdRule("し", "する", "(infinitive)", DefTag.vs_i, DefTag.stem_ren));
-        ruleList.add(new StdRule("し", "する", "(unstressed infinitive)", DefTag.vs_i, DefTag.stem_ren_less));
-        ruleList.add(new StdRule("し", "する", "(mizenkei)", DefTag.vs_i, DefTag.stem_mizenkei)); // actually irregular itself but this will do for now
-        ruleList.add(new StdRule("すれ", "する", "(izenkei)", DefTag.vs_i, DefTag.stem_e));
+        ruleList.add(new NeverFinalRule("し", "する", "(unstressed infinitive)", DefTag.vs_i, DefTag.stem_ren_less));
+        ruleList.add(new NeverFinalRule("し", "する", "(mizenkei)", DefTag.vs_i, DefTag.stem_mizenkei)); // actually irregular itself but this will do for now
+        ruleList.add(new NeverFinalRule("すれ", "する", "(izenkei)", DefTag.vs_i, DefTag.stem_e));
         ruleList.add(new StdRule("しろ", "する", "imperative", DefTag.vs_i, DefTag.uninflectable));
         ruleList.add(new StdRule("せよ", "する", "imperative", DefTag.vs_i, DefTag.uninflectable));
 
         ruleList.add(new StdRule("き", "くる", "(infinitive)", DefTag.vk, DefTag.stem_ren));
-        ruleList.add(new StdRule("き", "くる", "(unstressed infinitive)", DefTag.vk, DefTag.stem_ren_less));
-        ruleList.add(new StdRule("こ", "くる", "(mizenkei)", DefTag.vk, DefTag.stem_mizenkei));
-        ruleList.add(new StdRule("くれ", "くる", "(izenkei)", DefTag.vk, DefTag.stem_e));
+        ruleList.add(new NeverFinalRule("き", "くる", "(unstressed infinitive)", DefTag.vk, DefTag.stem_ren_less));
+        ruleList.add(new NeverFinalRule("こ", "くる", "(mizenkei)", DefTag.vk, DefTag.stem_mizenkei));
+        ruleList.add(new NeverFinalRule("くれ", "くる", "(izenkei)", DefTag.vk, DefTag.stem_e));
         ruleList.add(new StdRule("こい", "くる", "imperative", DefTag.vk, DefTag.uninflectable));
 
         ruleList.add(new StdRule("来", "来る", "(infinitive)", DefTag.vk, DefTag.stem_ren));
-        ruleList.add(new StdRule("来", "来る", "(unstressed infinitive)", DefTag.vk, DefTag.stem_ren_less));
-        ruleList.add(new StdRule("来", "来る", "(mizenkei)", DefTag.vk, DefTag.stem_mizenkei));
-        ruleList.add(new StdRule("来れ", "来る", "(izenkei)", DefTag.vk, DefTag.stem_e));
+        ruleList.add(new NeverFinalRule("来", "来る", "(unstressed infinitive)", DefTag.vk, DefTag.stem_ren_less));
+        ruleList.add(new NeverFinalRule("来", "来る", "(mizenkei)", DefTag.vk, DefTag.stem_mizenkei));
+        ruleList.add(new NeverFinalRule("来れ", "来る", "(izenkei)", DefTag.vk, DefTag.stem_e));
         ruleList.add(new StdRule("来い", "来る", "imperative", DefTag.vk, DefTag.uninflectable));
 
-        ruleList.add(new StdRule("あり", "ある", "(infinitive)", DefTag.v5r_i, DefTag.stem_ren));
+        ruleList.add(new NeverFinalRule("あり", "ある", "(infinitive)", DefTag.v5r_i, DefTag.stem_ren));
         ruleList.add(new StdRule("あっ", "ある", "(unstressed infinitive)", DefTag.v5r_i, DefTag.stem_ren_less));
         //ruleList.add(new StdRule("", "ある", "(mizenkei)", DefTag.v5r_i, DefTag.stem_mizenkei)); // not used
-        ruleList.add(new StdRule("あれ", "ある", "(izenkei)", DefTag.v5r_i, DefTag.stem_e));
+        ruleList.add(new NeverFinalRule("あれ", "ある", "(izenkei)", DefTag.v5r_i, DefTag.stem_e));
         // ruleList.add(new StdRule("あれ", "ある", "imperative", DefTag.v5r_i, DefTag.uninflectable)); // rare and conflicts with あれ "that"
-        
-        ruleList.add(new StdRule("ろ", "る", "imperative", DefTag.v1, DefTag.uninflectable));
 
         // rewrite rules
         ruleList.add(new RewriteRule("でした", "です", "past", DefTag.aux, DefTag.aux));
