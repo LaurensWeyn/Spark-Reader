@@ -150,6 +150,7 @@ public class WordScannerNew extends WordScanner implements SubScanner
         ruleList.add(new StdRule("に", "", "adverb", DefTag.adj_na));
         ruleList.add(new StdRule("な", "", "attributive", DefTag.adj_na));
         ruleList.add(new StdRule("の", "", "attributive", DefTag.adj_no));
+        ruleList.add(new StdRule("と", "", "attributive", DefTag.adv_to));
 
         // i-adjective stems
         ruleList.add(new StdRule("く", "い", "(adverb)", DefTag.adj_i, DefTag.stem_ku));
