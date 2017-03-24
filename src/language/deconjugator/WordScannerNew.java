@@ -166,6 +166,8 @@ public class WordScannerNew extends WordScanner implements SubScanner
         // negative
         // verbs
         ruleList.add(new StdRule("ない", "", "negative", DefTag.stem_mizenkei, DefTag.adj_i));
+        ruleList.add(new StdRule("ず", "", "adverbial negative", DefTag.stem_mizenkei, DefTag.uninflectable)); // archaically, not adverbiall, but in modern japanese, almost always adverbial
+        ruleList.add(new StdRule("ずに", "", "without doing so", DefTag.stem_mizenkei, DefTag.uninflectable)); // exactly the same meaning, despite the difference in label
         // i-adjectives
         ruleList.add(new StdRule("ない", "", "negative", DefTag.stem_ku, DefTag.adj_i));
 
