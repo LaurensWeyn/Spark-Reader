@@ -135,7 +135,7 @@ public class OptionsUI extends JFrame
 
         root.add(defs);
         OptionPage xport = new OptionPage("Export");
-            xport.add(new RadioOption("exportDisplay", exportDisplayConfig, "Export counter mode", null));
+            xport.add(new RadioOption("exportDisplay", exportDisplayConfig, "Export counter mode", "Requires restart to apply."));
             xport.add(new OptionLabel("Words:", null));
             xport.add(new ToggleOption("commentOnExport", "Ask for comment when exporting words", "<html>If ticked, you will be prompted for extra information when exporting a word."
                                                    + "<br>If unticked, this field is always left blank"));

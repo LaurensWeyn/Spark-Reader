@@ -93,3 +93,4 @@ epwingSourcePriority = -1
 epwingBlacklistMinLines = 10
 epwingStartBlacklist = ・
 resetDefScroll = true
+exportDisplay = external

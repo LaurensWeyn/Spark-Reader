@@ -129,6 +129,6 @@ public class UserDefPage implements Page
     @Override
     public String toString()
     {
-        return "edit " + source.getName().toLowerCase() + " dictionary";
+        return /*"edit " + */source.getName().toLowerCase() + " dictionary";
     }
 }

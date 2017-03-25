@@ -30,8 +30,6 @@ public class RadioOption extends UIOption
     JPanel mainPanel;
     ArrayList<ValueHandler> radioButtons;
 
-    static final int height = 150;
-
     public RadioOption(String tag, String configText, String name, String tip)
     {
         super(tag, name, tip);
@@ -64,7 +62,7 @@ public class RadioOption extends UIOption
         //mainPanel.add(colPanel, BorderLayout.WEST);
 
 
-        mainPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, height));
+        mainPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, mainPanel.getMinimumSize().height));
     }
     @Override
     public void update()
@@ -105,6 +103,7 @@ public class RadioOption extends UIOption
                 }
             });
             button.setText(name);
+            button.setToolTipText(tip);
         }
 
         public Component getComponent()
