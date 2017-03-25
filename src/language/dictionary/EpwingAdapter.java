@@ -24,22 +24,28 @@ import java.util.Set;
 public class EpwingAdapter extends HookAdapter<String[]>
 {
 
-    private int maxLine;
+    private int maxLines;
+    private int lineNum = 0;
+
     List<String> defLines = new ArrayList<>();
+
     /**
      * half/full width character mode
      */
     private boolean narrow = false;
-    private int lineNum = 0;
 
     /**
      * current line buffer
      */
     private StringBuilder lineBuffer = new StringBuilder(2048);
-    private boolean ignoreLine = false;
 
+    /**
+     * Ignore rest of line
+     */
+    private boolean ignoreLine = false;
     private SubAppendix appendix = null;
     private Set<Character> blackList;
+
     public EpwingAdapter(SubBook sub)
     {
         this(sub, 500, null);
@@ -49,11 +55,11 @@ public class EpwingAdapter extends HookAdapter<String[]>
         this(sub, 500, blackList);
     }
 
-    public EpwingAdapter(SubBook sub, int maxLine, Set<Character> blackList)
+    public EpwingAdapter(SubBook sub, int maxLines, Set<Character> blackList)
     {
         super();
         appendix = sub.getSubAppendix();
-        this.maxLine = maxLine;
+        this.maxLines = maxLines;
         this.blackList = blackList;
     }
 
@@ -77,16 +83,12 @@ public class EpwingAdapter extends HookAdapter<String[]>
 
     /**
      * Returns whether we can take more input.
-     * @return 
+     * @return true if more input is possible
      */
     @Override
     public boolean isMoreInput()
     {
-        if (lineNum >= maxLine)
-        {
-            return false;
-        }
-        return true;
+        return lineNum < maxLines;
     }
 
     /**
@@ -109,18 +111,19 @@ public class EpwingAdapter extends HookAdapter<String[]>
     public void append(int code)
     {
         String str = null;
-        if (narrow)
+        if(narrow)
         {
-            if (appendix != null)
+            if(appendix != null)
             {
                 try
                 {
                     str = appendix.getNarrowFontAlt(code);
-                } catch (EBException e)
+                }
+                catch(EBException ignored)
                 {
                 }
             }
-            if (StringUtils.isBlank(str))
+            if(StringUtils.isBlank(str))
             {
                 switch(code)
                 {
@@ -129,6 +132,9 @@ public class EpwingAdapter extends HookAdapter<String[]>
                         break;
                     case 0xA14B:
                         str = "é";
+                        break;
+                    case 0xA236:
+                        str = "ē";
                         break;
                     case 0xA226:
                         str = "ï";
@@ -163,14 +169,14 @@ public class EpwingAdapter extends HookAdapter<String[]>
         }
         else
         {
-            if (appendix != null)
+            if(appendix != null)
             {
                 try
                 {
                     str = appendix.getWideFontAlt(code);
-                } catch (EBException ignored){}
+                }catch(EBException ignored){}
             }
-            if (StringUtils.isBlank(str))
+            if(StringUtils.isBlank(str))
             {
                 switch(code)
                 {
@@ -179,7 +185,7 @@ public class EpwingAdapter extends HookAdapter<String[]>
                         str = "▶";//all basically solid arrows
                         break;
                     case 0xB661:
-                        str = "▷";//why are there so many codes for these arrows...
+                        str = "▷";
                         break;
                     case 0xB667:
                         str =  "Romaji: ";//'romaji' symbol
@@ -202,12 +208,10 @@ public class EpwingAdapter extends HookAdapter<String[]>
     {
         if(text.length() == 0)return;
         
-        if(ignoreLine == false && lineBuffer.length() == 0 &&
-          (blackList != null && blackList.contains(text.charAt(0))))
+        if(!ignoreLine && lineBuffer.length() == 0 && (blackList != null && blackList.contains(text.charAt(0))))
         {
             ignoreLine = true;
         }
-        
         if(!ignoreLine)lineBuffer.append(text);
     }
 
@@ -225,7 +229,6 @@ public class EpwingAdapter extends HookAdapter<String[]>
 
     /**
      * Start of new line, append buffer
-     *
      */
     @Override
     public void newLine()

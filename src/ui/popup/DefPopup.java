@@ -23,6 +23,7 @@ import language.dictionary.Kanji;
 import language.splitter.FoundDef;
 import language.splitter.FoundWord;
 import main.Main;
+import main.Utils;
 import ui.UI;
 
 import javax.swing.*;
@@ -96,6 +97,9 @@ public class DefPopup extends JPopupMenu
                 ClipboardHook.setClipboard("Definition for " + word.getText() + ":\n" + getDefText(-1));
             }
         });
+
+        anki.setText("Add as flashcard (" + getExportedCount() + ")");
+
         add(anki);
         add(setDef);
         add(new Separator());
@@ -116,10 +120,22 @@ public class DefPopup extends JPopupMenu
     public void show(int x, int y)
     {
         show(ui.disp.getFrame(), x, y);
-
     }
 
     private static int exportedThisSession = 0;
+    private static int exportedBeforeSession = -1;
+    private int getExportedCount()
+    {
+        if(exportedBeforeSession != -1)return exportedBeforeSession + exportedThisSession;
+        //calculate on first call
+        if(Main.options.getOption("exportDisplay").equals("external"))
+        {
+            exportedBeforeSession = Utils.countLines(Main.options.getFile("ankiExportPath"));
+        }
+        else exportedBeforeSession = 0;
+
+        return exportedBeforeSession + exportedThisSession;
+    }
 
     public static void ankiExport(FoundWord word)
     {
@@ -130,7 +146,7 @@ public class DefPopup extends JPopupMenu
         }
         try
         {
-            File file = new File(Main.options.getOption("ankiExportPath"));
+            File file = Main.options.getFile("ankiExportPath");
             Writer fr = new OutputStreamWriter(new FileOutputStream(file, true), Charset.forName("UTF-8"));
 
             FoundDef def = word.getCurrentDef();

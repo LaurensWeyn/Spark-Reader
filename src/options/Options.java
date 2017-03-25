@@ -106,6 +106,7 @@ public class Options
         options.put("timeStampFormat", "dd-MM-yyyy_hh-mm-ss");
         options.put("exportImage", "true");
         options.put("lineExportPath", "savedLines.csv");
+        options.put("exportDisplay", "external");
         options.put("screenshotExportPath", "screenshots/");
         options.put("fullscreenScreenshot", "false");
 

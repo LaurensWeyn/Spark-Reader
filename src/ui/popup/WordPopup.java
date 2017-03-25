@@ -19,6 +19,7 @@ package ui.popup;
 import hooker.ClipboardHook;
 import language.splitter.FoundWord;
 import main.Main;
+import main.Utils;
 import ui.UI;
 
 import javax.imageio.ImageIO;
@@ -115,6 +116,8 @@ public class WordPopup extends JPopupMenu
             }
         });
         markKnown.setSelected(Main.known.isKnown(word));
+
+        exportLine.setText("Export whole line (" + getExportedCount() + ")");
         
         add(addBreak);
         add(exportLine);
@@ -132,6 +135,22 @@ public class WordPopup extends JPopupMenu
         this.y = y;
         show(ui.disp.getFrame(), x, y);
     }
+
+    private static int exportedThisSession = 0;
+    private static int exportedBeforeSession = -1;
+    private int getExportedCount()
+    {
+        if(exportedBeforeSession != -1)return exportedBeforeSession + exportedThisSession;
+        //calculate on first call
+        if(Main.options.getOption("exportDisplay").equals("external"))
+        {
+            exportedBeforeSession = Utils.countLines(Main.options.getFile("lineExportPath"));
+        }
+        else exportedBeforeSession = 0;
+
+        return exportedBeforeSession + exportedThisSession;
+    }
+
     public static void exportLine()
     {
         JFrame frame = Main.ui.disp.getFrame();
@@ -158,12 +177,19 @@ public class WordPopup extends JPopupMenu
             }
 
             Writer fr = new OutputStreamWriter(new FileOutputStream(textFile, true), Charset.forName("UTF-8"));
-            fr.append(df.format(date) + "\t" + Main.text.replace("\n", "<br>") + "\t" + note + "\n");
+            fr.append(df.format(date))
+                    .append("\t")
+                    .append(Main.text.replace("\n", "<br>"))
+                    .append("\t")
+                    .append(note)
+                    .append("\n");
             fr.close();
+            exportedThisSession++;
+
             //take a screenshot with the exported line
             if(Main.options.getOptionBool("exportImage"))
             {
-                File imageFolder = new File(Main.options.getOption("screenshotExportPath"));
+                File imageFolder = Main.options.getFile("screenshotExportPath");
                 if (!imageFolder.exists())
                 {
                     boolean success = imageFolder.mkdirs();
