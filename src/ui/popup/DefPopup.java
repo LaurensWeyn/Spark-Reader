@@ -23,12 +23,14 @@ import language.dictionary.Kanji;
 import language.splitter.FoundDef;
 import language.splitter.FoundWord;
 import main.Main;
+import main.Utils;
 import ui.UI;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.io.*;
 import java.nio.charset.Charset;
+import java.util.Set;
 
 import static language.dictionary.Japanese.isJapanese;
 
@@ -96,6 +98,9 @@ public class DefPopup extends JPopupMenu
                 ClipboardHook.setClipboard("Definition for " + word.getText() + ":\n" + getDefText(-1));
             }
         });
+
+        anki.setText("Add as flashcard (" + getExportedCount() + ")");
+
         add(anki);
         add(setDef);
         add(new Separator());
@@ -116,10 +121,22 @@ public class DefPopup extends JPopupMenu
     public void show(int x, int y)
     {
         show(ui.disp.getFrame(), x, y);
-
     }
 
     private static int exportedThisSession = 0;
+    private static int exportedBeforeSession = -1;
+    private int getExportedCount()
+    {
+        if(exportedBeforeSession != -1)return exportedBeforeSession + exportedThisSession;
+        //calculate on first call
+        if(Main.options.getOption("exportDisplay").equals("external"))
+        {
+            exportedBeforeSession = Utils.countLines(Main.options.getFile("ankiExportPath"));
+        }
+        else exportedBeforeSession = 0;
+
+        return exportedBeforeSession + exportedThisSession;
+    }
 
     public static void ankiExport(FoundWord word)
     {
@@ -130,29 +147,31 @@ public class DefPopup extends JPopupMenu
         }
         try
         {
-            File file = new File(Main.options.getOption("ankiExportPath"));
+            File file = Main.options.getFile("ankiExportPath");
             Writer fr = new OutputStreamWriter(new FileOutputStream(file, true), Charset.forName("UTF-8"));
 
             FoundDef def = word.getCurrentDef();
             String kanji = def.getDictForm();
             String reading = def.getFurigana();
             String definition = def.getDefinition().getMeaningLine();
-            String tagList = "";
-            for(DefTag tag:def.getDefinition().getTags())
+
+            StringBuilder tagList = new StringBuilder();
+            Set<DefTag> tags = def.getDefinition().getTags();
+            if(tags != null)for(DefTag tag:tags)
             {
-                tagList += tag.name() + " ";
+                tagList.append(tag.name()).append(" ");
             }
 
 
-            String kanjiDetails = "";
+            StringBuilder kanjiDetails = new StringBuilder();
             int i = 0;
             while(i != kanji.length())
             {
                 String lookup = Kanji.lookup(kanji.charAt(i));
                 if(lookup != null)
                 {
-                    if(kanjiDetails.equals("")) kanjiDetails = kanji.charAt(i) + " 【" + lookup + "】";
-                    else kanjiDetails += "<br>" +  kanji.charAt(i) + " 【" + lookup + "】";
+                    if(kanjiDetails.toString().equals("")) kanjiDetails = new StringBuilder(kanji.charAt(i) + " 【" + lookup + "】");
+                    else kanjiDetails.append("<br>").append(kanji.charAt(i)).append(" 【").append(lookup).append("】");
                 }
                 i++;
             }
@@ -176,9 +195,9 @@ public class DefPopup extends JPopupMenu
             fr.append(kanji)
                     .append("\t").append(reading)
                     .append("\t").append(definition)
-                    .append("\t").append(tagList)
+                    .append("\t").append(tagList.toString())
                     .append("\t").append(Main.text.replace("\n", "<br>"))
-                    .append("\t").append(kanjiDetails)
+                    .append("\t").append(kanjiDetails.toString())
                     .append("\t").append(note)
                     .append("\n");
 

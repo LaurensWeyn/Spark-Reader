@@ -31,23 +31,23 @@ public class UserDefPage implements Page
         definitionList = new JList<>(listModel);
         defScroll = new JScrollPane(definitionList);
         buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        buttonPanel.add(new JButton(new AbstractAction("Add")
+        JButton addButton = new JButton(new AbstractAction("Add")
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
                 new WordEditUI();
             }
-        }));
-        buttonPanel.add(new JButton(new AbstractAction("Edit")
+        });
+        JButton editButton = new JButton(new AbstractAction("Edit")
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
                 new WordEditUI(definitionList.getSelectedValue());
             }
-        }));
-        buttonPanel.add(new JButton(new AbstractAction("Delete")
+        });
+        JButton deleteButton = new JButton(new AbstractAction("Delete")
         {
             @Override
             public void actionPerformed(ActionEvent e)
@@ -56,14 +56,21 @@ public class UserDefPage implements Page
                 {
                     Main.dict.removeDefinition(definition);
                     source.getDefinitions().remove(definition);
+                    //TODO save these changes
                     listModel.update();
                 }
             }
-        }));
+        });
+
+        buttonPanel.add(addButton);
+        buttonPanel.add(editButton);
+        buttonPanel.add(deleteButton);
+
+
 
         mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(defScroll, BorderLayout.CENTER);
-        mainPanel.add(buttonPanel, BorderLayout.NORTH);
+        //mainPanel.add(buttonPanel, BorderLayout.NORTH);
     }
     @Override
     public JComponent getComponent()
@@ -74,7 +81,7 @@ public class UserDefPage implements Page
     @Override
     public void update()
     {
-        //TODO reload dictionary
+        //TODO unload and reload user dictionary
     }
 
     private class DefListModel implements ListModel<UserDefinition>
@@ -122,6 +129,6 @@ public class UserDefPage implements Page
     @Override
     public String toString()
     {
-        return "edit " + source.getName().toLowerCase() + " dictionary";
+        return /*"edit " + */source.getName().toLowerCase() + " dictionary";
     }
 }

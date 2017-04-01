@@ -166,7 +166,7 @@ public class EDICTDefinition extends Definition
         String result = meaning.replace("/", ", ").replace(", (", "<br>(");
         if(result.startsWith("<br>"))result = result.replaceFirst("<br>", "");
         if(result.startsWith(", "))result = result.replaceFirst(", ", "");//TODO clean this up
-        if(result.endsWith(","))result = result.substring(0, result.length() - 1);
+        if(result.endsWith(", "))result = result.substring(0, result.length() - 2);
         return result;
     }
     public String[] getReadings()

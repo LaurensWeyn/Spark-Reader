@@ -59,7 +59,7 @@ public class TextBlockRenderer
         defLines = 0;//will be recounted
         capture = "";//will be recaptured
         g.setColor(new Color(0,0,0,1));
-        g.fillRect(x, y - g.getFontMetrics().getAscent(), width, 1);//let mouse move through 1 pixel space
+        g.fillRect(x, y - g.getFontMetrics().getAscent() + (options.getOptionBool("defsShowUpwards")?1:0), width, 1);//let mouse move through 1 pixel space
         y++;//slight spacer
         if(!options.getOptionBool("defsShowUpwards"))y -= g.getFontMetrics().getHeight();
 
@@ -103,27 +103,27 @@ public class TextBlockRenderer
         int startY = y;
         FontMetrics font = g.getFontMetrics();
         TextStream stream = new TextStream(text.getText());
-        String line = "";
+        StringBuilder line = new StringBuilder();
         Deque<String> lines = new LinkedList<>();
         while(!stream.isDone())
         {
             String nextBit = stream.nextWord();
             if(font.stringWidth(line + nextBit) > width)//too much for this line, wrap over
             {
-                lines.add(line);//add line for rendering
-                line = nextBit.trim();//put word on new line
+                lines.add(line.toString());//add line for rendering
+                line = new StringBuilder(nextBit.trim());//put word on new line
             }
             else
             {
-                line += nextBit;
+                line.append(nextBit);
             }
         }
-        if(!line.equals(""))lines.add(line);//add last line
+        if(!line.toString().equals(""))lines.add(line.toString());//add last line
         //draw lines
         while(!lines.isEmpty())
         {
-            if(displayUpwards)line = lines.pollLast();
-            else line = lines.pollFirst();
+            if(displayUpwards) line = new StringBuilder(lines.pollLast());
+            else line = new StringBuilder(lines.pollFirst());
             //draw line
             defLines++;
             if(startLine <= defLines)
@@ -137,7 +137,7 @@ public class TextBlockRenderer
 
                 //print text
                 g.setColor(text.getTextCol());
-                g.drawString(line, x, y);
+                g.drawString(line.toString(), x, y);
 
             }
         }
