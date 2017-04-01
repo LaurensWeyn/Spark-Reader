@@ -30,6 +30,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.io.*;
 import java.nio.charset.Charset;
+import java.util.Set;
 
 import static language.dictionary.Japanese.isJapanese;
 
@@ -153,22 +154,24 @@ public class DefPopup extends JPopupMenu
             String kanji = def.getDictForm();
             String reading = def.getFurigana();
             String definition = def.getDefinition().getMeaningLine();
-            String tagList = "";
-            for(DefTag tag:def.getDefinition().getTags())
+
+            StringBuilder tagList = new StringBuilder();
+            Set<DefTag> tags = def.getDefinition().getTags();
+            if(tags != null)for(DefTag tag:tags)
             {
-                tagList += tag.name() + " ";
+                tagList.append(tag.name()).append(" ");
             }
 
 
-            String kanjiDetails = "";
+            StringBuilder kanjiDetails = new StringBuilder();
             int i = 0;
             while(i != kanji.length())
             {
                 String lookup = Kanji.lookup(kanji.charAt(i));
                 if(lookup != null)
                 {
-                    if(kanjiDetails.equals("")) kanjiDetails = kanji.charAt(i) + " 【" + lookup + "】";
-                    else kanjiDetails += "<br>" +  kanji.charAt(i) + " 【" + lookup + "】";
+                    if(kanjiDetails.toString().equals("")) kanjiDetails = new StringBuilder(kanji.charAt(i) + " 【" + lookup + "】");
+                    else kanjiDetails.append("<br>").append(kanji.charAt(i)).append(" 【").append(lookup).append("】");
                 }
                 i++;
             }
@@ -192,9 +195,9 @@ public class DefPopup extends JPopupMenu
             fr.append(kanji)
                     .append("\t").append(reading)
                     .append("\t").append(definition)
-                    .append("\t").append(tagList)
+                    .append("\t").append(tagList.toString())
                     .append("\t").append(Main.text.replace("\n", "<br>"))
-                    .append("\t").append(kanjiDetails)
+                    .append("\t").append(kanjiDetails.toString())
                     .append("\t").append(note)
                     .append("\n");
 

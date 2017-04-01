@@ -3,8 +3,6 @@
 Spark Reader.jar
 forAnki.csv
 dictionaries/kanji.txt
-preferences/knownWords
-preferences/preferredDefs
 out/
 /screenshots/
 /savedLines.csv
@@ -12,3 +10,4 @@ nbproject/private/
 ~$manual.docx
 /dictionaries/Kenkyusha_Waei_Daijiten_V5/
 /.idea/workspace.xml
+/preferences/

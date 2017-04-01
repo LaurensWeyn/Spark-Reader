@@ -124,7 +124,7 @@ public class EPWINGDefinition extends Definition
         for(String line:defLines)
         {
             if(sb.length() == 0)sb.append(line);
-            sb.append("\n").append(line);
+            sb.append("<br>").append(line);
         }
         return sb.toString();
     }
