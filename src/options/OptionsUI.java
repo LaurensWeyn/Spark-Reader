@@ -49,8 +49,10 @@ public class OptionsUI extends JFrame
     private final PageGroup root;
 
     private final static String mouseoverConfig ="always=Always visible;mouseover=Only visible on mouseover;never=Never visible";
-    private final static String parserConfig ="full=Full;partial=Basic;none=None";
     private final static String exportDisplayConfig ="external=Total in export file;internal=Exported since starting Spark Reader";
+
+    private final static String parserConfig ="full=Full;partial=Basic;none=Disable";
+    private final static String deconConfig ="recursive=Recursive (better, slow);legacy=Legacy (faster, less accurate)";
 
     public OptionsUI() throws HeadlessException
     {
@@ -84,8 +86,6 @@ public class OptionsUI extends JFrame
             OptionPage mainUI = new OptionPage("Main text");
 
             mainUI.add(new ToggleOption("splitLines", "Retain newlines", "If disabled, all text is shown on one line, making the UI more compact"));
-            mainUI.add(new RadioOption("automaticallyParse", parserConfig, "Parser", null)); // If enabled, text will undergo a basic automatic parsing pass. Note that punctuation always causes segmentations.
-            mainUI.add(new ToggleOption("useOldParser", "Use old parser", "Uses a trivial non-recursive deconjugator. Faster, but worse."));
             //mainUI.add(new ToggleOption("reflowToFit", "Move text to next line if it doesn't fit", "If disabled, you can scroll through the text to see the rest of the line."));
             mainUI.add(new OptionLabel("Theme:", null));
             mainUI.add(new ColourOption("textCol", "Main text colour", "The colour used for the main font."));
@@ -104,8 +104,10 @@ public class OptionsUI extends JFrame
             window.add(backs);
 
         root.add(window);
-        //OptionPage splitter = new OptionPage("Text splitter");
-        //root.add(splitter);
+        OptionPage splitter = new OptionPage("Text splitter");
+            splitter.add(new RadioOption("splitterMode", parserConfig, "Auto text splitter mode", null)); // If enabled, text will undergo a basic automatic parsing pass. Note that punctuation always causes segmentations.
+            splitter.add(new RadioOption("deconMode", deconConfig, "Deconjugation mode", null)); // If enabled, text will undergo a basic automatic parsing pass. Note that punctuation always causes segmentations.
+        root.add(splitter);
 
         PageGroup defs = new PageGroup("Definitions", "Settings related to displaying and storing definitions");
             OptionPage defWindow = new OptionPage("Window");

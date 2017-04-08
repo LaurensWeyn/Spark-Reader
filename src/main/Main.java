@@ -3,6 +3,7 @@ package main;
 import hooker.ClipboardHook;
 import hooker.Hook;
 import hooker.Log;
+import language.deconjugator.WordScanner;
 import language.dictionary.Dictionary;
 import language.dictionary.EPWINGDefinition;
 import language.splitter.WordSplitter;
@@ -14,7 +15,6 @@ import ui.UI;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -86,7 +86,7 @@ public class Main
 
         dict = new Dictionary(new File(Main.options.getOption("dictionaryPath")));
         System.out.println("loaded " + Dictionary.getLoadedWordCount() + " in total");
-
+        WordScanner.init();
     }
 
     //loading screen-specific variables

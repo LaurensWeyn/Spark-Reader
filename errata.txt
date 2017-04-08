@@ -1,9 +1,0 @@
-- If an option doesn't exist in the settings file and it's not in the UI(?), saving the options causes it to get written multiple times
-- Deconjugator doesn't handle irregular verbs sensibly unless the form has its own dictionary entry (e.g. dekiru, arieru)
-- Deconjugator is very slow now (add a heuristic that makes the segmenter avoid obvious bogus words? if so, how?)
--- Look for easy optimizations for now
-- Heuristics for default definition sorting are bad (e.g. many common particles are marked as "archaic" and downscored badly)
-
-Wishlist:
-- Parser doesn't understand grammar at all and can't guess whether a given segment is a particular part of speech (like kuromoji does; however kuromoji's segmentation runs much deeper than spark's and extends to segmenting conjugations internally, etc)
-- The above would be useful even for manual segmentations if it could say "the next term is だ, this is probably a noun"

@@ -16,9 +16,6 @@
  */
 package language.deconjugator;
 
-import language.dictionary.DefTag;
-import language.dictionary.Japanese;
-
 import java.util.ArrayList;
 import java.util.TreeSet;
 
@@ -29,14 +26,6 @@ import static main.Main.options;
  * Produces all possible deconjugations of a word for lookup in dictionaries
  * @author Laurens Weyn
  */
-
-interface SubScanner
-{
-    void subinit();
-    void ScanWord(String word);
-}
-
-
 public class WordScanner
 {
     protected static ArrayList<ValidWord> matches;
@@ -46,18 +35,18 @@ public class WordScanner
 
     static private SubScanner subscanner = null;
     static boolean parserIsNew = false;
-    static void init()
+    public static void init()
     {
-        if(subscanner == null || parserIsNew == options.getOptionBool("useOldParser"))
+        if(subscanner == null || parserIsNew == options.getOption("deconMode").equals("legacy"))
         {
             System.out.println("Reinitializing deconjugator");
-            parserIsNew = !options.getOptionBool("useOldParser");
+            parserIsNew = options.getOption("deconMode").equals("recursive");
             ruleList = null;
             if(parserIsNew)
                 subscanner = new WordScannerNew();
             else
                 subscanner = new WordScannerOld();
-            subscanner.subinit();
+            subscanner.subInit();
         }
     }
 
@@ -95,7 +84,7 @@ public class WordScanner
         matches = new ArrayList<>();
         this.word = word;
 
-        subscanner.ScanWord(word);
+        subscanner.scanWord(word);
     }
 
     public ArrayList<ValidWord> getMatches()
@@ -116,5 +105,11 @@ public class WordScanner
             System.out.println(vw.toString() + " " + vw.getNeededTags());
         }
     }
-    
+
+    //TODO make WordScanner abstract and have these as abstract methods
+    interface SubScanner
+    {
+        void subInit();
+        void scanWord(String word);
+    }
 }

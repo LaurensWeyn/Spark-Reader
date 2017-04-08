@@ -18,11 +18,15 @@ package language.splitter;
 
 import language.deconjugator.ValidWord;
 import language.deconjugator.WordScanner;
-import language.dictionary.*;
+import language.dictionary.Definition;
 import language.dictionary.Dictionary;
-import java.util.*;
+import language.dictionary.Japanese;
 
-import static language.dictionary.Japanese.isKana;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import static main.Main.options;
 
 
@@ -58,24 +62,24 @@ public class WordSplitter
 
             // select the initial "overly long and certainly bogus" segment for deconjugation
 
-            if(!options.getOption("automaticallyParse").equals("none")) // (unless parsing is disabled)
+            if(!options.getOption("splitterMode").equals("none")) // (unless parsing is disabled)
             {
                 // look for the longest segment covered as-is in the dictionary
                 while(pos > start)
                 {
-                    String string_at = text.substring(start, pos);
-                    if(dict.find(string_at) == null && !dict.hasEpwingDef(string_at))
+                    String textHere = text.substring(start, pos);
+                    if(dict.find(textHere) == null && !dict.hasEpwingDef(textHere))
                     {
                         // not in dictionary, see if adding possible deconjugation match endings to it gives us a dictionary entry (fixes 振り返ります etc)
-                        string_at = string_at.substring(0, string_at.length()-1);
-                        boolean good_match = false;
+                        textHere = textHere.substring(0, textHere.length()-1);
+                        boolean goodMatch = false;
                         for(String ending:WordScanner.possibleEndings())
                         {
-                            String attempt = string_at+ending;
+                            String attempt = textHere+ending;
                             if(dict.find(attempt) != null || dict.hasEpwingDef(attempt))
-                                good_match = true;
+                                goodMatch = true;
                         }
-                        if(!good_match)
+                        if(!goodMatch)
                         {
                             pos--;
                             continue; // don't fall through to "break;"
@@ -110,7 +114,7 @@ public class WordSplitter
                     }
                 }
 
-                if(matchedWord.getDefinitionCount() == 0 && options.getOption("automaticallyParse").equals("full")) // (only if full parsing is enabled)
+                if(matchedWord.getDefinitionCount() == 0 && options.getOption("splitterMode").equals("full")) // (only if full parsing is enabled)
                 {
                     matchedWord = null;
                     pos--;//try shorter word
@@ -161,17 +165,17 @@ public class WordSplitter
         
         // todo: make segmenting on writing system changes optional? (when normal segmentation disabled only; dropdown menu?)
         // fixme: not segmenting non-japanese text into single characters makes the renderer's assumtions on segment width break, horribly.
-        boolean was_japanese;
-        boolean is_japanese = Japanese.isJapaneseWriting(text.charAt(0));
+        boolean wasJapanese;
+        boolean isJapanese = Japanese.isJapaneseWriting(text.charAt(0));
         while(pos < text.length())
         {
-            was_japanese = is_japanese;
-            is_japanese = Japanese.isJapaneseWriting(text.charAt(pos));
-            if(breaks.contains(pos) || is_japanese != was_japanese)
+            wasJapanese = isJapanese;
+            isJapanese = Japanese.isJapaneseWriting(text.charAt(pos));
+            if(breaks.contains(pos) || isJapanese != wasJapanese)
             {
-                // cause was_japanese to be equal to is_japanese on the next iteration
+                // cause wasJapanese to be equal to isJapanese on the next iteration
                 if(breaks.contains(pos) && pos+1 < text.length())
-                    is_japanese = Japanese.isJapaneseWriting(text.charAt(pos+1));
+                    isJapanese = Japanese.isJapaneseWriting(text.charAt(pos+1));
                 
                 String section = text.substring(start, pos);
                 words.addAll(splitSection(section, breaks.contains(start)));

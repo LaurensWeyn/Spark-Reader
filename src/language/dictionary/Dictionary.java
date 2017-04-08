@@ -171,7 +171,7 @@ public class Dictionary
                 Searcher search = book.searchExactword(word);
                 Result result = search.getNextResult();
                 if(result != null)return true;
-            }catch(EBException ignored){}
+            }catch(Exception ignored){}
         }
         return false;
     }

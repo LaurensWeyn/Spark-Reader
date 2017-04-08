@@ -22,9 +22,9 @@ import language.dictionary.Japanese;
 
 import java.util.ArrayList;
 
-public class WordScannerOld extends WordScanner implements SubScanner
+public class WordScannerOld extends WordScanner implements WordScanner.SubScanner
 {
-    public void subinit()
+    public void subInit()
     {
         if(ruleList != null)return;
         ruleList = new ArrayList<>();
@@ -270,7 +270,7 @@ public class WordScannerOld extends WordScanner implements SubScanner
             }
         }
     }
-    public void ScanWord(String word)
+    public void scanWord(String word)
     {
         matches.add(new ValidWord(word, ""));//add initial unmodified word
         test_rules();

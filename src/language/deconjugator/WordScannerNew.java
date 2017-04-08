@@ -24,9 +24,9 @@ import language.dictionary.Japanese;
 
 import java.util.ArrayList;
 
-public class WordScannerNew extends WordScanner implements SubScanner
+public class WordScannerNew extends WordScanner implements WordScanner.SubScanner
 {
-    public void subinit()
+    public void subInit()
     {
         if(ruleList != null)return;
         ruleList = new ArrayList<>();
@@ -195,7 +195,7 @@ public class WordScannerNew extends WordScanner implements SubScanner
         // negative
         // verbs
         ruleList.add(new ContextRule("ない", "", "negative", DefTag.stem_mizenkei, DefTag.adj_i, (rule, word) -> {
-            System.out.println(word.getConjugationTags());
+            //System.out.println(word.getConjugationTags());
             if(word.getConjugationTags().size() < 2) return true;
             DefTag tagOfInterest = word.getConjugationTags().get(word.getConjugationTags().size()-2);
             //noinspection RedundantIfStatement
@@ -207,7 +207,7 @@ public class WordScannerNew extends WordScanner implements SubScanner
         ruleList.add(new OnlyFinalRule("ずに", "", "without doing so", DefTag.stem_mizenkei, DefTag.uninflectable)); // exactly the same meaning, despite the difference in label
         // i-adjectives
         ruleList.add(new ContextRule("ない", "", "negative", DefTag.stem_ku, DefTag.adj_i, (rule, word) -> {
-            System.out.println(word.getConjugationTags());
+            //System.out.println(word.getConjugationTags());
             if(word.getConjugationTags().size() < 2) return true;
             DefTag tagOfInterest = word.getConjugationTags().get(word.getConjugationTags().size()-2);
             //noinspection RedundantIfStatement
@@ -376,7 +376,7 @@ public class WordScannerNew extends WordScanner implements SubScanner
         }
         return new_matches;
     }
-    public void ScanWord(String word)
+    public void scanWord(String word)
     {
         matches.add(new ValidWord(word, ""));//add initial unmodified word
         // convert to kana and add that too if it's not already in hiragana
@@ -395,19 +395,19 @@ public class WordScannerNew extends WordScanner implements SubScanner
             // the safeguards in process() should be enough, but in case they're not, or they break...
             if(iters > 24)
             {
-                System.out.println("bailing out from deconjugation");
+                /*System.out.println("bailing out from deconjugation");
                 System.out.println("conjugation tags: " + matches.get(matches.size()-1).getConjugationTags());
                 System.out.println("conjugation path: " + matches.get(matches.size()-1).getProcess());
                 System.out.println("original: " +  matches.get(matches.size()-1).getOriginalWord());
-                System.out.println("iteration " + Integer.toString(iters));
+                System.out.println("iteration " + Integer.toString(iters));*/
                 break;
             }
             //System.out.println("Matches: " + matches.size());
-            System.out.println("New matches: " + number_of_new_matches);
+            /*System.out.println("New matches: " + number_of_new_matches);
             for(int i = matches_before_testing; i < matches.size(); i++)
             {
                 System.out.println(matches.get(i).getSeenForms());
-            }
+            }*/
 
             iters++;
 
