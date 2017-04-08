@@ -48,17 +48,7 @@ public class TrayPopup extends JPopupMenu
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                try
-                {
-                    Main.known.save();
-                    Main.prefDef.save();
-                }catch(IOException err)
-                {
-                    JOptionPane.showMessageDialog(ui.disp.getFrame(), "Error while saving changes");
-                    err.printStackTrace();
-                }
-                ui.disp.getFrame().setVisible(false);
-                System.exit(0);
+                Main.exit();
             }
         });
         restore = new JMenuItem(new AbstractAction("Restore")

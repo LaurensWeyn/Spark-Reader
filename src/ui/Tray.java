@@ -74,6 +74,11 @@ public class Tray
             System.out.println("error loading icon: " + ex);
         }
     }
+
+    public boolean isShowing()
+    {
+        return showing;
+    }
     
     public void showTray()
     {

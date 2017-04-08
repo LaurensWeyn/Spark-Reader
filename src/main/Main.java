@@ -89,6 +89,26 @@ public class Main
         WordScanner.init();
     }
 
+    /**
+     * A call to this method cleanly exits the program, saving changes if possible.
+     */
+    public static void exit()
+    {
+        JFrame frame = null;
+        if(ui != null && ui.disp != null)frame = ui.disp.getFrame();
+        try
+        {
+            if(known != null)Main.known.save();
+            if(prefDef != null)Main.prefDef.save();
+        }catch(IOException err)
+        {
+            JOptionPane.showMessageDialog(frame, "Error while saving changes:\n" + err);
+            err.printStackTrace();
+        }
+        if(frame != null)frame.setVisible(false);
+        System.exit(0);
+    }
+
     //loading screen-specific variables
     private static JDialog loadScreen;
     private static JProgressBar loadProgress;
@@ -122,7 +142,7 @@ public class Main
                 if(!doneLoading)
                 {
                     System.out.println("Startup aborted");
-                    System.exit(0);
+                    exit();
                 }
             }
         });

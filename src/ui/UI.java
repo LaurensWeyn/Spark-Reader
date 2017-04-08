@@ -321,6 +321,13 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             {
                 Thread.sleep(100);
             }catch(InterruptedException ignored){}
+
+            //UI has become inaccessible (most likely closed via alt+f4)
+            if(!ui.disp.getFrame().isVisible() && !ui.tray.isShowing())
+            {
+                System.out.println("UI inaccessible");
+                Main.exit();
+            }
         }
         
     }
