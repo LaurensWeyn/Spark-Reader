@@ -109,7 +109,8 @@ public class Options
         options.put("exportDisplay", "external");
         options.put("screenshotExportPath", "screenshots/");
         options.put("fullscreenScreenshot", "false");
-
+        options.put("automaticallyParse", "true");
+        options.put("useOldParser", "false");
 
     }
     public Options(File file)throws IOException

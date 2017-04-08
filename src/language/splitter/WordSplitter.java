@@ -22,6 +22,10 @@ import language.dictionary.*;
 import language.dictionary.Dictionary;
 import java.util.*;
 
+import static language.dictionary.Japanese.isKana;
+import static main.Main.options;
+
+
 /**
  * Takes in text and splits it into individual words
  * @author Laurens Weyn
@@ -51,6 +55,43 @@ public class WordSplitter
         while(start < text.length())
         {
             int pos = text.length();
+
+            // select the initial "overly long and certainly bogus" segment for deconjugation
+
+            if(!options.getOption("automaticallyParse").equals("none")) // (unless parsing is disabled)
+            {
+                // look for the longest segment covered as-is in the dictionary
+                while(pos > start)
+                {
+                    String string_at = text.substring(start, pos);
+                    if(dict.find(string_at) == null && !dict.hasEpwingDef(string_at))
+                    {
+                        // not in dictionary, see if adding possible deconjugation match endings to it gives us a dictionary entry (fixes 振り返ります etc)
+                        string_at = string_at.substring(0, string_at.length()-1);
+                        boolean good_match = false;
+                        for(String ending:WordScanner.possibleEndings())
+                        {
+                            String attempt = string_at+ending;
+                            if(dict.find(attempt) != null || dict.hasEpwingDef(attempt))
+                                good_match = true;
+                        }
+                        if(!good_match)
+                        {
+                            pos--;
+                            continue; // don't fall through to "break;"
+                        }
+                    }
+                    break;
+                }
+                // extend it until it's about to pick up characters that aren't acceptable in conjugations
+                while(pos < text.length())
+                {
+                    if(WordScanner.isAcceptableCharacter(text.charAt(pos))) // character past the end of substr start...pos
+                        pos++;
+                    else
+                        break;
+                }
+            }
             FoundWord matchedWord = null;
             //until we've tried all lengths and failed
             while(pos > start)
@@ -69,7 +110,7 @@ public class WordSplitter
                     }
                 }
 
-                if(matchedWord.getDefinitionCount() == 0)
+                if(matchedWord.getDefinitionCount() == 0 && options.getOption("automaticallyParse").equals("full")) // (only if full parsing is enabled)
                 {
                     matchedWord = null;
                     pos--;//try shorter word
@@ -113,23 +154,27 @@ public class WordSplitter
     public List<FoundWord> split(String text, Set<Integer> breaks)
     {
         ArrayList<FoundWord> words = new ArrayList<>();
+        if(text.equals("")) return words;
         int pos = 0;
         int start = 0;
         breaks.add(0);
+        
+        // todo: make segmenting on writing system changes optional? (when normal segmentation disabled only; dropdown menu?)
+        // fixme: not segmenting non-japanese text into single characters makes the renderer's assumtions on segment width break, horribly.
+        boolean was_japanese;
+        boolean is_japanese = Japanese.isJapaneseWriting(text.charAt(0));
         while(pos < text.length())
         {
-            if(breaks.contains(pos))
+            was_japanese = is_japanese;
+            is_japanese = Japanese.isJapaneseWriting(text.charAt(pos));
+            if(breaks.contains(pos) || is_japanese != was_japanese)
             {
+                // cause was_japanese to be equal to is_japanese on the next iteration
+                if(breaks.contains(pos) && pos+1 < text.length())
+                    is_japanese = Japanese.isJapaneseWriting(text.charAt(pos+1));
+                
                 String section = text.substring(start, pos);
                 words.addAll(splitSection(section, breaks.contains(start)));
-                start = pos;
-            }
-            else if(!Japanese.isJapaneseWriting(text.charAt(pos)))
-            {
-                String section = text.substring(start, pos);
-                words.addAll(splitSection(section, breaks.contains(start)));
-                words.add(new FoundWord(text.charAt(pos) + ""));
-                pos++;//skip over grammar
                 start = pos;
             }
             pos++;

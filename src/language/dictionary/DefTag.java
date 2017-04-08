@@ -13,6 +13,29 @@ public enum DefTag
     //////////////////
     //part of speech//
     //////////////////
+    
+    // custom (internal to deconjugator)
+    // verbs
+    stem_e(-1, "izenkei stem"), // izenkei, as-if-so
+    stem_o(-1, "volitional stem"), // tentative form
+    stem_a(-1, "stem ending in a"), // the "a" stem of godan verbs
+    stem_mizenkei(-1, "mizenkei stem"), // same as stem_a, but parted in deconjugator for simplicity
+    stem_te(-1, "te form"), // te form; comes from stem_i_reduced plus te/de
+    stem_ren(-1, "renyoukei (masu stem)"), // verb renyoukei; the masu stem infinitive
+    stem_ren_less(-1, "reduced renyoukei (past stem)"), // phonologically reduced masu stem infinitive
+    stem_ren_less_v(-1, "reduced renyoukei (past stem) (voiced)"), // voiced
+    // i-adj
+    // i-adjectives have two renyoukei-like infinitives, but only this one is useful as a tag
+    stem_ku(-1, "adjective ku form"), // e.g. nakute
+    stem_ka(-1, "adjective ka form"), // e.g. nakatta
+    stem_ke(-1, "adjective ke form"), // e.g. nakereba
+    stem_must_first_half(-1, "first half of a 'must' form"), // to reduce the number of rules in WordScanner
+    stem_te_defective(-1, "adjective te form (defective syntax)"), // adjectives have a defective te form that does not work the same morphologically as the verbal one; for example なくてください is wrong, but ないでください is fine.
+    // dummy tag for organization purposes (might do something later, or might get removed)
+    uninflectable(-1, "uninflectable"), // does not further inflect
+    stem_adj_base(-1, "adjective stem"),
+    
+    // non-custom
     adj_i(0, "adjective (keiyoushi)"),
     adj_na(0, "adjectival nouns or quasi_adjectives (keiyodoshi)"),
     adj_no(0, "nouns which may take the genitive case particle `no'"),
@@ -44,25 +67,27 @@ public enum DefTag
     suf(0, "suffix"),
     
     v1(0, "Ichidan verb"),
+    v5b(0, "Godan verb with `bu' ending"),
+    v5g(0, "Godan verb with `gu' ending"),
+    v5k(0, "Godan verb with `ku' ending"),
+    v5m(0, "Godan verb with `mu' ending"),
+    v5n(0, "Godan verb with `nu' ending"),
+    v5r(0, "Godan verb with `ru' ending"),
+    v5s(0, "Godan verb with `su' ending"),
+    v5t(0, "Godan verb with `tsu' ending"),
+    v5u(0, "Godan verb with `u' ending"),
+    v5z(0, "Godan verb with `zu' ending"),
+    
     v2a_s(0, "Nidan verb with 'u' ending (archaic)"),
     v4h(0, "Yodan verb with `hu/fu' ending (archaic)"),
     v4r(0, "Yodan verb with `ru' ending (archaic)"),
     v5(0, "Godan verb (not completely classified)"),
     v5aru(0, "Godan verb - -aru special class"),
-    v5b(0, "Godan verb with `bu' ending"),
-    v5g(0, "Godan verb with `gu' ending"),
-    v5k(0, "Godan verb with `ku' ending"),
     v5k_s(0, "Godan verb - iku/yuku special class"),
-    v5m(0, "Godan verb with `mu' ending"),
-    v5n(0, "Godan verb with `nu' ending"),
-    v5r(0, "Godan verb with `ru' ending"),
     v5r_i(0, "Godan verb with `ru' ending (irregular verb)"),
-    v5s(0, "Godan verb with `su' ending"),
-    v5t(0, "Godan verb with `tsu' ending"),
-    v5u(0, "Godan verb with `u' ending"),
     v5u_s(0, "Godan verb with `u' ending (special class)"),
     v5uru(0, "Godan verb - uru old class verb (old form of Eru)"),
-    v5z(0, "Godan verb with `zu' ending"),
+    
     vz(0, "Ichidan verb - zuru verb - (alternative form of -jiru verbs)"),
     
     vi(0, "intransitive verb"),
@@ -142,6 +167,10 @@ public enum DefTag
     public String toString()
     {
         return name;
+    }
+    public int getGroup()
+    {
+        return group;
     }
     public static DefTag toTag(String text)
     {

@@ -1,11 +1,11 @@
-/build/
-/dist/
+build/
+dist/
 Spark Reader.jar
 forAnki.csv
 dictionaries/kanji.txt
 out/
-/screenshots/
-/savedLines.csv
+screenshots/
+savedLines.csv
 nbproject/private/
 ~$manual.docx
 /dictionaries/Kenkyusha_Waei_Daijiten_V5/

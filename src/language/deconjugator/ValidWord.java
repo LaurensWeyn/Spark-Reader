@@ -29,35 +29,40 @@ import java.util.Set;
  */
 public class ValidWord
 {
-    private String word;
-    private Set<DefTag> neededTags, impliedTags;
+    private String word, originalWord;
+    private Set<DefTag> neededTags;
+    private HashSet<String> seenForms;
+    private ArrayList<DefTag> conjugationTags;
     private String process;
+    private Integer conjugations;
 
-    public ValidWord(String word, Set<DefTag> neededTags, Set<DefTag> impliedTags, String process)
+    public ValidWord(Integer conjugations, String originalWord, String word, HashSet<String> seenForms, Set<DefTag> neededTags, ArrayList<DefTag> conjugationTags, String process)
     {
+        this.conjugations = conjugations;
+        this.originalWord = originalWord;
+        this.seenForms = seenForms;
+        this.conjugationTags = conjugationTags;
         this.word = word;
         this.neededTags = neededTags;
-        this.impliedTags = impliedTags;
         this.process = process.trim();
-        if(process.contains("i stem"))
-        {
-            neededTags.remove(DefTag.v5s);//"su" ending not needed anymore (note: su ending i stem seceretly doesn't produce exactly "i stem")
-        }
-    }
-    public ValidWord(String word, DefTag neededTag, String process)
-    {
-        this.word = word;
-        neededTags = new HashSet<>();
-        impliedTags = new HashSet<>();
-        this.process = process.trim();
-        if(neededTag != null)neededTags.add(neededTag);
     }
     public ValidWord(String word, String process)
     {
+        this.conjugations = 0;
+        this.originalWord = word;
         this.word = word;
-        neededTags = new HashSet<>();
-        impliedTags = new HashSet<>();
+        this.neededTags = new HashSet<>();
+        this.seenForms = new HashSet<>();
+        this.conjugationTags = new ArrayList<>();
         this.process = process;
+    }
+    public Integer getNumConjugations()
+    {
+        return conjugations;
+    }
+    public String getOriginalWord()
+    {
+        return originalWord;
     }
     public String getWord()
     {
@@ -68,10 +73,18 @@ public class ValidWord
     {
         return neededTags;
     }
-
-    public Set<DefTag> getImpliedTags()
+    public HashSet<String> getSeenForms()
     {
-        return impliedTags;
+        return seenForms;
+    }
+    public ArrayList<DefTag> getConjugationTags()
+    {
+        return conjugationTags;
+    }
+
+    boolean hasSeenForm(String test)
+    {
+        return seenForms.contains(test);
     }
 
     /**
@@ -87,7 +100,8 @@ public class ValidWord
 
         for(DefTag needed:getNeededTags())
         {
-            if(!def.getTags().contains(needed) &&!getImpliedTags().contains(needed))
+            if(needed.toString().equals("")) return false;
+            if(!def.getTags().contains(needed))
             {
                 return false;
             }
@@ -103,8 +117,14 @@ public class ValidWord
     @Override
     public String toString()
     {
-        return word + "(" + process + ")";
+        // hide non-freestanding weak forms and remove parens from freestanding ones
+        String temp = process;
+        if(temp.startsWith("("))
+        {
+            temp = temp.replaceFirst("[(]", "");
+            temp = temp.replaceFirst("[)]", "");
+        }
+        temp = temp.replaceAll("[(].*?[)]", "");
+        return word + "―" + temp;
     }
-    
-    
 }
