@@ -32,7 +32,7 @@ It's mainly designed for use with Visual Novels, but anything that will let you 
 
 ---
 
-### Build requirements
+# Build requirements
 - Compiled using IntelliJ and Java 8. NetBeans project files present as well.
 - Uses eb4j (original, not the one on Github) for Epwing support
 - Uses JNA for the memory based text hook and other native features
@@ -56,16 +56,3 @@ You don't have to follow the instructions below if you know what you're doing, b
 - In IntelliJ, ensure that the Spark Reader.jar artifact is set to be included in the project build
 - Press the project build button
 - If you encounter any build errors, scrap and re-clone the repository (but not the libraries you downloaded) and try again. If you have any source changes, back them up first, but not any project file changes. 
-
-## Stuff that still needs doing
-Somewhat sorted in order of importance:
-
-- EPWING support
-- Support for the special case verbs in the deconjugator or dictionary
-- Misc. work on deconjugator (more tests etc.)
-- a built-in text hooker or some sort, probably using JNA
-- Multiplayer testing/repair (code is there, but it's broken right now)
-- More JUnit tests
-- UI for settings, adding words to dictionary and such
-
-Please report bugs here if you find them!

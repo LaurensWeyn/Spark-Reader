@@ -65,9 +65,9 @@ public class WordScanner
         {
             if(rule.getClass() == StdRule.class)
             {
-                StdRule cast_rule = ((StdRule) rule);
-                String ending = cast_rule.getReplace();
-                if(!ending.equals("") && cast_rule.getNeededTag().getGroup() != -1)
+                StdRule castRule = ((StdRule) rule);
+                String ending = castRule.getReplace();
+                if(!ending.equals("") && castRule.getNeededTag().getGroup() != -1)
                     ret.add(ending);
             }
         }

@@ -34,9 +34,9 @@ public class ValidWord
     private HashSet<String> seenForms;
     private ArrayList<DefTag> conjugationTags;
     private String process;
-    private Integer conjugations;
+    private int conjugations;
 
-    public ValidWord(Integer conjugations, String originalWord, String word, HashSet<String> seenForms, Set<DefTag> neededTags, ArrayList<DefTag> conjugationTags, String process)
+    public ValidWord(int conjugations, String originalWord, String word, HashSet<String> seenForms, Set<DefTag> neededTags, ArrayList<DefTag> conjugationTags, String process)
     {
         this.conjugations = conjugations;
         this.originalWord = originalWord;
@@ -56,7 +56,7 @@ public class ValidWord
         this.conjugationTags = new ArrayList<>();
         this.process = process;
     }
-    public Integer getNumConjugations()
+    public int getNumConjugations()
     {
         return conjugations;
     }

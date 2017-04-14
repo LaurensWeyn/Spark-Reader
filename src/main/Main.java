@@ -22,11 +22,11 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Created by Laurens on 2/19/2017.
+ * Main entry point and holds global program objects and methods.
  */
 public class Main
 {
-    public static final String VERSION = "Beta 0.6";
+    public static final String VERSION = "Beta 0.7";
 
     public static UI ui;
     /**

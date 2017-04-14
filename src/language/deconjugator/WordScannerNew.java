@@ -31,6 +31,24 @@ public class WordScannerNew extends WordScanner implements WordScanner.SubScanne
         if(ruleList != null)return;
         ruleList = new ArrayList<>();
 
+        //Decensor: simple, but actually works well enough with a lot of 'censored' words
+        ruleList.add(word ->
+        {
+            if(word.getNumConjugations() == 0 && word.getWord().contains("○"))
+            {
+                return new ValidWord(word.getWord().replace('○', 'っ'), (word.getProcess() + " " + "censored").trim());
+            }
+            else return null;
+        });
+        ruleList.add(word ->
+        {
+            if(word.getNumConjugations() == 0 && word.getWord().contains("○"))
+            {
+                return new ValidWord(word.getWord().replace('○', 'ん'), (word.getProcess() + " " + "censored").trim());
+            }
+            else return null;
+        });
+
         /*
         // handle "must" in a single block because it's dumb and long
         // todo: add a type of rule that allows A/B matches in conjugated ending
