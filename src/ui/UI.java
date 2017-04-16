@@ -123,10 +123,12 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     {
         Graphics2D g = disp.getGraphics();
         g.setBackground(CLEAR);
-        disp.getFrame().setVisible(!hidden);
-        
-        calculateSizes(g);
 
+        disp.getFrame().setFocusableWindowState(false); // prevent setVisible(true) from focusing window when window was previously not visible
+        disp.getFrame().setVisible(!hidden);
+        disp.getFrame().setFocusableWindowState(Main.options.getOptionBool("takeFocus")); // restore setting
+
+        calculateSizes(g);
 
         if(!hidden)
         {

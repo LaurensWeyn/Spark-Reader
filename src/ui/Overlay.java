@@ -54,6 +54,7 @@ public class Overlay
         setSize(width, height);//build components with given size
 
         frame.setFocusableWindowState(Main.options.getOptionBool("takeFocus"));//set the focus mode
+        frame.setAutoRequestFocus(false); // prevent auto focus when takeFocus is disabled when using setVisible
         //frame.pack();
         frame.setVisible(true);
         frame.setFocusable(false);
