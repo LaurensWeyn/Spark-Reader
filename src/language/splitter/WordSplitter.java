@@ -51,6 +51,7 @@ public class WordSplitter
             x = word.endX();
         }
     }
+    
     // not in dictionary, see if adding possible deconjugation match endings to it gives us a dictionary entry (fixes 振り返ります etc)
     private boolean mightBeDeconjugatable(String text, boolean firstSection)
     {
@@ -63,7 +64,8 @@ public class WordSplitter
                 goodMatch = true;
         }
         return goodMatch;
-}
+    }
+
     private List<FoundWord> splitSection(String text, boolean firstSection)
     {
         ArrayList<FoundWord> words = new ArrayList<>();
