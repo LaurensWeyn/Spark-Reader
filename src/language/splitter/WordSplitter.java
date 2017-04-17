@@ -56,11 +56,11 @@ public class WordSplitter
     private boolean mightBeDeconjugatable(String text, boolean firstSection)
     {
         boolean goodMatch = false;
-
         for(String ending:WordScanner.possibleEndings())
         {
-            String attempt = text+ending;
-            if(dict.find(attempt) != null || (dict.hasEpwingDef(text) && firstSection))
+            String attempt = text + ending;
+            //only check Edict here; Epwing does cannot handle conjugations
+            if(dict.find(attempt) != null)
                 goodMatch = true;
         }
         return goodMatch;
@@ -84,7 +84,7 @@ public class WordSplitter
                 {
                     String textHere = text.substring(start, pos);
                     // only check the epwing dictionary if this is the first segment in the section (for speed reasons)
-                    if(dict.find(textHere) != null || (dict.hasEpwingDef(textHere) && firstSection) || mightBeDeconjugatable(textHere, firstSection))
+                    if(dict.find(textHere) != null || (firstSection && dict.hasEpwingDef(textHere)) || mightBeDeconjugatable(textHere, firstSection))
                         break;
                     pos--;
                 }

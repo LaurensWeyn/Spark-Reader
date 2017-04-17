@@ -164,6 +164,7 @@ public class Dictionary
     }
     public boolean hasEpwingDef(String word)
     {
+        //System.out.println("checking epwing for " + word);
         for(SubBook book:books)
         {
             try
