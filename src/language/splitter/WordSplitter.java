@@ -51,6 +51,19 @@ public class WordSplitter
             x = word.endX();
         }
     }
+    // not in dictionary, see if adding possible deconjugation match endings to it gives us a dictionary entry (fixes 振り返ります etc)
+    private boolean mightBeDeconjugatable(String text, boolean firstSection)
+    {
+        boolean goodMatch = false;
+
+        for(String ending:WordScanner.possibleEndings())
+        {
+            String attempt = text+ending;
+            if(dict.find(attempt) != null || (dict.hasEpwingDef(text) && firstSection))
+                goodMatch = true;
+        }
+        return goodMatch;
+}
     private List<FoundWord> splitSection(String text, boolean firstSection)
     {
         ArrayList<FoundWord> words = new ArrayList<>();
@@ -68,24 +81,10 @@ public class WordSplitter
                 while(pos > start)
                 {
                     String textHere = text.substring(start, pos);
-                    if(dict.find(textHere) == null && !dict.hasEpwingDef(textHere))
-                    {
-                        // not in dictionary, see if adding possible deconjugation match endings to it gives us a dictionary entry (fixes 振り返ります etc)
-                        textHere = textHere.substring(0, textHere.length()-1);
-                        boolean goodMatch = false;
-                        for(String ending:WordScanner.possibleEndings())
-                        {
-                            String attempt = textHere+ending;
-                            if(dict.find(attempt) != null || dict.hasEpwingDef(attempt))
-                                goodMatch = true;
-                        }
-                        if(!goodMatch)
-                        {
-                            pos--;
-                            continue; // don't fall through to "break;"
-                        }
-                    }
-                    break;
+                    // only check the epwing dictionary if this is the first segment in the section (for speed reasons)
+                    if(dict.find(textHere) != null || (dict.hasEpwingDef(textHere) && firstSection) || mightBeDeconjugatable(textHere, firstSection))
+                        break;
+                    pos--;
                 }
                 // extend it until it's about to pick up characters that aren't acceptable in conjugations
                 while(pos < text.length())
