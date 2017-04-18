@@ -89,6 +89,11 @@ public interface User32 extends W32APIOptions {
         }
     }  
 
-    boolean GetKeyboardState(byte[] state);  
+    //There's a library better suited for unfocused key data and seems to be multiplatform.
+    //Perhaps use that instead of User32 calls...
+
+    //get state of all keys
+    boolean GetKeyboardState(byte[] state);
+    //get state of one key
     short GetAsyncKeyState(int vKey);  
 }

@@ -16,17 +16,15 @@
  */
 package ui;
 
+import language.dictionary.Japanese;
 import language.splitter.FoundWord;
 import main.Main;
-import main.Utils;
 import ui.popup.DefPopup;
 import ui.popup.MenuPopup;
 import ui.popup.WordPopup;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Set;
 
 import static main.Main.*;
@@ -48,10 +46,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
 
     public Overlay disp;
     public Tray tray;
-    
-    ArrayList<Line> lines;
-    int longestLine = 0;
-    
+
     public static int mainFontSize = 1;//1 default to stop division by 0
     public int xOffset = 0;
     boolean lMouseClick = false;
@@ -82,8 +77,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
 
     public UI()
     {
-        lines = new ArrayList<>();
-        lines.add(new Line());
+        currPage = new Page();
         disp = new Overlay(options.getOptionInt("windowWidth") + options.getOptionInt("defWidth"),
                 options.getOptionInt("maxHeight"));
     }
@@ -106,15 +100,15 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         mainFontSize = g.getFontMetrics().charWidth('べ');
         if(options.getOptionBool("defsShowUpwards"))
         {
-            furiganaStartY = options.getOptionInt("maxHeight") - lineHeight * Math.max(options.getOptionInt("expectedLineCount"), lines.size());
+            furiganaStartY = options.getOptionInt("maxHeight") - lineHeight * Math.max(options.getOptionInt("expectedLineCount"), currPage.getLineCount());
             defStartY = furiganaStartY - 2;
             textStartY = furiHeight + furiganaStartY;
-            textEndY = textStartY + lineHeight * lines.size();
+            textEndY = textStartY + lineHeight * currPage.getLineCount();
         }
         else
         {
             textStartY = furiHeight + furiganaStartY;
-            textEndY = textStartY + lineHeight * lines.size() - furiHeight;
+            textEndY = textStartY + lineHeight * currPage.getLineCount() - furiHeight;
             defStartY = textEndY;
         }
         buttonStartX = options.getOptionInt("windowWidth") - optionsButtonWidth - 1;
@@ -136,10 +130,10 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             if(renderBackground)
             {
                 g.setColor(options.getColor("textBackCol"));
-                g.fillRect(0, textStartY - 1, options.getOptionInt("windowWidth"), lines.size() * lineHeight - furiHeight + 1);
+                g.fillRect(0, textStartY - 1, options.getOptionInt("windowWidth"), currPage.getLineCount() * lineHeight - furiHeight + 1);
                 g.setColor(options.getColor("windowBackCol"));
                 int i = 1;
-                while(i < lines.size())
+                while(i < currPage.getLineCount())
                 {
                     g.clearRect(0, (textStartY - 1) + (i * lineHeight) - furiHeight + 1, options.getOptionInt("windowWidth"), furiHeight - 1);
                     g.fillRect (0, (textStartY - 1) + (i * lineHeight) - furiHeight + 1, options.getOptionInt("windowWidth"), furiHeight - 1);
@@ -151,7 +145,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
 
             g.setColor(options.getColor("furiBackCol"));
             g.fillRect(0, furiganaStartY, options.getOptionInt("windowWidth"), furiHeight - 1);
-            if(text.equals(""))
+            if(currPage.getText().equals(""))
             {
                 g.setColor(options.getColor("furiCol"));
                 g.drawString("Spark Reader " + VERSION + ", by Laurens Weyn. Waiting for text...", 0,furiganaStartY + g.getFontMetrics().getAscent());
@@ -159,7 +153,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             
             int yOff = 0;
             //render lines
-            for(Line line:lines)
+            for(Line line:currPage)
             {
                 line.render(g, xOffset, yOff);
                 yOff += lineHeight;
@@ -188,50 +182,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     }
     private void updateText(String newText)
     {
-        text = newText;
-        String bits[] = newText.split("\n");
-        longestLine = 0;
-        int i = 0;
-        for(String bit:bits)
-        {
-            if(bit.length() > longestLine)longestLine = bit.length();
-            
-            if(i == lines.size())
-            {
-                lines.add(new Line(splitter.split(bit, new HashSet<>())));
-            }
-            else
-            {
-                lines.get(i).setWords(splitter.split(bit, lines.get(i).getMarkers()));
-            }
-            i++;
-        }
-        //clear all leftover lines
-        while(i < lines.size())
-        {
-            lines.remove(i);
-        }
-        //reflow if needed
-        int maxLineLength = options.getOptionInt("windowWidth") / mainFontSize;
-        if(longestLine > mainFontSize && options.getOptionBool("reflowToFit"))
-        {
-            ArrayList<Line> newLines = new ArrayList<>(lines.size());
-            for(Line line:lines)
-            {
-                Line newLine = new Line();
-                for(FoundWord word:line.getWords())
-                {
-                    if(newLine.calcLength() + word.getLength() > maxLineLength)
-                    {
-                        newLines.add(newLine);
-                        newLine = new Line();
-                    }
-                    addWord(line, newLine, word);
-                }
-                if(newLine.calcLength() != 0)newLines.add(newLine);
-            }
-            lines = newLines;
-        }
+        currPage.setText(newText);
     }
 
     /**
@@ -290,14 +241,11 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
                     ui.tray.hideTray();
                 }
                 
+                clip = Japanese.toFullWidth(clip);
 
-                clip = clip.replace("\r", "");
                 log.addLine(clip);//add line to log
                 if(!options.getOptionBool("splitLines"))clip = clip.replace("\n", "");//all on one line if not splitting
-                for(Line line:ui.lines)
-                {
-                    line.getMarkers().clear();//clear all markers
-                }
+                currPage.clearMarkers();
                 ui.updateText(clip);//reflow text on defaults
                 ui.xOffset = 0;//scroll back to front
                 ui.render();
@@ -346,6 +294,8 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     //////////////////////////////
     private long lastClickTime = 0;
     private static final long MAX_CLICK_DELAY = 1000;
+    private static final long MIN_DRAG_DIST = 100;
+
     @Override
     public void mouseClicked(MouseEvent e)
     {
@@ -371,17 +321,18 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             {
                 int pos = toCharPos(e.getX());
                 int lineIndex = getLineIndex(e.getPoint());
-                selectedWord = null;//to recalulate
-                
+                selectedWord = null;//to recalculate
+                //TODO move this over to Page functions?
+
                 //reset selection on all unselected lines:
                 int i = 0;
-                for(Line line:lines)
+                for(Line line:currPage)
                 {
                     if(i != lineIndex)line.resetSelection();
                     i++;
                 }
                 //toggle on selected line:
-                for(FoundWord word:lines.get(lineIndex).getWords())
+                for(FoundWord word:currPage.getLine(lineIndex).getWords())
                 {
                     word.toggleWindow(pos);
                     if(word.isShowingDef())selectedWord = word;
@@ -394,12 +345,12 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         {
             int pos = toCharPos(e.getX() + mainFontSize/2);
             int lineIndex = getLineIndex(e.getPoint());
-            Set<Integer> markers = lines.get(lineIndex).getMarkers();
+            Set<Integer> markers = currPage.getLine(lineIndex).getMarkers();
             //toggle markers
             if(markers.contains(pos))markers.remove(pos);
             else markers.add(pos);
             
-            updateText(text);//reflow
+            updateText(currPage.getText());//reflow (TODO don't pass text to itself)
             render();//redraw
         }
         else if(e.getButton() == 3)//right click: extra option menu
@@ -414,7 +365,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             {
                 WordPopup popup = null;
                 int lineIndex = getLineIndex(e.getPoint());
-                for(FoundWord word:lines.get(lineIndex).getWords())
+                for(FoundWord word:currPage.getLine(lineIndex).getWords())
                 {
                     int pos = toCharPos(e.getX());
                     if(word.inBounds(pos))
@@ -457,11 +408,18 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     {
 
         double dist = dragReference.distanceSq(e.getPoint());
-        if((dist != 0 || lMouseState) && dist < 100)//only moved a little
+        if((dist != 0 || lMouseState) && dist < MIN_DRAG_DIST)//only moved a little
         {
             if(e.getButton() == 1)lMouseClick = true;
             lMouseState = false;
             mouseClicked(e);//pass this over as a click
+        }
+        else if (!lMouseState)//long drag, not on Furigana bar
+        {
+            //place splits at start and end points of drag
+            //TODO place split points
+            //TODO show first split point when starting the drag
+            //TODO select word on release
         }
         lMouseState = false;
     }
@@ -516,7 +474,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     {
         int pos = toCharPos(e.getX());
         int lineIndex = getLineIndex(e.getPoint());
-        if(lineIndex >= lines.size() || lineIndex < 0)return;
+        if(lineIndex >= currPage.getLineCount() || lineIndex < 0)return;
         if(lineIndex != mouseLine || (mousedWord!= null && !mousedWord.inBounds(pos)))
         {
             boolean reRender = false;
@@ -525,9 +483,9 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
                 mousedWord.setMouseover(false);
                 if(mousedWord.updateOnMouse())reRender = true;
             }
-            mousedWord = null;//to recalulate
+            mousedWord = null;//to recalculate
             //toggle on selected line:
-            for (FoundWord word : lines.get(lineIndex).getWords())
+            for (FoundWord word : currPage.getLine(lineIndex).getWords())
             {
                 if (word.inBounds(pos))
                 {
@@ -599,10 +557,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
             }
             if(!options.getOptionBool("splitLines"))historyLine = historyLine.replace("\n", "");//all on one line if not splitting
             System.out.println("loading line " + historyLine);
-            for(Line line:lines)
-            {
-                line.getMarkers().clear();//clear markers (not relevant for this text)
-            }
+            currPage.clearMarkers();//markers not relevant for this text
             updateText(historyLine);//flow new text
             xOffset = 0;//scroll back to front
             render();//update
@@ -620,7 +575,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         }
         if(xOffset > 0)xOffset = 0;
         int maxChars = (options.getOptionInt("windowWidth") - options.getOptionInt("defWidth")) / mainFontSize;
-        int maxX = (longestLine - maxChars) * mainFontSize;
+        int maxX = (currPage.getMaxTextLength() - maxChars) * mainFontSize;
         if(-xOffset > maxX)xOffset = Math.min(-maxX, 0);
     }
 

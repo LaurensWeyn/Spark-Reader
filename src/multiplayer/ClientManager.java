@@ -40,7 +40,7 @@ public class ClientManager extends Thread
         this.socket = socket;
         this.host = host;
         this.clientNum = clientNum;
-        lastText = Main.text;
+        lastText = Main.currPage.getText();
     }
     
     @Override

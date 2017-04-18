@@ -11,6 +11,7 @@ import multiplayer.MPController;
 import options.Known;
 import options.Options;
 import options.PrefDef;
+import ui.Page;
 import ui.UI;
 
 import javax.imageio.ImageIO;
@@ -35,13 +36,13 @@ public class Main
     public static MPController mpManager;
     public static Thread mpThread;
     /**
-     * The currently displayed line of text
-     */
-    public static String text = "";
-    /**
      * Text line history
      */
     public static Log log;
+    /**
+     * The current line of text
+     */
+    public static Page currPage;
     /**
      * Source used for new lines of text
      */
@@ -54,6 +55,7 @@ public class Main
      */
     public static Options options;
     public static WordSplitter splitter;
+
 
     public static void main(String[] args)throws Exception
     {

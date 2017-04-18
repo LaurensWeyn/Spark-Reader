@@ -65,6 +65,13 @@ public class JapaneseTest
         assertEquals("Hiragana to Katakana", "きょう", toHiragana("キョウ", true));
         assertEquals("Hiragana to Katakana, stripping", "きょう", toHiragana("キョウ today", true));
         assertEquals("Hiragana to Katakana, stripping", "きょう today", toHiragana("キョウ today", false));
-        
+    }
+
+    @Test
+    public void testFullWidthConversion()
+    {
+        assertEquals("ａｅｓｔｈｅｔｉｃ", toFullWidth("aesthetic"));
+        assertEquals("ＡＥＳＴＨＥＴＩＣ", toFullWidth("AESTHETIC"));
+        assertEquals("ａｂｃ.　あいう。ｘｙｚ.", toFullWidth("abc. あいう。xyz."));
     }
 }

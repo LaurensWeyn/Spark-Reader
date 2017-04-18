@@ -66,7 +66,8 @@ public class Line
         }
         g.setClip(0, 0, Main.options.getOptionInt("windowWidth"), Main.options.getOptionInt("maxHeight"));//render only over window
         //render markers
-        for (int i = 0; i < Main.text.length(); i++)
+        int length = calcLength();
+        for (int i = 0; i < length; i++)
         {
             if(markers.contains(i) || splitPoints.contains(i))//only draw on actual points
             {
@@ -92,12 +93,12 @@ public class Line
     @Override
     public String toString()
     {
-        String text = "";
+        StringBuilder text = new StringBuilder();
         for(FoundWord word:words)
         {
-            text += word.getText();
+            text.append(word.getText());
         }
-        return text;
+        return text.toString();
     }
 
     public int calcLength()

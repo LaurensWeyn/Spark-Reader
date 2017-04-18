@@ -35,7 +35,7 @@ public class Japanese
     }
     public static boolean isGrammar(char c)
     {
-        return c == '\n' || c == '\r' || c == '\t' || c == '。' || c == '…' || c == '？' || c == '　';
+        return c == '\n' || c == '。' || c == '…' || c == '？' || c == '　';
     }
     public static boolean isJapanese(String text)
     {
@@ -63,7 +63,7 @@ public class Japanese
     }
     public static boolean isJapaneseWriting(char c)
     {
-        return isKana(c) || isKanji(c) || c == '々' || c == '○';
+        return isKana(c) || isKanji(c) || c == '々';
     }
     public static boolean hasKanji(String text)
     {
@@ -95,7 +95,7 @@ public class Japanese
     }
     public static boolean isKana(char c)
     {
-        return 0x3040 <= c && c <= 0x30ff;
+        return (0x3040 <= c && c <= 0x30ff) || c == '○';
     }
     public static boolean isHiragana(char c)
     {
@@ -107,22 +107,50 @@ public class Japanese
     }
     public static String toHiragana(String input, boolean stripOthers)
     {
-        String output = "";
+        StringBuilder output = new StringBuilder();
         for (int i = 0; i < input.length(); i++)
         {
             char c = input.charAt(i);
             if(isHiragana(c))
             {
-                output += c;
+                output.append(c);
             }
             else if(isKatakana(c))
             {
-                output += (char)(c - (0x30a0 - 0x3040));//shift
+                output.append((char) (c - (0x30a0 - 0x3040)));//shift
             }
-            else if(!stripOthers)output += c;//Kanji and others intentionally removed from output if needed (for reading extraction)
+            else if(!stripOthers) output.append(c);//Kanji and others intentionally removed from output if needed (for reading extraction)
         }
-        return output;
+        return output.toString();
     }
+
+
+    /**
+     * Converts latin characters to their full width equivalent. Other characters (Japanese etc.) are left as is.<br>
+     * Also removes carriage returns if present.
+     * @param input text to convert
+     * @return full width version of input
+     */
+    public static String toFullWidth(String input)
+    {
+        StringBuilder output = new StringBuilder(input.length());
+        for (int i = 0; i < input.length(); i++)
+        {
+            char c = input.charAt(i);
+            if(c >= 'a' && c <= 'z')
+            {
+                output.append((char)(c + ('ａ' - 'a')));
+            }else if(c >= 'A' && c <= 'Z')
+            {
+                output.append((char)(c + ('Ａ' - 'A')));
+            }
+            else if(c == ' ' || c == '\t')output.append('　');//full width space
+            else if(c != '\r')output.append(c);
+
+        }
+        return output.toString();
+    }
+
 
     public static String[] splitJapaneseWriting(String text)
     {

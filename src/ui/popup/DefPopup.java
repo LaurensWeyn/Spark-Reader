@@ -196,7 +196,7 @@ public class DefPopup extends JPopupMenu
                     .append("\t").append(reading)
                     .append("\t").append(definition)
                     .append("\t").append(tagList.toString())
-                    .append("\t").append(Main.text.replace("\n", "<br>"))
+                    .append("\t").append(Main.currPage.getText().replace("\n", "<br>"))
                     .append("\t").append(kanjiDetails.toString())
                     .append("\t").append(note)
                     .append("\n");
