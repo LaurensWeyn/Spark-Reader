@@ -18,6 +18,7 @@
       <element id="extracted-dir" path="$USER_HOME$/java libs/eb4j-1.0.5/lib/conv-zipcode-1.0.5.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$USER_HOME$/java libs/eb4j-1.0.5/lib/slf4j-log4j12-1.5.10.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$USER_HOME$/java libs/eb4j-1.0.5/lib/commons-collections-3.2.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/1stleg/jnativehook/2.1.0/jnativehook-2.1.0.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

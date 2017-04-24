@@ -26,6 +26,7 @@ import ui.UI;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -221,9 +222,9 @@ public class MenuPopup extends JPopupMenu
         show(ui.disp.getFrame(), UI.buttonStartX, UI.textStartY);
     }
 
-    public void display(MouseEvent e)
+    public void display(Point pos)
     {
-        show(ui.disp.getFrame(), e.getX(), e.getY());
+        show(ui.disp.getFrame(), pos.x, pos.y);
     }
     public void importPrompt()
     {

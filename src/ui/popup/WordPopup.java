@@ -95,7 +95,7 @@ public class WordPopup extends JPopupMenu
             {
                 System.out.println("adding break");
                 //simulate middle button press at window origin (placing a break there)
-                ui.mouseClicked(new MouseEvent(ui.disp.getFrame(), -1, System.currentTimeMillis(), 0, x, y, 1, true, 2));
+                ui.mouseHandler.middleClick(new Point(x, y));
             }
         });
         

@@ -31,8 +31,8 @@ import static ui.UI.*;
  */
 public class Line
 {
-    SortedSet<Integer> markers;
-    List<FoundWord> words;
+    private SortedSet<Integer> markers;
+    private List<FoundWord> words;
 
     public Line(SortedSet<Integer> markers, ArrayList<FoundWord> words)
     {

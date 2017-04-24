@@ -213,8 +213,7 @@ public class OptionsUI extends JFrame
     public void initComponents()
     {
         setSize(720, 480);
-        //TODO centre window on screen
-        
+
         setLayout(new BorderLayout(SPACING, SPACING));
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         rightOptions.setLayout(new BoxLayout(rightOptions, BoxLayout.Y_AXIS));

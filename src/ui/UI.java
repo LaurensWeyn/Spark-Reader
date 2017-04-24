@@ -19,13 +19,12 @@ package ui;
 import language.dictionary.Japanese;
 import language.splitter.FoundWord;
 import main.Main;
-import ui.popup.DefPopup;
-import ui.popup.MenuPopup;
-import ui.popup.WordPopup;
+import ui.input.JNativeKeyHandler;
+import ui.input.KeyHandler;
+import ui.input.MouseHandler;
+import ui.input.SwingMouseHandler;
 
 import java.awt.*;
-import java.awt.event.*;
-import java.util.Set;
 
 import static main.Main.*;
 
@@ -33,7 +32,7 @@ import static main.Main.*;
  * Main Spark Reader UI
  * @author Laurens Weyn
  */
-public class UI implements MouseListener, MouseMotionListener, MouseWheelListener
+public class UI
 {
 
 
@@ -49,11 +48,9 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
 
     public static int mainFontSize = 1;//1 default to stop division by 0
     public int xOffset = 0;
-    boolean lMouseClick = false;
-    boolean lMouseState = false;
-    Point dragReference;
+
     
-    FoundWord selectedWord = null;
+    public FoundWord selectedWord = null;
     
     public static int furiganaStartY = 0;
     public static int textStartY = 0;
@@ -74,6 +71,8 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     public static boolean renderBackground = true;
     public static boolean tempIgnoreMouseExit = false;
 
+    public MouseHandler mouseHandler;
+    public KeyHandler keyHandler;
 
     public UI()
     {
@@ -83,10 +82,12 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
     }
     private void registerListeners()
     {
-        disp.getFrame().addMouseListener(this);
-        disp.getFrame().addMouseMotionListener(this);
-        disp.getFrame().addMouseWheelListener(this);
-        
+        mouseHandler = new SwingMouseHandler(this);
+        mouseHandler.addListeners();
+
+        keyHandler = new JNativeKeyHandler(this);
+        keyHandler.addListeners();
+
         tray = new Tray(this);//manages tray icon
     }
 
@@ -180,7 +181,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         }
         disp.refresh();
     }
-    private void updateText(String newText)
+    public void updateText(String newText)
     {
         currPage.setText(newText);
     }
@@ -282,290 +283,11 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         
     }
 
-    private int toCharPos(int x)
-    {
-        x -= xOffset;
-        x /= mainFontSize;
-        return x;
-    }
+
     
-    //////////////////////////////
-    //begin mouse event handlers//
-    //////////////////////////////
-    private long lastClickTime = 0;
-    private static final long MAX_CLICK_DELAY = 1000;
-    private static final long MIN_DRAG_DIST = 100;
-
-    @Override
-    public void mouseClicked(MouseEvent e)
-    {
-        long clickTime = System.nanoTime();
-        if(clickTime - lastClickTime < MAX_CLICK_DELAY)
-        {
-            System.out.println("stop double event");
-            return;//[attempt to]stop accidental double click
-        }
-        lastClickTime = clickTime;
-
-        if(e.getButton() == 1)lMouseState = false;
-        
-        if(e.getButton() == 1 && lMouseClick)//if left click (and wasn't drag)
-        {
-            //settings button
-            if(e.getY() < textStartY && e.getX() > buttonStartX)
-            {
-                new MenuPopup(this).display();
-            }
-            
-            if(e.getY() >= textStartY && e.getY() <= textEndY)
-            {
-                int pos = toCharPos(e.getX());
-                int lineIndex = getLineIndex(e.getPoint());
-                selectedWord = null;//to recalculate
-                //TODO move this over to Page functions?
-
-                //reset selection on all unselected lines:
-                int i = 0;
-                for(Line line:currPage)
-                {
-                    if(i != lineIndex)line.resetSelection();
-                    i++;
-                }
-                //toggle on selected line:
-                for(FoundWord word:currPage.getLine(lineIndex).getWords())
-                {
-                    word.toggleWindow(pos);
-                    if(word.isShowingDef())selectedWord = word;
-                }
-                render();
-            }
-            lMouseClick = false;
-        }
-        else if(e.getY() > textStartY && e.getY() < textEndY && e.getButton() == 2)//middle click: place marker
-        {
-            int pos = toCharPos(e.getX() + mainFontSize/2);
-            int lineIndex = getLineIndex(e.getPoint());
-            Set<Integer> markers = currPage.getLine(lineIndex).getMarkers();
-            //toggle markers
-            if(markers.contains(pos))markers.remove(pos);
-            else markers.add(pos);
-            
-            updateText(currPage.getText());//reflow (TODO don't pass text to itself)
-            render();//redraw
-        }
-        else if(e.getButton() == 3)//right click: extra option menu
-        {
-            //settings button
-            if(e.getY() > furiganaStartY && e.getY() < textStartY)
-            {
-                new MenuPopup(this).display(e);//no longer requires button; right click anywhere on bar works
-            }
-            //word
-            else if(e.getY() >= textStartY && e.getY() <= textEndY)
-            {
-                WordPopup popup = null;
-                int lineIndex = getLineIndex(e.getPoint());
-                for(FoundWord word:currPage.getLine(lineIndex).getWords())
-                {
-                    int pos = toCharPos(e.getX());
-                    if(word.inBounds(pos))
-                    {
-                        popup = new WordPopup(word, this);
-                        break;
-                    }
-                }
-
-                if(popup != null)
-                {
-                    popup.show(e.getX(), e.getY());
-                }
-            }
-            //definition
-            else if(options.getOptionBool("defsShowUpwards") ? (e.getY() < defStartY):(e.getY() > defStartY))
-            {
-                DefPopup popup = new DefPopup(selectedWord, this, e.getY());
-                popup.show(e.getX(), e.getY());
-            }
-        }
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e)
-    {
-        dragReference = e.getPoint();
-        if(e.getButton() == 1)
-        {
-            lMouseClick = true;
-            if(e.getY() >= furiganaStartY && e.getY() <= textStartY)//only furigana bar draggable
-            {
-                lMouseState = true;
-            }
-        }
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e)
-    {
-
-        double dist = dragReference.distanceSq(e.getPoint());
-        if((dist != 0 || lMouseState) && dist < MIN_DRAG_DIST)//only moved a little
-        {
-            if(e.getButton() == 1)lMouseClick = true;
-            lMouseState = false;
-            mouseClicked(e);//pass this over as a click
-        }
-        else if (!lMouseState)//long drag, not on Furigana bar
-        {
-            //place splits at start and end points of drag
-            //TODO place split points
-            //TODO show first split point when starting the drag
-            //TODO select word on release
-        }
-        lMouseState = false;
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e)
-    {
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e)
-    {
-        //temporary ignore loose focus
-        if(tempIgnoreMouseExit)
-        {
-            return;
-        }
-        //collapse definitions
-        if(selectedWord != null && options.getOptionBool("hideDefOnMouseLeave"))
-        {
-            selectedWord.showDef(false);
-            selectedWord = null;
-            render();
-        }
-        if(mousedWord != null)
-        {
-            mousedWord.setMouseover(false);
-            boolean rerender = mousedWord.updateOnMouse();
-            mousedWord = null;
-            if(rerender)render();
-        }
-        mouseLine = -1;
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent e)
-    {
-        if(lMouseState)
-        {
-            Point moveTo = e.getLocationOnScreen();
-            moveTo.translate(-dragReference.x, -dragReference.y);
-            disp.getFrame().setLocation(moveTo);
-            lMouseClick = false;//no longer a click
-        }
-    }
 
 
-    private int mouseLine = -1;
-    private FoundWord mousedWord;
-    @Override
-    public void mouseMoved(MouseEvent e)
-    {
-        int pos = toCharPos(e.getX());
-        int lineIndex = getLineIndex(e.getPoint());
-        if(lineIndex >= currPage.getLineCount() || lineIndex < 0)return;
-        if(lineIndex != mouseLine || (mousedWord!= null && !mousedWord.inBounds(pos)))
-        {
-            boolean reRender = false;
-            if(mousedWord != null)
-            {
-                mousedWord.setMouseover(false);
-                if(mousedWord.updateOnMouse())reRender = true;
-            }
-            mousedWord = null;//to recalculate
-            //toggle on selected line:
-            for (FoundWord word : currPage.getLine(lineIndex).getWords())
-            {
-                if (word.inBounds(pos))
-                {
-                    mousedWord = word;
-                    break;
-                }
-            }
-            mouseLine = lineIndex;
-
-            if(mousedWord != null)
-            {
-                //System.out.println("mouseover'd word changed to " + mousedWord.getText());
-                mousedWord.setMouseover(true);
-                if(mousedWord.updateOnMouse())reRender = true;
-            }
-
-            if(reRender)render();
-        }
-    }
-    
-    @Override
-    public void mouseWheelMoved(MouseWheelEvent e)
-    {
-        if(hidden)return;
-        boolean onTextRange = (e.getY() < textEndY && e.getY() >= textStartY);
-
-        //scroll up/down definition
-        if((options.getOptionBool("defsShowUpwards") ? (e.getY() < defStartY):
-                                                            (e.getY() > defStartY)) && selectedWord != null)
-        {
-            if(e.getWheelRotation() > 0)selectedWord.getCurrentDef().scrollDown();
-            if(e.getWheelRotation() < 0)selectedWord.getCurrentDef().scrollUp();
-            render();
-        }
-
-        //scroll through definitions
-        else if(onTextRange && selectedWord != null)
-        {
-            if(selectedWord.inBounds(toCharPos(e.getX())))
-            {
-                if(e.getWheelRotation() > 0)selectedWord.scrollDown();
-                if(e.getWheelRotation() < 0)selectedWord.scrollUp();
-            }
-            else//not over this word: close definition and scroll text instead
-            {
-                selectedWord.showDef(false);
-                xOffset += e.getWheelRotation() * -mainFontSize;
-                boundXOff();
-                selectedWord = null;
-            }
-            render();
-        }
-        else if(onTextRange && selectedWord == null)//scroll text
-        {
-            xOffset += e.getWheelRotation() * -mainFontSize;
-            boundXOff();
-            render();
-        }
-        else if(e.getY() <= textStartY && e.getY() > furiganaStartY)//scroll history
-        {
-            String historyLine;
-            if(e.getWheelRotation() < 0)//scroll up
-            {
-                historyLine = log.back();
-            }
-            else
-            {
-                historyLine = log.forward();
-            }
-            if(!options.getOptionBool("splitLines"))historyLine = historyLine.replace("\n", "");//all on one line if not splitting
-            System.out.println("loading line " + historyLine);
-            currPage.clearMarkers();//markers not relevant for this text
-            updateText(historyLine);//flow new text
-            xOffset = 0;//scroll back to front
-            render();//update
-        }
-        
-    }
-
-    private void boundXOff()
+    public void boundXOff()
     {
         if(options.getOptionBool("reflowToFit"))
         {
@@ -579,7 +301,7 @@ public class UI implements MouseListener, MouseMotionListener, MouseWheelListene
         if(-xOffset > maxX)xOffset = Math.min(-maxX, 0);
     }
 
-    private int getLineIndex(Point pos)
+    public int getLineIndex(Point pos)
     {
         return (pos.y - textStartY)/ lineHeight;
     }
