@@ -13,7 +13,10 @@ import java.util.logging.Logger;
 
 /**
  * Gets key events using the JNativeHook library. <br>
- * This library is multiplatform and will get key events even when the window is not focused.
+ * This library is multiplatform and will get key events even when the window is not focused.<br>
+ * Problems include:
+ *     wastes resources monitoring the mouse.
+ *     cursor slowdowns during debug, general usage.
  */
 public class JNativeKeyHandler extends KeyHandler implements NativeKeyListener
 {

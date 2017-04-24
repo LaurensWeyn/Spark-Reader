@@ -111,6 +111,7 @@ public class Options
         options.put("fullscreenScreenshot", "false");
         options.put("splitterMode", "full");
         options.put("deconMode", "recursive");
+        options.put("hookKeyboard", "false");
 
     }
     public Options(File file)throws IOException

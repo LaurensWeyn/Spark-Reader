@@ -71,6 +71,7 @@ public class OptionsUI extends JFrame
             display.add(new ToggleOption("startInTray", "Start in tray if there's no Japanese text on startup", "By default, the window will be visible after startup even if there is no text to display."));
             display.add(new OptionLabel("Other:", null));
             display.add(new ToggleOption("reduceSave", "Reduce file I/O", "<html>If ticked, writing to files is avoided until the program is closed or a lot of changes have been made.<br>Turning this on will improve performance, but if the program crashes some progress may be lost."));
+            display.add(new ToggleOption("hookKeyboard", "Enable keyboard controls", "<html>If enabled, Spark Reader uses a tool to listen for keystrokes while the window is unfocused.<br>Requires restart."));
         PageGroup window = new PageGroup("Overlay", "Graphical settings related to the on-screen overlay window");
 
             OptionPage furigana = new OptionPage("Furigana");

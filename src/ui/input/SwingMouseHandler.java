@@ -189,6 +189,6 @@ public class SwingMouseHandler extends MouseHandler implements MouseListener, Mo
     public void mouseWheelMoved(MouseWheelEvent e)
     {
         if(hidden)return;
-        mouseScroll(e.getScrollAmount(), e.getPoint());
+        mouseScroll(e.getWheelRotation(), e.getPoint());
     }
 }

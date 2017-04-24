@@ -85,8 +85,11 @@ public class UI
         mouseHandler = new SwingMouseHandler(this);
         mouseHandler.addListeners();
 
-        keyHandler = new JNativeKeyHandler(this);
-        keyHandler.addListeners();
+        if(options.getOptionBool("hookKeyboard"))
+        {
+            keyHandler = new JNativeKeyHandler(this);
+            keyHandler.addListeners();
+        }
 
         tray = new Tray(this);//manages tray icon
     }
