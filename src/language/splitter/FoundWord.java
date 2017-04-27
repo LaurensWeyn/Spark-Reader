@@ -24,10 +24,8 @@ import main.Main;
 import ui.UI;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 
 import static main.Main.options;
 
@@ -305,7 +303,7 @@ public class FoundWord
             List<EPWINGDefinition> extraDefs = dict.findEpwing(text);
             for(EPWINGDefinition extraDef:extraDefs)
             {
-                addDefinition(new FoundDef(new ValidWord(text, ""), extraDef));
+                addDefinition(new FoundDef(new ValidWord(text), extraDef));
             }
         }
         //TODO search for other forms (kana etc.)

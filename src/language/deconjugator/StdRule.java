@@ -3,6 +3,7 @@ package language.deconjugator;
 import language.dictionary.DefTag;
 import java.util.HashSet;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * Original (legacy) deconjugation rule.
@@ -51,14 +52,14 @@ public class StdRule implements DeconRule
         if(word.getWord().length() > word.getOriginalWord().length()+10)
         {   // don't allow the deconjugation to become too much longer than the original text
             //System.out.println("bogus length");
-            //System.out.println(word.getProcess());
+            //System.out.println(word.getProcessText());
             return null;
         }
 
         if(word.getNumConjugations() > word.getOriginalWord().length()+6)
         {   // don't allow the deconjugator to make impossibly information-dense conjugations
             //System.out.println("bogus complexity");
-            //System.out.println(word.getProcess());
+            //System.out.println(word.getProcessText());
             return null;
         }
 
@@ -88,19 +89,29 @@ public class StdRule implements DeconRule
                 conjugationTags.add(neededTag);
             }
             
-            String newProcess = word.getProcess();
-            if(newProcess.equals(""))
-                newProcess = change;
-            else
-                newProcess = newProcess + " " + change;
+            LinkedList<DeconRule> newProcess = new LinkedList<>(word.getProcess());
+            newProcess.addFirst(this);
 
             HashSet<String> forms = new HashSet<>(word.getSeenForms());
             forms.add(newForm + impliedTag);
 
-            return new ValidWord(word.getNumConjugations()+1, word.getOriginalWord(), newForm, forms, tags, conjugationTags, newProcess);
+            return new ValidWord(word.getOriginalWord(), newForm, forms, tags, conjugationTags, newProcess);
         }
         //doesn't match, don't add new word
         //System.out.println("-Doesn't work");
         return null;
+    }
+
+    @Override
+    public String getProcessName()
+    {
+        return change;
+    }
+
+    @Override
+    public String conjugate(String word)
+    {
+        if(word == null || !word.endsWith(replace))return null;
+        return word.substring(0, word.length() - replace.length()) + ending;
     }
 }

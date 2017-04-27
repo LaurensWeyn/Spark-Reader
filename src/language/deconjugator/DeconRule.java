@@ -16,10 +16,6 @@
  */
 package language.deconjugator;
 
-import language.dictionary.DefTag;
-
-import java.util.ArrayList;
-
 /**
  * Holds a rule for deconjugating a word
  * @author Laurens Weyn
@@ -27,9 +23,23 @@ import java.util.ArrayList;
 public interface DeconRule
 {
     /**
-     * Attempts to deconjugate a word with this
+     * Attempts to deconjugate a word with this rule.
      * @param word the word to attempt to deconjugate
      * @return the deconjugated word, or null if it doesn't apply
      */
-    public abstract ValidWord process(ValidWord word);
+    ValidWord process(ValidWord word);
+
+    /**
+     * Gets the name of the conjugation this rule performs.
+     * @return the name, null if not applicable
+     */
+    String getProcessName();
+
+    /**
+     * The reverse of {@link DeconRule#process(ValidWord)}, applies a conjugation to a word.<br>
+     * This function assumes the given word can be conjugated.
+     * @param word The word to conjugate
+     * @return the word with this conjugation rule applied
+     */
+    String conjugate(String word);
 }

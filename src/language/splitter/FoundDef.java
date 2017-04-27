@@ -53,7 +53,7 @@ public class FoundDef implements Comparable<FoundDef>
         defText.addText(foundDef.getSource().getName(), options.getColor("defReadingCol"), options.getColor("defBackCol"));
 
         //output original form if processed
-        if(!foundForm.getProcess().equals(""))
+        if(!foundForm.getProcessText().equals(""))
         {
             defText.addText(foundForm.toString(), options.getColor("defReadingCol"), options.getColor("defBackCol"));
         }
@@ -167,7 +167,7 @@ public class FoundDef implements Comparable<FoundDef>
             if (tags.contains(DefTag.ctr)) score -= 10;
         }
         score -= foundDef.getSpellings().length;//-1 for every spelling; more likely it's coincidence
-        if (foundForm.getProcess().equals("")) score += 5;//prefer words/phrases instead of deviations
+        if (foundForm.getProcessText().equals("")) score += 5;//prefer words/phrases instead of deviations
 
 
         //TODO: join numbers and counter words!

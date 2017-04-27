@@ -19,9 +19,7 @@ package language.deconjugator;
 import language.dictionary.DefTag;
 import language.dictionary.Definition;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Holds a possible valid conjugation if a word exists with the valid tags
@@ -31,24 +29,26 @@ public class ValidWord
 {
     private String word, originalWord;
     private Set<DefTag> neededTags;
-    private HashSet<String> seenForms;
-    private ArrayList<DefTag> conjugationTags;
-    private String process;
-    private int conjugations;
+    private Set<String> seenForms;
+    private List<DefTag> conjugationTags;
+    private List<DeconRule> process;
 
-    public ValidWord(int conjugations, String originalWord, String word, HashSet<String> seenForms, Set<DefTag> neededTags, ArrayList<DefTag> conjugationTags, String process)
+    public ValidWord(String originalWord, String word, HashSet<String> seenForms, Set<DefTag> neededTags,
+                     ArrayList<DefTag> conjugationTags, List<DeconRule> process)
     {
-        this.conjugations = conjugations;
         this.originalWord = originalWord;
         this.seenForms = seenForms;
         this.conjugationTags = conjugationTags;
         this.word = word;
         this.neededTags = neededTags;
-        this.process = process.trim();
+        this.process = process;
     }
-    public ValidWord(String word, String process)
+    public ValidWord(String word)
     {
-        this.conjugations = 0;
+        this(word, new LinkedList<>());
+    }
+    public ValidWord(String word, LinkedList<DeconRule> process)
+    {
         this.originalWord = word;
         this.word = word;
         this.neededTags = new HashSet<>();
@@ -58,7 +58,7 @@ public class ValidWord
     }
     public int getNumConjugations()
     {
-        return conjugations;
+        return process.size();
     }
     public String getOriginalWord()
     {
@@ -73,11 +73,11 @@ public class ValidWord
     {
         return neededTags;
     }
-    public HashSet<String> getSeenForms()
+    public Set<String> getSeenForms()
     {
         return seenForms;
     }
-    public ArrayList<DefTag> getConjugationTags()
+    public List<DefTag> getConjugationTags()
     {
         return conjugationTags;
     }
@@ -108,23 +108,53 @@ public class ValidWord
         }
         return true;
     }
-
-    public String getProcess()
+    public List<DeconRule> getProcess()
     {
         return process;
+    }
+    public String getProcessText()
+    {
+        StringBuilder text = new StringBuilder();
+        int i = 1;
+        for(DeconRule rule:process)
+        {
+            //attempt to copy old process toString
+            if(i == process.size())//last item
+            {
+                //TODO make these braces a 'hidden' flag or something instead of literal text
+                if(rule.getProcessName().startsWith("("))
+                {
+                    if(text.length() != 0)text.append(' ');
+                    text.append(rule.getProcessName().replace("(", "").replace(")",""));
+                }
+                else
+                {
+                    if(text.length() != 0)text.append(' ');
+                    text.append(rule.getProcessName());
+                }
+            }
+            else if(!rule.getProcessName().startsWith("("))
+            {
+                if(text.length() != 0)text.append(' ');
+                text.append(rule.getProcessName());
+            }
+            i++;
+        }
+        return text.toString();
     }
 
     @Override
     public String toString()
     {
         // hide non-freestanding weak forms and remove parens from freestanding ones
-        String temp = process;
+        /*String temp = process;
         if(temp.startsWith("("))
         {
             temp = temp.replaceFirst("[(]", "");
             temp = temp.replaceFirst("[)]", "");
         }
-        temp = temp.replaceAll("[(].*?[)]", "");
-        return word + "―" + temp;
+        temp = temp.replaceAll("[(].*?[)]", "");*/
+
+        return word + "―" + getProcessText();
     }
 }

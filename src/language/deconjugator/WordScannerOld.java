@@ -21,6 +21,7 @@ import language.dictionary.DefTag;
 import language.dictionary.Japanese;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class WordScannerOld extends WordScanner implements WordScanner.SubScanner
 {
@@ -31,7 +32,35 @@ public class WordScannerOld extends WordScanner implements WordScanner.SubScanne
 
 
         //Hiragana->Katakana: words are often written in katakana for emphasis but won't be found in EDICT in that form
-        ruleList.add(word ->
+        ruleList.add(new DeconRule()
+        {
+            @Override
+            public ValidWord process(ValidWord word)
+            {
+                String hiragana = Japanese.toHiragana(word.getWord(), false);
+                if(!word.getWord().equals(hiragana))
+                {
+                    LinkedList<DeconRule> process = new LinkedList<>();
+                    process.add(this);
+                    return new ValidWord(hiragana, process);
+                }
+                else return null;
+            }
+
+            @Override
+            public String getProcessName()
+            {
+                return "hiragana";
+            }
+
+            @Override
+            public String conjugate(String word)
+            {
+                return word;//can't convert back, leave it as is I suppose
+            }
+        });
+
+        /*word ->
         {
             String hiragana = Japanese.toHiragana(word.getWord(), false);
             if(!word.getWord().equals(hiragana))
@@ -39,26 +68,10 @@ public class WordScannerOld extends WordScanner implements WordScanner.SubScanne
                 return new ValidWord(hiragana, "hiragana");
             }
             else return null;
-        });
-
-
-        //Decensor: simple, but actually works well enough with a lot of 'censored' words
-        ruleList.add(l_word ->
-        {
-            if(l_word.getWord().contains("○"))
-            {
-                return new ValidWord(l_word.getWord().replace('○', 'っ'), (l_word.getProcess() + " " + "censored").trim());
-            }
-            else return null;
-        });
-        ruleList.add(l_word ->
-        {
-            if(l_word.getWord().contains("○"))
-            {
-                return new ValidWord(l_word.getWord().replace('○', 'ん'), (l_word.getProcess() + " " + "censored").trim());
-            }
-            else return null;
-        });
+        }*/
+        //Decensor
+        ruleList.add(new DecensorRule('ん'));
+        ruleList.add(new DecensorRule('っ'));
 
         //entire Japanese deconjugation lookup table
         //see http://www.wikiwand.com/en/Japanese_verb_conjugation
@@ -272,7 +285,7 @@ public class WordScannerOld extends WordScanner implements WordScanner.SubScanne
     }
     public void scanWord(String word)
     {
-        matches.add(new ValidWord(word, ""));//add initial unmodified word
+        matches.add(new ValidWord(word));//add initial unmodified word
         test_rules();
     }
 }
