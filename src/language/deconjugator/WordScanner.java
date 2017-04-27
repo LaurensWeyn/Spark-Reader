@@ -63,7 +63,7 @@ public class WordScanner
         init();
         for(DeconRule rule:ruleList)
         {
-            if(rule.getClass() == StdRule.class)
+            if(rule instanceof StdRule)
             {
                 StdRule castRule = ((StdRule) rule);
                 String ending = castRule.getReplace();
