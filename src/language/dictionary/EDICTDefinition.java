@@ -70,7 +70,6 @@ public class EDICTDefinition extends Definition
                }
                if(findCount != 0 || i == 0)
                {
-                   
                    defLine = defLine.replace("(" + tag + ")", "");
                }
                

@@ -8,6 +8,7 @@ import language.dictionary.Dictionary;
 import language.dictionary.EPWINGDefinition;
 import language.splitter.WordSplitter;
 import multiplayer.MPController;
+import options.BlacklistDef;
 import options.Known;
 import options.Options;
 import options.PrefDef;
@@ -50,6 +51,7 @@ public class Main
     public static Dictionary dict;
     public static Known known;
     public static PrefDef prefDef;
+    public static BlacklistDef blacklistDef;
     /**
      * The currently active configuration
      */
@@ -67,6 +69,7 @@ public class Main
             options = new Options(Options.SETTINGS_FILE);
             known = new Known(options.getFile("knownWordsPath"));
             prefDef = new PrefDef(options.getFile("preferredDefsPath"));
+            blacklistDef = new BlacklistDef(options.getFile("blacklistDefsPath"));
 
             hook = new ClipboardHook();//default hook
             log = new Log(50);//new log
@@ -102,6 +105,7 @@ public class Main
         {
             if(known != null)Main.known.save();
             if(prefDef != null)Main.prefDef.save();
+            if(blacklistDef != null)Main.blacklistDef.save();
         }catch(IOException err)
         {
             JOptionPane.showMessageDialog(frame, "Error while saving changes:\n" + err);

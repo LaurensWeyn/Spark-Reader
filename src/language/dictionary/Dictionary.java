@@ -160,7 +160,19 @@ public class Dictionary
     public List<Definition> find(String word)
     {
         //System.out.println("looking up " + word);
-        return lookup.get(word);
+        if(lookup.get(word) == null) return null;
+        // FIXME: this is a pile of crap and probably really slow
+        List<Definition> stored = new ArrayList<>(lookup.get(word));
+        for(int i = 0; i < stored.size(); i++)
+        {
+            Definition def = stored.get(i);
+            if(Main.blacklistDef.isBlacklisted(def.getID(), word))
+            {
+                stored.remove(i);
+                i--;
+            }
+        }
+        return stored;
     }
     public boolean hasEpwingDef(String word)
     {
