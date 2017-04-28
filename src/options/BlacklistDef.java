@@ -93,17 +93,19 @@ public class BlacklistDef
             if(table.get(id).contains(spelling))
             {
                 System.out.println("BL: adding additional");
-                ArrayList<String> forms = new ArrayList<>(table.get(id));
+                //ArrayList<String> forms = new ArrayList<>(table.get(id));
+                ArrayList<String> forms = table.get(id);
                 forms.remove(spelling);
-                table.replace(id, forms);
+                //table.replace(id, forms);
             }
             // adding
             else
             {
                 System.out.println("BL: removing");
-                ArrayList<String> forms = new ArrayList<>(table.get(id));
+                //ArrayList<String> forms = new ArrayList<>(table.get(id));
+                ArrayList<String> forms = table.get(id);
                 forms.add(spelling);
-                table.replace(id, forms);
+                //table.replace(id, forms);
             }
         }
         // adding
