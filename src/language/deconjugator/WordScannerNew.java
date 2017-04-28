@@ -94,8 +94,8 @@ public class WordScannerNew extends WordScanner implements WordScanner.SubScanne
         ruleList.add(new StdRule("いる", "", "teiru", DefTag.stem_te, DefTag.v1));
         // -- common colloquial form drops the い entirely));
         ruleList.add(new ContextRule("る", "", "teru", DefTag.stem_te, DefTag.v1, (rule, word) -> {
-            if(word.getConjugationTags().size() < 2) return true;
-            DefTag tagOfInterest = word.getConjugationTags().get(word.getConjugationTags().size()-2);
+            if(word.getConjugationTags().size() < 1) return true;
+            DefTag tagOfInterest = word.getConjugationTags().get(0);
             //noinspection RedundantIfStatement
             if(tagOfInterest == DefTag.stem_ren
             || tagOfInterest == DefTag.stem_ren_less)
@@ -329,20 +329,41 @@ public class WordScannerNew extends WordScanner implements WordScanner.SubScanne
         ruleList.add(new StdRule("こう", "く", "volitional", DefTag.v5k_s, DefTag.stem_ren_less));
 
         // irregulars
-        ruleList.add(new StdRule("し", "する", "(infinitive)", DefTag.vs_i, DefTag.stem_ren));
+        ruleList.add(new ContextRule("し", "する", "(infinitive)", DefTag.vs_i,  DefTag.stem_ren, (rule, word) -> {
+            if(word.getConjugationTags().size() < 2) return true;
+            DefTag tagOfInterest = word.getConjugationTags().get(word.getConjugationTags().size()-2);
+            //noinspection RedundantIfStatement
+            if(tagOfInterest == DefTag.stem_te)
+                return false;
+            return true;
+        }));
         ruleList.add(new NeverFinalRule("し", "する", "(unstressed infinitive)", DefTag.vs_i, DefTag.stem_ren_less));
         ruleList.add(new NeverFinalRule("し", "する", "(mizenkei)", DefTag.vs_i, DefTag.stem_mizenkei)); // actually irregular itself but this will do for now
         ruleList.add(new NeverFinalRule("すれ", "する", "(izenkei)", DefTag.vs_i, DefTag.stem_e));
         ruleList.add(new StdRule("しろ", "する", "imperative", DefTag.vs_i, DefTag.uninflectable));
         ruleList.add(new StdRule("せよ", "する", "imperative", DefTag.vs_i, DefTag.uninflectable));
 
-        ruleList.add(new StdRule("き", "くる", "(infinitive)", DefTag.vk, DefTag.stem_ren));
+        ruleList.add(new ContextRule("き", "くる", "(infinitive)", DefTag.vk, DefTag.stem_ren, (rule, word) -> {
+            if(word.getConjugationTags().size() < 2) return true;
+            DefTag tagOfInterest = word.getConjugationTags().get(word.getConjugationTags().size()-2);
+            //noinspection RedundantIfStatement
+            if(tagOfInterest == DefTag.stem_te)
+                return false;
+            return true;
+        }));
         ruleList.add(new NeverFinalRule("き", "くる", "(unstressed infinitive)", DefTag.vk, DefTag.stem_ren_less));
         ruleList.add(new NeverFinalRule("こ", "くる", "(mizenkei)", DefTag.vk, DefTag.stem_mizenkei));
         ruleList.add(new NeverFinalRule("くれ", "くる", "(izenkei)", DefTag.vk, DefTag.stem_e));
         ruleList.add(new StdRule("こい", "くる", "imperative", DefTag.vk, DefTag.uninflectable));
 
-        ruleList.add(new StdRule("来", "来る", "(infinitive)", DefTag.vk, DefTag.stem_ren));
+        ruleList.add(new ContextRule("来", "来る", "(infinitive)", DefTag.vk, DefTag.stem_ren, (rule, word) -> {
+            if(word.getConjugationTags().size() < 2) return true;
+            DefTag tagOfInterest = word.getConjugationTags().get(word.getConjugationTags().size()-2);
+            //noinspection RedundantIfStatement
+            if(tagOfInterest == DefTag.stem_te)
+                return false;
+            return true;
+        }));
         ruleList.add(new NeverFinalRule("来", "来る", "(unstressed infinitive)", DefTag.vk, DefTag.stem_ren_less));
         ruleList.add(new NeverFinalRule("来", "来る", "(mizenkei)", DefTag.vk, DefTag.stem_mizenkei));
         ruleList.add(new NeverFinalRule("来れ", "来る", "(izenkei)", DefTag.vk, DefTag.stem_e));
