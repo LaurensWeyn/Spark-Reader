@@ -32,7 +32,7 @@ public class EDICTDefinition extends Definition
 
     protected boolean showReading = true;
     protected final DefSource source;
-    protected int ID;
+    protected long ID;
     
     //String[] meaningArr;
     protected String meaning;
@@ -98,11 +98,15 @@ public class EDICTDefinition extends Definition
             }
         }
         meaning = meaningBuilder.toString();
+        
         //process ID
-        String IDCode = bits[bits.length - 1].replaceFirst("Ent", "");
+        // The field has the format: EntLnnnnnnnnX.
+        // The EntL is a unique string to help identify the field.
+        // The "X", if present, indicates that an audio clip of the entry reading is available from the JapanesePod101.com site.
+        String IDCode = bits[bits.length - 1].replaceFirst("EntL", "").replaceFirst("X", "");
         try
         {
-            ID = Integer.parseInt(IDCode);
+            ID = Long.parseLong(IDCode);
         }catch(NumberFormatException e)
         {
             ID = IDCode.hashCode();
