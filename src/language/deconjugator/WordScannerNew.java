@@ -356,7 +356,7 @@ public class WordScannerNew extends WordScanner implements WordScanner.SubScanne
         ruleList.add(new NeverFinalRule("くれ", "くる", "(izenkei)", DefTag.vk, DefTag.stem_e));
         ruleList.add(new StdRule("こい", "くる", "imperative", DefTag.vk, DefTag.uninflectable));
 
-        ruleList.add(new ContextRule("来", "来る", "(infinitive)", DefTag.vk, DefTag.stem_ren, (rule, word) -> {
+        ruleList.add(new FuriContextRule("来", "き", "来る", "くる", "(infinitive)", DefTag.vk, DefTag.stem_ren, (rule, word) -> {
             if(word.getConjugationTags().size() < 2) return true;
             DefTag tagOfInterest = word.getConjugationTags().get(word.getConjugationTags().size()-2);
             //noinspection RedundantIfStatement
@@ -364,10 +364,10 @@ public class WordScannerNew extends WordScanner implements WordScanner.SubScanne
                 return false;
             return true;
         }));
-        ruleList.add(new NeverFinalRule("来", "来る", "(unstressed infinitive)", DefTag.vk, DefTag.stem_ren_less));
-        ruleList.add(new NeverFinalRule("来", "来る", "(mizenkei)", DefTag.vk, DefTag.stem_mizenkei));
-        ruleList.add(new NeverFinalRule("来れ", "来る", "(izenkei)", DefTag.vk, DefTag.stem_e));
-        ruleList.add(new StdRule("来い", "来る", "imperative", DefTag.vk, DefTag.uninflectable));
+        ruleList.add(new FuriNeverFinalRule("来", "き", "来る", "くる", "(unstressed infinitive)", DefTag.vk, DefTag.stem_ren_less));
+        ruleList.add(new FuriNeverFinalRule("来", "こ", "来る", "くる", "(mizenkei)", DefTag.vk, DefTag.stem_mizenkei));
+        ruleList.add(new FuriNeverFinalRule("来れ", "くれ", "来る", "くる", "(izenkei)", DefTag.vk, DefTag.stem_e));
+        ruleList.add(new FuriStdRule("来い", "こい", "来る", "くる", "imperative", DefTag.vk, DefTag.uninflectable));
 
         ruleList.add(new NeverFinalRule("あり", "ある", "(infinitive)", DefTag.v5r_i, DefTag.stem_ren));
         ruleList.add(new StdRule("あっ", "ある", "(unstressed infinitive)", DefTag.v5r_i, DefTag.stem_ren_less));
