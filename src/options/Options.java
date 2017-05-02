@@ -111,6 +111,7 @@ public class Options
         options.put("fullscreenScreenshot", "false");
         options.put("splitterMode", "full");
         options.put("deconMode", "recursive");
+        options.put("furiMode", "original");
         options.put("hookKeyboard", "false");
 
     }

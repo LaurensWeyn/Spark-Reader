@@ -159,6 +159,8 @@ public class FoundDef implements Comparable<FoundDef>
         {
             if (tags.contains(DefTag.obs) || tags.contains(DefTag.obsc) || tags.contains(DefTag.rare) || tags.contains(DefTag.arch))
                 score -= 50;//obscure penalty
+            if(tags.contains(DefTag.p) || tags.contains(DefTag.P))
+                score += 50;//'common in newspapers etc.' bonus
 
             if (tags.contains(DefTag.uk) && !Japanese.hasKana(foundForm.getWord())) score -= 10;//usually kana without kana
             if (tags.contains(DefTag.uK) && Japanese.hasOnlyKana(foundForm.getWord())) score -= 10;//usually Kanji, only kana

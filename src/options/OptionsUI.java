@@ -53,6 +53,7 @@ public class OptionsUI extends JFrame
 
     private final static String parserConfig ="full=Full;partial=Basic;none=Disable";
     private final static String deconConfig ="recursive=Recursive (better, slow);legacy=Legacy (faster, less accurate)";
+    private final static String furiConfig ="sameForm=Conjugated as in text;original=Dictionary form;stripKana=Kanji readings only";
 
     public OptionsUI() throws HeadlessException
     {
@@ -75,8 +76,10 @@ public class OptionsUI extends JFrame
         PageGroup window = new PageGroup("Overlay", "Graphical settings related to the on-screen overlay window");
 
             OptionPage furigana = new OptionPage("Furigana");
-            furigana.add(new RadioOption("unknownFuriMode", mouseoverConfig, "Furigana mode (unknown words)", null));
-            furigana.add(new RadioOption("knownFuriMode", mouseoverConfig, "Furigana mode (known words)", null));//TODO add tips
+            furigana.add(new RadioOption("furiMode", furiConfig, "Furigana type", null));
+            furigana.add(new OptionLabel("Visibility:", null));
+            furigana.add(new RadioOption("unknownFuriMode", mouseoverConfig, "Furigana display mode (unknown words)", null));
+            furigana.add(new RadioOption("knownFuriMode", mouseoverConfig, "Furigana display mode (known words)", null));
             furigana.add(new OptionLabel("Theme:", null));
             furigana.add(new FontOption("furiFont", "Furigana font", "Also decides the size of the furigana bar."));
             furigana.add(new ColourOption("furiCol", "Main text colour", "The colour used for the furigana text."));

@@ -96,19 +96,30 @@ public class Main
      */
     public static void exit()
     {
-        JFrame frame = null;
-        if(ui != null && ui.disp != null)frame = ui.disp.getFrame();
+        JFrame frame = getParentFrame();
         try
         {
             if(known != null)Main.known.save();
             if(prefDef != null)Main.prefDef.save();
         }catch(IOException err)
         {
-            JOptionPane.showMessageDialog(frame, "Error while saving changes:\n" + err);
+            JOptionPane.showMessageDialog(getParentFrame(), "Error while saving changes:\n" + err);
             err.printStackTrace();
         }
         if(frame != null)frame.setVisible(false);
         System.exit(0);
+    }
+
+    /**
+     * Gets the GUI frame if available.
+     * For use in functions that need a parent frame, like {@link JOptionPane}
+     */
+    public static JFrame getParentFrame()
+    {
+        //TODO change usages of ui.disp.getFrame() to use this one instead
+
+        if(ui != null && ui.disp != null)return ui.disp.getFrame();
+        return null;
     }
 
     //loading screen-specific variables

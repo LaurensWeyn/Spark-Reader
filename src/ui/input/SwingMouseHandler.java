@@ -21,7 +21,7 @@ public class SwingMouseHandler extends MouseHandler implements MouseListener, Mo
     private Point dragReference;
     private long lastClickTime = 0;
 
-    private static final long MAX_CLICK_DELAY = 1000;
+    private static final long MAX_CLICK_DELAY = 100;
     private static final long MIN_DRAG_DIST = 100;
 
     public SwingMouseHandler(UI ui)
@@ -40,7 +40,7 @@ public class SwingMouseHandler extends MouseHandler implements MouseListener, Mo
     @Override
     public void mouseClicked(MouseEvent e)
     {
-        long clickTime = System.nanoTime();
+        long clickTime = System.currentTimeMillis();
         if(clickTime - lastClickTime < MAX_CLICK_DELAY)
         {
             System.out.println("stop double event");

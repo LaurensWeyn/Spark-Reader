@@ -156,7 +156,7 @@ public enum DefTag
     kyu(3, "Kyuushuu-ben"),
     rkb(3, "Ryuukyuu-ben"),
     
-    p(4, ""), P(4, "");//TODO what are these, actually?
+    p(4, ""), P(4, "");
     private int group;
     private String name;
     DefTag(int group, String name)
