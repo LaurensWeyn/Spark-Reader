@@ -16,6 +16,7 @@
  */
 package language.splitter;
 
+import language.deconjugator.DeconRule;
 import language.deconjugator.ValidWord;
 import language.dictionary.Dictionary;
 import language.dictionary.EPWINGDefinition;
@@ -145,6 +146,18 @@ public class FoundWord
         else if(showFurigana(known))
         {
             furiText = definitions.get(currentDef).getFurigana();
+            if(!options.getOption("furiMode").equals("original"))
+            {
+                //convert dictionary form to displayed form
+                for(DeconRule rule : definitions.get(currentDef).getFoundForm().getProcess())
+                {
+                    furiText = rule.conjugate(furiText);
+                }
+            }
+            if(options.getOption("furiMode").equals("stripKana"))
+            {
+                furiText = Japanese.stripOkurigana(definitions.get(currentDef).getFoundForm().getOriginalWord(), furiText);
+            }
         }
         //render furigana
 
