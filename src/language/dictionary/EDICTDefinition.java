@@ -27,21 +27,20 @@ import java.util.regex.Pattern;
  */
 public class EDICTDefinition extends Definition
 {
-    protected String[] word, reading;// spellings;
+    protected String[] word, reading;
     protected Set<DefTag> tags;
 
     protected boolean showReading = true;
     protected final DefSource source;
     protected int ID;
-    
-    //String[] meaningArr;
+
     protected String meaning;
     
-    private static final Pattern FIND_TAGS = Pattern.compile("\\((.*?)\\)");//regex vodoo magic
+    private static final Pattern FIND_TAGS = Pattern.compile("\\((.*?)\\)");//regex voodoo magic
+
     public EDICTDefinition(String line, DefSource source)
     {
         //parses EDICT2 definition lines
-        //TODO deal with that (P) thing at the end properly (currently using workarounds)
         tags = new HashSet<>();
         this.source = source;
         
@@ -99,18 +98,16 @@ public class EDICTDefinition extends Definition
         }
         meaning = meaningBuilder.toString();
         //process ID
-        String IDCode = bits[bits.length - 1].replaceFirst("Ent", "");
+        String IDCode = bits[bits.length - 1].replaceFirst("EntL", "").replaceFirst("X", "");;
         try
         {
             ID = Integer.parseInt(IDCode);
         }catch(NumberFormatException e)
         {
+            System.out.println("WARN: cannot format EDICT ID " + bits[bits.length - 1]);
             ID = IDCode.hashCode();
         }
-        
-        
-        
-        
+
     }
     @Override
     public String getFurigana()

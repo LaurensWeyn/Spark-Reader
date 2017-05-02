@@ -20,6 +20,7 @@ import language.dictionary.Definition;
 import language.splitter.FoundDef;
 import main.Main;
 
+import javax.swing.*;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.HashMap;
@@ -53,7 +54,23 @@ public class PrefDef
         while(line != null)
         {
             String bits[] = line.split("=");
-            if(bits.length == 2)table.put(bits[0], Long.parseLong(bits[1]));
+            if(bits.length == 2)
+            {
+                if(bits[1].startsWith("-"))//negative numbers: files from 0.6 and below
+                {
+                    int option = JOptionPane.showConfirmDialog(Main.getParentFrame(), "Warning: Spark Reader 0.7 and up's preferred definition files are not backwards compatible with older versions.\n" +
+                            "Select yes to reset your preferred definitions. Pressing no will close the program.");
+                    if(option == JOptionPane.YES_OPTION)
+                    {
+                        table.clear();
+                        br.close();
+                        file.delete();
+                        return;
+                    }
+                    else Main.exit();
+                }
+                table.put(bits[0], Long.parseLong(bits[1]));
+            }
             line = br.readLine();
         }
         br.close();

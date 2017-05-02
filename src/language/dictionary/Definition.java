@@ -16,13 +16,6 @@
  */
 package language.dictionary;
 
-import language.deconjugator.ValidWord;
-import language.deconjugator.WordScanner;
-import language.splitter.FoundDef;
-import language.splitter.FoundWord;
-
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -50,12 +43,12 @@ public abstract class Definition
         Set<DefTag> tags = getTags();
         if(tags == null)return null;
 
-        String tagList = "";
+        StringBuilder tagList = new StringBuilder();
         for(DefTag tag:tags)
         {
-            tagList += tag.name() + " ";
+            tagList.append(tag.name()).append(" ");
         }
-        return tagList.trim();
+        return tagList.toString().trim();
     }
 
 
