@@ -111,7 +111,10 @@ public class StdRule implements DeconRule
     @Override
     public String conjugate(String word)
     {
-        if(word == null || !word.endsWith(replace))return null;
+        if(word == null)
+            return "";
+        if(!word.endsWith(replace))
+            return word;
         return word.substring(0, word.length() - replace.length()) + ending;
     }
 }
