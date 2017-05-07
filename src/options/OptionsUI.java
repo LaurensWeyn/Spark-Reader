@@ -64,6 +64,7 @@ public class OptionsUI extends JFrame
 
         OptionPage display = new OptionPage("General");
             display.add(new OptionLabel("Window properties:", null));
+            display.add(new ToggleOption("useNativeUI", "Use System UI (requires restart)", "Themes the UI like the operating system. Looks a bit weird at the moment."));
             display.add(new NumberOption("windowWidth", "Window width (requires restart)", "I recommend setting this to the width of the window you plan to overlay this on."));
             display.add(new NumberOption("maxHeight", "Maximum height (requires restart)", "<html>Definitions will not be longer than this.<br>I recommend setting this to the height of the window you plan to overlay this on."));        root.add(display);
             display.add(new ToggleOption("takeFocus", "Take focus when clicked (requires restart)", "If the game under the overlay is still receiving clicks, try turning this on."));
