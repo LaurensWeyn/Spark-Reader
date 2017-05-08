@@ -72,7 +72,8 @@ public class JapaneseTest
     {
         assertEquals("ａｅｓｔｈｅｔｉｃ", toFullWidth("aesthetic"));
         assertEquals("ＡＥＳＴＨＥＴＩＣ", toFullWidth("AESTHETIC"));
-        assertEquals("ａｂｃ.　あいう。ｘｙｚ.", toFullWidth("abc. あいう。xyz."));
+        assertEquals("１２３４５６７８９０", toFullWidth("1234567890"));
+        assertEquals("ａｂｃ.　あいう。ｘｙｚ.１２３漢字", toFullWidth("abc. あいう。xyz.123漢字"));
     }
 
     @Test

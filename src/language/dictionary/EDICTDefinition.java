@@ -109,7 +109,7 @@ public class EDICTDefinition extends Definition
         }catch(NumberFormatException e)
         {
             System.out.println("WARN: cannot format EDICT ID " + bits[bits.length - 1]);
-            ID = IDCode.hashCode();
+            ID = Math.abs(IDCode.hashCode());
         }
 
     }

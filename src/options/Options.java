@@ -81,7 +81,8 @@ public class Options
         options.put("windowWidth", "1280");
         options.put("maxHeight", "720");
         options.put("defWidth", "250");
-        
+        options.put("useNativeUI", "false");
+
         options.put("splitLines", "true");
         options.put("reflowToFit", "false");
         options.put("defsShowUpwards", "false");

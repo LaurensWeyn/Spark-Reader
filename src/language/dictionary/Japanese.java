@@ -171,6 +171,9 @@ public class Japanese
             }else if(c >= 'A' && c <= 'Z')
             {
                 output.append((char)(c + ('Ａ' - 'A')));
+            }else if(c >= '0' && c <= '9')
+            {
+                output.append((char)(c + ('０' - '0')));
             }
             else if(c == ' ' || c == '\t')output.append('　');//full width space
             else if(c != '\r')output.append(c);
