@@ -24,6 +24,7 @@ public enum DefTag
     stem_ren(-1, "renyoukei (masu stem)"), // verb renyoukei; the masu stem infinitive
     stem_ren_less(-1, "reduced renyoukei (past stem)"), // phonologically reduced masu stem infinitive
     stem_ren_less_v(-1, "reduced renyoukei (past stem) (voiced)"), // voiced
+    form_volition(-1, "volitional form"), // based on the mizenkei
     // i-adj
     // i-adjectives have two renyoukei-like infinitives, but only this one is useful as a tag
     stem_ku(-1, "adjective ku form"), // e.g. nakute
