@@ -106,7 +106,7 @@ public class WordScannerNew extends WordScanner implements WordScanner.SubScanne
         ruleList.add(new StdRule("いく", "", "teiku", DefTag.stem_te, DefTag.v5k_s));
         ruleList.add(new StdRule("くる", "", "tekuru", DefTag.stem_te, DefTag.vk));
         // Should form differently on adjectives than verbs
-        ruleList.add(new StdRule("ある", "", "tearu", DefTag.stem_te, DefTag.v5aru));
+        ruleList.add(new StdRule("ある", "", "tearu", DefTag.stem_te, DefTag.v5r_i));
 
         // たら, the generic conditional
         // verbs
@@ -378,6 +378,29 @@ public class WordScannerNew extends WordScanner implements WordScanner.SubScanne
 
         // rewrite rules
         ruleList.add(new RewriteRule("でした", "です", "past", DefTag.aux, DefTag.aux));
+        
+        // archaic/fossilized/keigo stuff
+        
+        // https://ja.wikipedia.org/wiki/ラ行変格活用#.E5.8F.A3.E8.AA.9E.E3.81.AE.E3.83.A9.E8.A1.8C.E7.89.B9.E5.88.A5.E6.B4.BB.E7.94.A8.E5.8B.95.E8.A9.9E
+        // kudasaru etc
+        // source of "kudasai", "irasshai", etc
+        ruleList.add(new NeverFinalRule("れ", "る", "(izenkei)", DefTag.v5aru, DefTag.stem_e));
+        ruleList.add(new OnlyFinalRule("れ", "る", "imperative", DefTag.v5aru, DefTag.uninflectable));
+        ruleList.add(new NeverFinalRule("ら", "る", "('a' stem)", DefTag.v5aru, DefTag.stem_a));
+        ruleList.add(new NeverFinalRule("っ", "る", "(unstressed infinitive)", DefTag.v5r, DefTag.stem_ren_less));
+        ruleList.add(new StdRule("い", "る", "(infinitive)", DefTag.v5aru, DefTag.stem_ren)); // this is the irregular part
+        ruleList.add(new StdRule("り", "る", "(infinitive)", DefTag.v5aru, DefTag.stem_ren));
+        ruleList.add(new StdRule("ろう", "る", "volitional", DefTag.v5aru, DefTag.form_volition));
+        // gozaru etc
+        // source of gozaimasu instead of gozarimasu
+        // unfortunately edict doesn't have an inflectional category for its ございます entry, which means we have to allow ございました to deconjugate to ござる instead.
+        ruleList.add(new NeverFinalRule("れ", "る", "(izenkei)", DefTag.v4r, DefTag.stem_e));
+        ruleList.add(new OnlyFinalRule("れ", "る", "imperative", DefTag.v4r, DefTag.uninflectable));
+        ruleList.add(new NeverFinalRule("ら", "る", "('a' stem)", DefTag.v4r, DefTag.stem_a));
+        ruleList.add(new NeverFinalRule("っ", "る", "(unstressed infinitive)", DefTag.v4r, DefTag.stem_ren_less));
+        ruleList.add(new StdRule("い", "る", "(infinitive)", DefTag.v4r, DefTag.stem_ren)); // this is the irregular part
+        ruleList.add(new StdRule("り", "る", "(infinitive)", DefTag.v4r, DefTag.stem_ren));
+        ruleList.add(new StdRule("ろう", "る", "volitional", DefTag.v4r, DefTag.form_volition));
     }
     private int test_rules(int start)
     {
