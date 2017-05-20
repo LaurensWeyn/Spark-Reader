@@ -43,13 +43,13 @@ public class JNativeKeyHandler extends KeyHandler implements NativeKeyListener
         try
         {
             GlobalScreen.registerNativeHook();
+            GlobalScreen.addNativeKeyListener(this);
         }
         catch (NativeHookException ex)
         {
             System.err.println("Error starting KeyHandler:\n" + ex);
             System.err.println("Keyboard controls disabled");
         }
-        GlobalScreen.addNativeKeyListener(this);
     }
 
     @Override
