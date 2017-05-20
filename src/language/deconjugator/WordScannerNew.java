@@ -387,7 +387,7 @@ public class WordScannerNew extends WordScanner implements WordScanner.SubScanne
         ruleList.add(new NeverFinalRule("れ", "る", "(izenkei)", DefTag.v5aru, DefTag.stem_e));
         ruleList.add(new OnlyFinalRule("れ", "る", "imperative", DefTag.v5aru, DefTag.uninflectable));
         ruleList.add(new NeverFinalRule("ら", "る", "('a' stem)", DefTag.v5aru, DefTag.stem_a));
-        ruleList.add(new NeverFinalRule("っ", "る", "(unstressed infinitive)", DefTag.v5r, DefTag.stem_ren_less));
+        ruleList.add(new NeverFinalRule("っ", "る", "(unstressed infinitive)", DefTag.v5aru, DefTag.stem_ren_less));
         ruleList.add(new StdRule("い", "る", "(infinitive)", DefTag.v5aru, DefTag.stem_ren)); // this is the irregular part
         ruleList.add(new StdRule("り", "る", "(infinitive)", DefTag.v5aru, DefTag.stem_ren));
         ruleList.add(new StdRule("ろう", "る", "volitional", DefTag.v5aru, DefTag.form_volition));
