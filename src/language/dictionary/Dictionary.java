@@ -46,6 +46,7 @@ public class Dictionary
     {
         this();
         loadDirectory(dictFolder);
+        loadEpwing(dictFolder);//special case: this folder may itself be a valid epwing dictionary
     }
     public void loadDirectory(File dictFolder)throws IOException
     {
@@ -53,15 +54,12 @@ public class Dictionary
         if(fileList == null)throw new IOException(dictFolder + " not a valid directory");
         for(File file:fileList)
         {
-            if(file.isDirectory())
+            if(file.isDirectory())//either epwing or subdir
             {
-                try
+                //is this directory an epwing root?
+                if(!loadEpwing(file))
                 {
-                    //perhaps it's an epwing dictionary
-                    loadEpwing(file);
-                }catch(EBException ignored)
-                {
-                    //failed, try load subdirectory
+                    //if not, recurse to find more dictionaries
                     loadDirectory(file);
                 }
             }
@@ -72,24 +70,31 @@ public class Dictionary
             else if(file.getName().equalsIgnoreCase("edict2"))
             {
                 //edict file encoding
-                loadEdict(file, "EUC-JP", DefSource.getSource("Edict"));
+                loadEdict(file, DefSource.getSource("Edict"));
             }
             else if(file.getName().endsWith(".txt"))
             {
                 //UTF-8 dictionary
-                loadUserDict(file, "UTF-8", DefSource.getSource("Custom"));
+                loadUserDict(file, DefSource.getSource("Custom"));
             }
 
         }
     }
-    public void loadEpwing(File file)throws EBException
+    public boolean loadEpwing(File file)
     {
-        books.addAll(Arrays.asList(new Book(file).getSubBooks()));
+        try
+        {
+            books.addAll(Arrays.asList(new Book(file).getSubBooks()));
+            return true;
+        }catch(EBException ignored)
+        {
+            return false;
+        }
     }
-    public void loadEdict(File file, String encoding, DefSource source)throws IOException
+    public void loadEdict(File file, DefSource source)throws IOException
     {
         FileInputStream is = new FileInputStream(file);
-        InputStreamReader isr = new InputStreamReader(is, Charset.forName(encoding));
+        InputStreamReader isr = new InputStreamReader(is, Charset.forName("EUC-JP"));
         BufferedReader reader = new BufferedReader(isr);
         reader.readLine();//first line is copyright stuff
         String line = reader.readLine();
@@ -101,10 +106,10 @@ public class Dictionary
         }
         System.out.println("loaded " + lookup.keySet().size() + " entries so far");
     }
-    public void loadUserDict(File file, String encoding, DefSource source)throws IOException
+    public void loadUserDict(File file, DefSource source)throws IOException
     {
         FileInputStream is = new FileInputStream(file);
-        InputStreamReader isr = new InputStreamReader(is, Charset.forName(encoding));
+        InputStreamReader isr = new InputStreamReader(is, Charset.forName("UTF-8"));
         BufferedReader reader = new BufferedReader(isr);
         reader.readLine();//first line is design info
         String line = reader.readLine();

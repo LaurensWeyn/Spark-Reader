@@ -22,12 +22,14 @@ public abstract class MouseHandler
 {
     protected UI ui;
     protected Point mousePos;
+    protected int mouseLine = -1;
+    protected FoundWord mousedWord;
 
     public MouseHandler(UI ui)
     {
         this.ui= ui;
-
     }
+
     public abstract void addListeners();
 
     public void leftClick()
@@ -124,6 +126,45 @@ public abstract class MouseHandler
         }
     }
 
+
+    public void mouseMove(Point pos)
+    {
+        mousePos = pos;//keep track of where the mouse is
+
+        int charPos = toCharPos(pos.x);
+        int lineIndex = ui.getLineIndex(pos);
+        if(lineIndex >= currPage.getLineCount() || lineIndex < 0)return;
+        if(lineIndex != mouseLine || (mousedWord!= null && !mousedWord.inBounds(charPos)))
+        {
+            boolean reRender = false;
+            if(mousedWord != null)
+            {
+                mousedWord.setMouseover(false);
+                if(mousedWord.updateOnMouse())reRender = true;
+            }
+            mousedWord = null;//to recalculate
+            //toggle on selected line:
+            for (FoundWord word : currPage.getLine(lineIndex).getWords())
+            {
+                if (word.inBounds(charPos))
+                {
+                    mousedWord = word;
+                    break;
+                }
+            }
+            mouseLine = lineIndex;
+
+            if(mousedWord != null)
+            {
+                //System.out.println("mouseover'd word changed to " + mousedWord.getText());
+                mousedWord.setMouseover(true);
+                if(mousedWord.updateOnMouse())reRender = true;
+            }
+
+            if(reRender)ui.render();
+        }
+    }
+
     public void mouseScroll(int scrollDir)
     {
         if(mousePos == null)return;
@@ -165,6 +206,7 @@ public abstract class MouseHandler
             ui.xOffset += scrollDir * -mainFontSize;
             ui.boundXOff();
             ui.render();
+            mouseMove(mousePos);//update highlighted word since text moved (kind of a hack right now)
         }
         else if(pos.y <= textStartY && pos.y > furiganaStartY)//scroll history
         {

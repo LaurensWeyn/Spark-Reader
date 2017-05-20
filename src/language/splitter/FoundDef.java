@@ -169,10 +169,11 @@ public class FoundDef implements Comparable<FoundDef>
             if (tags.contains(DefTag.ctr)) score -= 10;
         }
         score -= foundDef.getSpellings().length;//-1 for every spelling; more likely it's coincidence
-        if (foundForm.getProcessText().equals("")) score += 5;//prefer words/phrases instead of deviations
+        if (foundForm.getNumConjugations() == 0) score += 5 + 50;//prefer words/phrases instead of deviations
+        //'common' words are often marked as such while a conjugated form of a common word would not.
+        //To avoid this, the above has an increased score (since word must be common enough to have it conjugated)
+        //FIXME if the above causes extra side effects.
 
-
-        //TODO: join numbers and counter words!
         //System.out.println("score for " + foundDef + " is " + score);
         return score;
     }
