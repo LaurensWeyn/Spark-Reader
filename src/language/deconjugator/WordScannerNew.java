@@ -209,8 +209,15 @@ public class WordScannerNew extends WordScanner implements WordScanner.SubScanne
                 return false;
             return true;
         }));
+        ruleList.add(new OnlyFinalRule("ん", "", "slurred negative", DefTag.stem_a, DefTag.uninflectable)); // causes problems with ichidan verbs
+        ruleList.add(new OnlyFinalRule("ん", "る", "slurred", DefTag.v1, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("ん", "る", "slurred", DefTag.v5r, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("ん", "る", "slurred", DefTag.v5aru, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("ん", "る", "slurred", DefTag.vk, DefTag.uninflectable));
+        
         ruleList.add(new OnlyFinalRule("ず", "", "adverbial negative", DefTag.stem_mizenkei, DefTag.uninflectable)); // archaically, not adverbiall, but in modern japanese, almost always adverbial
         ruleList.add(new OnlyFinalRule("ずに", "", "without doing so", DefTag.stem_mizenkei, DefTag.uninflectable)); // exactly the same meaning, despite the difference in label
+        
         // i-adjectives
         ruleList.add(new ContextRule("ない", "", "negative", DefTag.stem_ku, DefTag.adj_i, (rule, word) -> {
             //System.out.println(word.getConjugationTags());
