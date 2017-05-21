@@ -77,6 +77,7 @@ public class Options
         options.put("ankiExportPath", "forAnki.csv");
         options.put("knownWordsPath", "preferences/knownWords");
         options.put("preferredDefsPath", "preferences/preferredDefs");
+        options.put("blacklistDefsPath", "preferences/blacklistDefs");
         
         options.put("windowWidth", "1280");
         options.put("maxHeight", "720");

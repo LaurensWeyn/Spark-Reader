@@ -43,7 +43,7 @@ public class DefPopup extends JPopupMenu
     private UI ui;
     private FoundDef def;
     private JMenuItem anki, copy, copyAll, lookup;
-    private JCheckBoxMenuItem setDef;
+    private JCheckBoxMenuItem setDef, setBlacklist;
 
     public DefPopup(FoundWord word, UI ui, int mouseY)
     {
@@ -63,6 +63,19 @@ public class DefPopup extends JPopupMenu
             }
         });
         setDef.setSelected(word.isShowingFirstDef());
+
+        setBlacklist = new JCheckBoxMenuItem(new AbstractAction("Blacklist definition for this spelling")
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                Main.blacklistDef.toggleBlacklist(def);
+                //word.resortDefs();
+                //word.resetScroll();
+                ui.render();
+            }
+        });
+        setBlacklist.setSelected(Main.blacklistDef.isBlacklisted(word.getCurrentDef().getDefinition().getID(), word.getCurrentDef().getDictForm()));
 
         anki = new JMenuItem(new AbstractAction("Add as flashcard")
         {
@@ -103,6 +116,7 @@ public class DefPopup extends JPopupMenu
 
         add(anki);
         add(setDef);
+        add(setBlacklist);
         add(new Separator());
         add(copy);
         if(isJapanese(defLine))add(lookup);
