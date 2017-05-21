@@ -19,6 +19,7 @@ package options.page;
 import options.option.UIOption;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.util.ArrayList;
 
 /**
@@ -36,6 +37,7 @@ public class OptionPage implements Page
         options = new ArrayList<>();
         frame = new JPanel();
         frame.setLayout(new BoxLayout(frame, BoxLayout.Y_AXIS));
+        frame.setBorder(new EmptyBorder(3, 3, 3, 3));
         //frame.setLayout(new FlowLayout(FlowLayout.LEFT));
         frame.add(new JLabel(name));
         this.name = name;
