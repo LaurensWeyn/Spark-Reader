@@ -27,6 +27,7 @@ import options.page.UserDefPage;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
@@ -121,6 +122,7 @@ public class OptionsUI extends JFrame
             defWindow.add(new NumberOption("defWidth", "Definition popup width", "Determines how wide the definition popup window is."));
             defWindow.add(new ToggleOption("hideDefOnMouseLeave", "Hide definition when mouse leaves the screen", "If unticked, the definition popup will remain visible until you manually close it."));
             defWindow.add(new ToggleOption("showAllKanji", "Show all possible Kanji for a word", "If unticked, only kana readings are shown."));
+            defWindow.add(new ToggleOption("showDefID", "Show definition ID", "Shows the ID code of definitions. Mainly for debug purposes."));
             defWindow.add(new OptionLabel("Theme:", null));
             defWindow.add(new ColourOption("defBackCol", "Background colour", "Colour for overlay background."));
             defWindow.add(new FontOption("defFont", "Font", "Used for definition popup text."));
@@ -168,10 +170,11 @@ public class OptionsUI extends JFrame
         }
         menuScroll = new JScrollPane(leftMenu);
         rightOptions = new JPanel();
+        rightOptions.setBorder(new EmptyBorder(3, 3, 3, 3));
         optionScroll = new JScrollPane(rightOptions);
         lowerButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        optionScroll.getVerticalScrollBar().setUnitIncrement(8);
-        menuScroll.getVerticalScrollBar().setUnitIncrement(8);
+        optionScroll.getVerticalScrollBar().setUnitIncrement(12);
+        menuScroll.getVerticalScrollBar().setUnitIncrement(12);
 
         lowerButtons.add(new JButton(new AbstractAction("Revert changes")
         {

@@ -53,15 +53,16 @@ public class FoundDef implements Comparable<FoundDef>
         defText.addText(foundDef.getSource().getName(), options.getColor("defReadingCol"), options.getColor("defBackCol"));
 
         //output original form if processed
-        if(!foundForm.getProcessText().equals(""))
+        if(foundForm.getProcess().size() != 0)
         {
             defText.addText(foundForm.toString(), options.getColor("defReadingCol"), options.getColor("defBackCol"));
         }
 
         //output tags
         defText.addText(foundDef.getTagLine(), options.getColor("defTagCol"), options.getColor("defBackCol"));
-
-        defText.addText(String.valueOf(foundDef.getID()), options.getColor("defTagCol"), options.getColor("defBackCol"));
+        //output ID (debug)
+        if(options.getOptionBool("showDefID"))
+            defText.addText(String.valueOf(foundDef.getID()), options.getColor("defTagCol"), options.getColor("defBackCol"));
 
         String[] readings = foundDef.getSpellings();
         for(String reading:readings)
