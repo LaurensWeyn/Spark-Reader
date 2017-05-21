@@ -61,6 +61,8 @@ public class FoundDef implements Comparable<FoundDef>
         //output tags
         defText.addText(foundDef.getTagLine(), options.getColor("defTagCol"), options.getColor("defBackCol"));
 
+        defText.addText(String.valueOf(foundDef.getID()), options.getColor("defTagCol"), options.getColor("defBackCol"));
+
         String[] readings = foundDef.getSpellings();
         for(String reading:readings)
         {
