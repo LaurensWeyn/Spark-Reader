@@ -94,15 +94,17 @@ public class OptionsUI extends JFrame
             mainUI.add(new ToggleOption("splitLines", "Retain newlines", "If disabled, all text is shown on one line, making the UI more compact"));
             //mainUI.add(new ToggleOption("reflowToFit", "Move text to next line if it doesn't fit", "If disabled, you can scroll through the text to see the rest of the line."));
             mainUI.add(new OptionLabel("Theme:", null));
-            mainUI.add(new ColourOption("textCol", "Main text colour", "The colour used for the main font."));
+            mainUI.add(new ColourOption("textCol", "Main text colour", "The colour used for the main text."));
+            mainUI.add(new ColourOption("knownTextCol", "Known text colour", "The colour used for main text if it's marked as known."));
             mainUI.add(new FontOption("textFont", "Main text font", "The font used for the captured Japanese text."));
             window.add(mainUI);
 
             OptionPage backs = new OptionPage("Background colours");
 
             backs.add(new OptionLabel("Text:", null));
+            backs.add(new ToggleOption("textBackIsDropshadow", "Use dropshadow instead of background", "If enabled, the text background will be a dropshadow instead of a solid block."));
             backs.add(new ColourOption("textBackCol", "Main text background colour", "The colour used for normal words."));
-            backs.add(new ColourOption("knownTextBackCol", "known word colour", "Colour used for words marked as known."));
+            backs.add(new ColourOption("knownTextBackCol", "Known text background colour", "Colour used for words marked as known."));
             backs.add(new ColourOption("clickedTextBackCol", "selected word colour", "Colour used for words while their definition is visible."));
             backs.add(new OptionLabel("Word splits:", null));
             backs.add(new ColourOption("markerCol", "Manual seperator colour", "These are the word spacers you place when you middle click on text."));

@@ -53,10 +53,12 @@ public class Options
         options.put("furiBackCol", "0, 0, 0, 128");
         options.put("windowBackCol", "0, 0, 0, 175");
 
+        options.put("textBackIsDropshadow", "false");
         options.put("textBackCol", "0, 0, 0, 200");
         options.put("knownTextBackCol", "0, 0, 100, 200");
         options.put("clickedTextBackCol", "0, 100, 0, 200");
         options.put("textCol", "255, 255, 255, 255");
+        options.put("knownTextCol", "255, 255, 255, 255");
 
         options.put("defReadingCol", "0, 255, 255, 255");
         options.put("defKanjiCol", "255, 255, 255, 255");

@@ -122,11 +122,27 @@ public class FoundWord
         int startPos = g.getFontMetrics().charWidth('べ') * startX + xOff;
         int width = g.getFontMetrics().charWidth('べ') * text.length();
         boolean known = isKnown();
-        //TODO make colour setting text more readable
-        g.setColor(showDef? options.getColor("clickedTextBackCol") : (known? options.getColor("knownTextBackCol"):options.getColor("textBackCol")));
+        
+        //TODO make colour setting text mor
         g.clearRect(startPos + 1,yOff + UI.textStartY, width - 2, g.getFontMetrics().getHeight());//remove background
-        g.fillRect (startPos + 1,yOff + UI.textStartY, width - 2, g.getFontMetrics().getHeight());//set to new color
-        g.setColor(options.getColor("textCol"));
+        Color bgColor = showDef ? options.getColor("clickedTextBackCol") : known ? options.getColor("knownTextBackCol") : options.getColor("textBackCol");
+        if(options.getOptionBool("textBackIsDropshadow"))
+        {
+            // We need it to be not 100% transparent to allow the word to be clicked
+            Color fakeBgColor = new Color(bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue(), 1);
+            g.setColor(fakeBgColor);
+            g.fillRect(startPos + 1,yOff + UI.textStartY, width - 2, g.getFontMetrics().getHeight());
+            // Now draw the dropshadow text
+            g.setColor(bgColor);
+            g.drawString(text, startPos + 2, yOff + UI.textStartY + 2 + g.getFontMetrics().getMaxAscent());
+        }
+        else
+        {
+            g.setColor(bgColor);
+            g.fillRect (startPos + 1,yOff + UI.textStartY, width - 2, g.getFontMetrics().getHeight());//set to new color
+        }
+        
+        g.setColor((known ? options.getColor("knownTextCol") : options.getColor("textCol")));
         g.drawString(text, startPos, yOff + UI.textStartY + g.getFontMetrics().getMaxAscent());
 
         if(showDef && !hasOpened)
