@@ -67,7 +67,7 @@ public class Line
         g.setClip(0, 0, Main.options.getOptionInt("windowWidth"), Main.options.getOptionInt("maxHeight"));//render only over window
         //render markers
         int length = calcLength();
-        for (int i = 0; i < length; i++)
+        for (int i = 1; i < length; i++) // starting at 1: don't draw markers at the very beginning of the line 
         {
             if(markers.contains(i) || splitPoints.contains(i))//only draw on actual points
             {
