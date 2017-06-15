@@ -117,6 +117,7 @@ public class Options
         options.put("splitterMode", "full");
         options.put("deconMode", "recursive");
         options.put("furiMode", "original");
+        options.put("unparsedWordsAltColor", "false");
 
         options.put("hookKeyboard", "false");
         options.put("showDefID", "false");

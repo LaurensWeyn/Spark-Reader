@@ -125,6 +125,8 @@ public class FoundWord
         int width = g.getFontMetrics().charWidth('べ') * text.length();
         boolean known = isKnown();
         
+        if(options.getOptionBool("unparsedWordsAltColor")) known = known|(getDefinitionCount()==0);
+        
         //TODO make colour setting text more readable
         g.clearRect(startPos + 1,yOff + UI.textStartY, width - 2, g.getFontMetrics().getHeight());//remove background
         Color bgColor = showDef ? options.getColor("clickedTextBackCol") : known ? options.getColor("knownTextBackCol") : options.getColor("textBackCol");

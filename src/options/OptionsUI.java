@@ -93,6 +93,7 @@ public class OptionsUI extends JFrame
             OptionPage mainUI = new OptionPage("Main text");
 
             mainUI.add(new ToggleOption("splitLines", "Retain newlines", "If disabled, all text is shown on one line, making the UI more compact"));
+            mainUI.add(new ToggleOption("unparsedWordsAltColor", "Color unparsed text like known words", "If enabled, segments with no definitions will be rendered as if they're marked as known"));
             //mainUI.add(new ToggleOption("reflowToFit", "Move text to next line if it doesn't fit", "If disabled, you can scroll through the text to see the rest of the line."));
             mainUI.add(new OptionLabel("Theme:", null));
             mainUI.add(new ColourOption("textCol", "Main text colour", "The colour used for the main text."));
