@@ -28,6 +28,8 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
+import static java.awt.BasicStroke.CAP_ROUND;
+import static java.awt.BasicStroke.JOIN_ROUND;
 import static main.Main.options;
 
 /**
@@ -123,18 +125,44 @@ public class FoundWord
         int width = g.getFontMetrics().charWidth('べ') * text.length();
         boolean known = isKnown();
         
-        //TODO make colour setting text mor
+        //TODO make colour setting text more readable
         g.clearRect(startPos + 1,yOff + UI.textStartY, width - 2, g.getFontMetrics().getHeight());//remove background
         Color bgColor = showDef ? options.getColor("clickedTextBackCol") : known ? options.getColor("knownTextBackCol") : options.getColor("textBackCol");
-        if(options.getOptionBool("textBackIsDropshadow"))
+        
+        float textBackVar = 2.0f;
+        try
+        {
+            textBackVar = Float.valueOf(options.getOption("textBackVariable").trim());
+        }
+        catch (NumberFormatException e)
+        { /* */ }
+        
+        if(options.getOption("textBackMode").equals("dropshadow"))
         {
             // We need it to be not 100% transparent to allow the word to be clicked
             Color fakeBgColor = new Color(bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue(), 1);
             g.setColor(fakeBgColor);
             g.fillRect(startPos + 1,yOff + UI.textStartY, width - 2, g.getFontMetrics().getHeight());
+            
             // Now draw the dropshadow text
             g.setColor(bgColor);
-            g.drawString(text, startPos + 2, yOff + UI.textStartY + 2 + g.getFontMetrics().getMaxAscent());
+            g.drawString(text, startPos + textBackVar, yOff + UI.textStartY + textBackVar + g.getFontMetrics().getMaxAscent());
+        }
+        else if(options.getOption("textBackMode").equals("outline"))
+        {
+            // We need it to be not 100% transparent to allow the word to be clicked
+            Color fakeBgColor = new Color(bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue(), 1);
+            g.setColor(fakeBgColor);
+            g.fillRect(startPos + 1,yOff + UI.textStartY, width - 2, g.getFontMetrics().getHeight());
+            
+            // Get outline of text
+            Shape outline = g.getFont().createGlyphVector(g.getFontRenderContext(), text).getOutline(startPos, yOff + UI.textStartY + g.getFontMetrics().getMaxAscent());
+            // Render it
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+            g.setColor(bgColor);
+            g.setStroke(new BasicStroke(textBackVar*2.0f, CAP_ROUND, JOIN_ROUND));
+            g.draw(outline);
         }
         else
         {

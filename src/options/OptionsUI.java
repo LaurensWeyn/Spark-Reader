@@ -55,6 +55,7 @@ public class OptionsUI extends JFrame
     private final static String parserConfig ="full=Full;partial=Basic;none=Disable";
     private final static String deconConfig ="recursive=Recursive (better, slow);legacy=Legacy (faster, less accurate)";
     private final static String furiConfig ="sameForm=Conjugated as in text;original=Dictionary form;stripKana=Kanji readings only";
+    private final static String textBackConfig ="normal=Simple background;dropshadow=Dropshadow;outline=Outline";
 
     public OptionsUI() throws HeadlessException
     {
@@ -102,7 +103,9 @@ public class OptionsUI extends JFrame
             OptionPage backs = new OptionPage("Background colours");
 
             backs.add(new OptionLabel("Text:", null));
-            backs.add(new ToggleOption("textBackIsDropshadow", "Use dropshadow instead of background", "If enabled, the text background will be a dropshadow instead of a solid block."));
+            
+            backs.add(new RadioOption("textBackMode", textBackConfig, "Text background mode", null));
+            backs.add(new NumberOption("textBackVariable", "Dropshadow/outline distance/thickness", "", NumberOption.NumberPreset.posOnly));
             backs.add(new ColourOption("textBackCol", "Main text background colour", "The colour used for normal words."));
             backs.add(new ColourOption("knownTextBackCol", "Known text background colour", "Colour used for words marked as known."));
             backs.add(new ColourOption("clickedTextBackCol", "selected word colour", "Colour used for words while their definition is visible."));

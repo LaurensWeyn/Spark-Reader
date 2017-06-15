@@ -131,7 +131,7 @@ public class UI
         if(!hidden)
         {
             //render background unless it's supposed to be for dropshadows only
-            if(renderBackground && !options.getOptionBool("textBackIsDropshadow"))
+            if(renderBackground && !(options.getOption("textBackMode").equals("dropshadow") || options.getOption("textBackMode").equals("outline")))
             {
                 g.setColor(options.getColor("textBackCol"));
                 g.fillRect(0, textStartY - 1, options.getOptionInt("windowWidth"), currPage.getLineCount() * lineHeight - furiHeight + 1);
