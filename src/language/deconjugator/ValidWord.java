@@ -124,18 +124,18 @@ public class ValidWord
                 //TODO make these braces a 'hidden' flag or something instead of literal text
                 if(rule.getProcessName().startsWith("("))
                 {
-                    if(text.length() != 0)text.append(' ');
+                    if(text.length() != 0)text.append('—');
                     text.append(rule.getProcessName().replace("(", "").replace(")",""));
                 }
                 else
                 {
-                    if(text.length() != 0)text.append(' ');
+                    if(text.length() != 0)text.append('—');
                     text.append(rule.getProcessName());
                 }
             }
             else if(!rule.getProcessName().startsWith("("))
             {
-                if(text.length() != 0)text.append(' ');
+                if(text.length() != 0)text.append('—');
                 text.append(rule.getProcessName());
             }
             i++;
@@ -155,6 +155,6 @@ public class ValidWord
         }
         temp = temp.replaceAll("[(].*?[)]", "");*/
 
-        return word + "―" + getProcessText();
+        return word + "～" + getProcessText();
     }
 }

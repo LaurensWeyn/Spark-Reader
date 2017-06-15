@@ -77,15 +77,22 @@ public class WordScannerNew extends WordScanner implements WordScanner.SubScanne
         ruleList.add(new StdRule("で", "", "(te form)", DefTag.adj_i, DefTag.stem_te));
         ruleList.add(new StdRule("て", "", "(te form)", DefTag.stem_ku, DefTag.stem_te_defective));
 
-        // te-form auxiliaries that sometimes require rewrites after they eat て
+        // te-form auxiliaries that can be contracted
         ruleList.add(new StdRule("しまう", "", "completely", DefTag.stem_te, DefTag.v5u));
-        ruleList.add(new StdRule("ちゃう", "てしまう", "(reduced)", DefTag.v5u, DefTag.v5u));
-        ruleList.add(new StdRule("じゃう", "でしまう", "(reduced)", DefTag.v5u, DefTag.v5u));
+        ruleList.add(new StdRule("ちゃう", "てしまう", "(contraction)", DefTag.v5u, DefTag.v5u));
+        ruleList.add(new StdRule("ちまう", "てしまう", "(contraction)", DefTag.v5u, DefTag.v5u));
+        ruleList.add(new StdRule("じゃう", "でしまう", "(contraction)", DefTag.v5u, DefTag.v5u));
+        ruleList.add(new StdRule("じまう", "でしまう", "(contraction)", DefTag.v5u, DefTag.v5u));
+        
+        ruleList.add(new StdRule("あげる", "", "do for someone", DefTag.stem_te, DefTag.v5u));
+        ruleList.add(new StdRule("たげる", "てあげる", "(contraction)", DefTag.v5u, DefTag.v5u));
+        ruleList.add(new StdRule("だげる", "であげる", "(contraction)", DefTag.v5u, DefTag.v5u));
+        
 
         // improves parsing. can be rewritten by ちゃ
         ruleList.add(new StdRule("は", "", "(topic)", DefTag.stem_te, DefTag.uninflectable));
-        ruleList.add(new OnlyFinalRule("ちゃ", "ては", "(reduced)", DefTag.stem_te, DefTag.uninflectable));
-        ruleList.add(new OnlyFinalRule("じゃ", "では", "(reduced)", DefTag.stem_te, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("ちゃ", "ては", "(contraction)", DefTag.stem_te, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("じゃ", "では", "(contraction)", DefTag.stem_te, DefTag.uninflectable));
 
         ruleList.add(new StdRule("は", "", "(topic)", DefTag.stem_te_defective, DefTag.uninflectable));
 
