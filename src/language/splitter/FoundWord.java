@@ -139,7 +139,34 @@ public class FoundWord
         catch (NumberFormatException e)
         { /* */ }
         
-        if(options.getOption("textBackMode").equals("dropshadow"))
+        Shape outline = g.getFont().createGlyphVector(g.getFontRenderContext(), text).getOutline(startPos, yOff + UI.textStartY + g.getFontMetrics().getMaxAscent());
+        // for the Shape outline;-based text rendering mode 
+        boolean aaEnabled = options.getFontAA("textFont");
+        if(aaEnabled)
+        {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+        }
+        else
+        {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+            g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
+        }
+        
+        if(options.getOption("textBackMode").equals("outline"))
+        {
+            // We need it to be not 100% transparent to allow the word to be clicked
+            Color fakeBgColor = new Color(bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue(), 1);
+            g.setColor(fakeBgColor);
+            g.fillRect(startPos + 1,yOff + UI.textStartY, width - 2, g.getFontMetrics().getHeight());
+            
+            
+            // Render it
+            g.setColor(bgColor);
+            g.setStroke(new BasicStroke(textBackVar*2.0f, CAP_ROUND, JOIN_ROUND));
+            g.draw(outline);
+        }
+        else if(options.getOption("textBackMode").equals("dropshadow"))
         {
             // We need it to be not 100% transparent to allow the word to be clicked
             Color fakeBgColor = new Color(bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue(), 1);
@@ -150,22 +177,6 @@ public class FoundWord
             g.setColor(bgColor);
             g.drawString(text, startPos + textBackVar, yOff + UI.textStartY + textBackVar + g.getFontMetrics().getMaxAscent());
         }
-        else if(options.getOption("textBackMode").equals("outline"))
-        {
-            // We need it to be not 100% transparent to allow the word to be clicked
-            Color fakeBgColor = new Color(bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue(), 1);
-            g.setColor(fakeBgColor);
-            g.fillRect(startPos + 1,yOff + UI.textStartY, width - 2, g.getFontMetrics().getHeight());
-            
-            // Get outline of text
-            Shape outline = g.getFont().createGlyphVector(g.getFontRenderContext(), text).getOutline(startPos, yOff + UI.textStartY + g.getFontMetrics().getMaxAscent());
-            // Render it
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-            g.setColor(bgColor);
-            g.setStroke(new BasicStroke(textBackVar*2.0f, CAP_ROUND, JOIN_ROUND));
-            g.draw(outline);
-        }
         else
         {
             g.setColor(bgColor);
@@ -173,7 +184,11 @@ public class FoundWord
         }
         
         g.setColor((known ? options.getColor("knownTextCol") : options.getColor("textCol")));
-        g.drawString(text, startPos, yOff + UI.textStartY + g.getFontMetrics().getMaxAscent());
+        if(!options.getOptionBool("textFontUnhinted"))
+            g.drawString(text, startPos, yOff + UI.textStartY + g.getFontMetrics().getMaxAscent());
+        else
+            g.fill(outline);
+        
 
         if(showDef && !hasOpened)
         {

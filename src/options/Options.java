@@ -43,6 +43,7 @@ public class Options
         //all default settings hardcoded here//
         ///////////////////////////////////////
 
+        options.put("textFontUnhinted", "false");
         options.put("textFont", "Meiryo, A, 30");
         options.put("furiFont", "MS Gothic,, 12");
         options.put("defFont", "Meiryo,, 15");
