@@ -25,6 +25,7 @@ import main.Main;
 import ui.UI;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.util.*;
 import java.util.List;
 
@@ -117,18 +118,59 @@ public class FoundWord
         return definitions.size();
     }
     
-    public void render(Graphics2D g, int xOff, int yOff)
+    
+    ArrayList<Integer> cachedWidths = null;
+    int rememberedAdvancementWidth = 0;
+    public int getCachedWidth(int numchars)
+    {
+        if(numchars < cachedWidths.size()) return cachedWidths.get(numchars);
+        else return rememberedAdvancementWidth;
+    }
+    public int getAdvancementWidth(Graphics2D g)
+    {
+        options.getFont(g, "textFont");
+        Rectangle2D rect = g.getFontMetrics().getStringBounds(text, g);
+        
+        // Java doesn't give a reasonable way to get the character at a given physical distance into a string so this has to be done manually and it's awful
+        int newAdvancementWidth = (int)Math.round(rect.getWidth());
+        if(newAdvancementWidth != rememberedAdvancementWidth)
+        {
+            cachedWidths = new ArrayList<>();
+            cachedWidths.add(0);
+            for(int i = 1; i < text.length(); i++)
+                cachedWidths.add((int)Math.round(g.getFontMetrics().getStringBounds(text.substring(0,i), g).getWidth()));
+        }
+        rememberedAdvancementWidth = newAdvancementWidth;
+        return rememberedAdvancementWidth;
+    }
+    
+    public int getRenderWidth(Graphics2D g)
+    {
+        options.getFont(g, "textFont");
+        // Can't use getStringBounds or stringWidth because they're imprecise for some characters in some fonts (like ─ in yozfont)
+        Rectangle2D rect = g.getFont().createGlyphVector(g.getFontRenderContext(), text).getOutline(0, 0).getBounds2D();
+        return (int)Math.round(rect.getWidth());
+    }
+    
+    public void renderClear(Graphics2D g, int xStart, int xOff, int yOff)
     {
         g.setClip(0, 0, options.getOptionInt("windowWidth"), options.getOptionInt("maxHeight"));//render only over window
         options.getFont(g, "textFont");
-        int startPos = g.getFontMetrics().charWidth('べ') * startX + xOff;
-        int width = g.getFontMetrics().charWidth('べ') * text.length();
-        boolean known = isKnown();
         
-        if(options.getOptionBool("unparsedWordsAltColor")) known = known|(getDefinitionCount()==0);
+        int bgStart = xStart + xOff;
+        int bgEnd = bgStart + getAdvancementWidth(g);
         
         //TODO make colour setting text more readable
-        g.clearRect(startPos + 1,yOff + UI.textStartY, width - 2, g.getFontMetrics().getHeight());//remove background
+        g.clearRect(bgStart, yOff + UI.textStartY, bgEnd-bgStart, g.getFontMetrics().getHeight());//remove background
+        
+    }
+    public void renderBackground(Graphics2D g, int xStart, int xOff, int yOff)
+    {
+        int startPos = xStart + xOff;
+        int bgEnd = startPos + getAdvancementWidth(g);
+        
+        boolean known = isKnown();
+        if(options.getOptionBool("unparsedWordsAltColor")) known = known|(getDefinitionCount()==0);
         Color bgColor = showDef ? options.getColor("clickedTextBackCol") : known ? options.getColor("knownTextBackCol") : options.getColor("textBackCol");
         
         float textBackVar = 2.0f;
@@ -139,7 +181,6 @@ public class FoundWord
         catch (NumberFormatException e)
         { /* */ }
         
-        Shape outline = g.getFont().createGlyphVector(g.getFontRenderContext(), text).getOutline(startPos, yOff + UI.textStartY + g.getFontMetrics().getMaxAscent());
         // for the Shape outline;-based text rendering mode 
         boolean aaEnabled = options.getFontAA("textFont");
         if(aaEnabled)
@@ -155,10 +196,11 @@ public class FoundWord
         
         if(options.getOption("textBackMode").equals("outline"))
         {
+            Shape outline = g.getFont().createGlyphVector(g.getFontRenderContext(), text).getOutline(startPos, yOff + UI.textStartY + g.getFontMetrics().getMaxAscent());
             // We need it to be not 100% transparent to allow the word to be clicked
             Color fakeBgColor = new Color(bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue(), 1);
             g.setColor(fakeBgColor);
-            g.fillRect(startPos + 1,yOff + UI.textStartY, width - 2, g.getFontMetrics().getHeight());
+            g.fillRect(startPos, yOff + UI.textStartY, bgEnd-startPos, g.getFontMetrics().getHeight());
             
             
             // Render it
@@ -171,7 +213,7 @@ public class FoundWord
             // We need it to be not 100% transparent to allow the word to be clicked
             Color fakeBgColor = new Color(bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue(), 1);
             g.setColor(fakeBgColor);
-            g.fillRect(startPos + 1,yOff + UI.textStartY, width - 2, g.getFontMetrics().getHeight());
+            g.fillRect(startPos, yOff + UI.textStartY, bgEnd-startPos, g.getFontMetrics().getHeight());
             
             // Now draw the dropshadow text
             g.setColor(bgColor);
@@ -180,14 +222,26 @@ public class FoundWord
         else
         {
             g.setColor(bgColor);
-            g.fillRect (startPos + 1,yOff + UI.textStartY, width - 2, g.getFontMetrics().getHeight());//set to new color
+            g.fillRect(startPos, yOff + UI.textStartY, bgEnd-startPos, g.getFontMetrics().getHeight());//set to new color
         }
+    }
+    
+    public void render(Graphics2D g, int xStart, int xOff, int yOff)
+    {
+        int startPos = xStart + xOff;
+        
+        boolean known = isKnown();
+        
+        int width = getAdvancementWidth(g);
         
         g.setColor((known ? options.getColor("knownTextCol") : options.getColor("textCol")));
         if(!options.getOptionBool("textFontUnhinted"))
             g.drawString(text, startPos, yOff + UI.textStartY + g.getFontMetrics().getMaxAscent());
         else
+        {
+            Shape outline = g.getFont().createGlyphVector(g.getFontRenderContext(), text).getOutline(startPos, yOff + UI.textStartY + g.getFontMetrics().getMaxAscent());
             g.fill(outline);
+        }
         
 
         if(showDef && !hasOpened)
@@ -236,6 +290,8 @@ public class FoundWord
             int y = UI.defStartY + g.getFontMetrics().getAscent();
             definitions.get(currentDef).render(g, startPos, Math.max(width, options.getOptionInt("defWidth")), y);
         }
+        
+        return;
     }
     private boolean showFurigana(boolean known)
     {
@@ -249,12 +305,9 @@ public class FoundWord
             default:return false;
         }
     }
-    public void toggleWindow(int pos)
+    public void toggleWindow()
     {
-        if(inBounds(pos))
-        {
-            showDef(!showDef);
-        }else showDef(false);
+        showDef(!showDef);
     }
     public void showDef(boolean mode)
     {

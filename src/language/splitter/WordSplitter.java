@@ -164,14 +164,12 @@ public class WordSplitter
         int start = 0;
         breaks.add(0);
         
-        // todo: make segmenting on writing system changes optional? (when normal segmentation disabled only; dropdown menu?)
-        // fixme: not segmenting non-japanese text into single characters makes the renderer's assumptions on segment width break, horribly.
         boolean wasJapanese;
-        boolean isJapanese = Japanese.isJapaneseWriting(text.charAt(0));
+        boolean isJapanese = true;//Japanese.isJapaneseWriting(text.charAt(0));
         while(pos < text.length())
         {
             wasJapanese = isJapanese;
-            isJapanese = Japanese.isJapaneseWriting(text.charAt(pos));
+            isJapanese = true;//Japanese.isJapaneseWriting(text.charAt(pos));
             if(breaks.contains(pos) || isJapanese != wasJapanese)
             {
                 // cause wasJapanese to be equal to isJapanese on the next iteration

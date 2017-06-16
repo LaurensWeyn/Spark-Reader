@@ -245,7 +245,7 @@ public class UI
                     ui.tray.hideTray();
                 }
                 
-                clip = Japanese.toFullWidth(clip);
+                //clip = Japanese.toFullWidth(clip);
 
                 log.addLine(clip);//add line to log
                 if(!options.getOptionBool("splitLines"))clip = clip.replace("\n", "");//all on one line if not splitting

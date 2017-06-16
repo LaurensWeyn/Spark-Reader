@@ -55,7 +55,7 @@ public abstract class MouseHandler
 
         if(pos.y >= textStartY && pos.y <= textEndY)
         {
-            int charIndex = toCharPos(pos.x);
+            //int charIndex = toCharPos(pos.x);
             int lineIndex = ui.getLineIndex(pos);
             ui.selectedWord = null;//to recalculate
             //TODO move this over to Page functions?
@@ -68,11 +68,18 @@ public abstract class MouseHandler
                 i++;
             }
             //toggle on selected line:
-            for(FoundWord word:currPage.getLine(lineIndex).getWords())
+            FoundWord word = currPage.getLine(lineIndex).getWordAt(pos.x);
+            for(FoundWord word2:currPage.getLine(lineIndex).getWords())
             {
-                word.toggleWindow(charIndex);
-                if(word.isShowingDef())ui.selectedWord = word;
+                if(word2 == word)
+                {
+                    word.toggleWindow();
+                    if(word.isShowingDef())ui.selectedWord = word;
+                }
+                else
+                    word2.showDef(false);
             }
+            
             ui.render();
         }
     }
@@ -88,20 +95,13 @@ public abstract class MouseHandler
         {
             WordPopup popup = null;
             int lineIndex = ui.getLineIndex(pos);
-            for(FoundWord word:currPage.getLine(lineIndex).getWords())
-            {
-                int index = toCharPos(pos.x);
-                if(word.inBounds(index))
-                {
-                    popup = new WordPopup(word, ui);
-                    break;
-                }
-            }
-
+            FoundWord word = currPage.getLine(lineIndex).getWordAt(pos.x);
+            
+            if(word != null)
+                popup = new WordPopup(word, ui);
+            
             if(popup != null)
-            {
                 popup.show(pos.x, pos.y);
-            }
         }
         //definition
         else if(options.getOptionBool("defsShowUpwards") ? (pos.y < defStartY):(pos.y > defStartY))
@@ -114,8 +114,9 @@ public abstract class MouseHandler
     {
         if(pos.y > textStartY && pos.y < textEndY)//place marker
         {
-            int point = toCharPos(pos.x + mainFontSize/2);
+            //int point = toCharPos(pos.x + mainFontSize/2);
             int lineIndex = ui.getLineIndex(pos);
+            int point = currPage.getLine(lineIndex).getCharAt(pos.x);
             Set<Integer> markers = currPage.getLine(lineIndex).getMarkers();
             //toggle markers
             if(markers.contains(point))markers.remove(point);
@@ -134,24 +135,20 @@ public abstract class MouseHandler
         int charPos = toCharPos(pos.x);
         int lineIndex = ui.getLineIndex(pos);
         if(lineIndex >= currPage.getLineCount() || lineIndex < 0)return;
-        if(lineIndex != mouseLine || (mousedWord!= null && !mousedWord.inBounds(charPos)))
+        
+        FoundWord word = currPage.getLine(lineIndex).getWordAt(mousePos.x);
+        
+        if(lineIndex != mouseLine || (mousedWord != null && mousedWord != word))
         {
             boolean reRender = false;
             if(mousedWord != null)
             {
                 mousedWord.setMouseover(false);
-                if(mousedWord.updateOnMouse())reRender = true;
+                if(mousedWord.updateOnMouse()) reRender = true;
             }
             mousedWord = null;//to recalculate
-            //toggle on selected line:
-            for (FoundWord word : currPage.getLine(lineIndex).getWords())
-            {
-                if (word.inBounds(charPos))
-                {
-                    mousedWord = word;
-                    break;
-                }
-            }
+            
+            mousedWord = word;
             mouseLine = lineIndex;
 
             if(mousedWord != null)

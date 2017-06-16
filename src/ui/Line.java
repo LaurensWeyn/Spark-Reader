@@ -56,6 +56,39 @@ public class Line
             word.showDef(false);
         }
     }
+    
+    List<Integer> wordLocations = null; // must be stored in ascending order
+    public FoundWord getWordAt(int x)
+    {
+        if(wordLocations == null) return null;
+        
+        for(int i = 1; i < wordLocations.size(); i++)
+        {
+            if(wordLocations.get(i) > x && i-1 < words.size())
+                return words.get(i-1);
+        }
+        return null;
+    }
+    public int getCharAt(int x)
+    {
+        if(wordLocations == null) return 0;
+        
+        for(int i = 1; i < wordLocations.size(); i++)
+        {
+            if(wordLocations.get(i) > x && i-1 < words.size())
+            {
+                int startpoint = wordLocations.get(i-1);
+                FoundWord word = words.get(i-1);
+                if(word.getLength() == 0) return word.startX();
+                for(int j = 0; j < word.getLength(); j++)
+                {
+                    if(word.getCachedWidth(j)/2+word.getCachedWidth(j+1)/2+startpoint > x) return word.startX() + j; 
+                }
+                return word.endX();
+            }
+        }
+        return 0;
+    }
     public int render(Graphics2D g, int xOff, int yOff)
     {
         //find markers
@@ -67,6 +100,9 @@ public class Line
         g.setClip(0, 0, Main.options.getOptionInt("windowWidth"), Main.options.getOptionInt("maxHeight"));//render only over window
         //render markers
         int length = calcLength();
+        
+        
+        /*
         for (int i = 1; i < length; i++) // starting at 1: don't draw markers at the very beginning of the line 
         {
             if(markers.contains(i) || splitPoints.contains(i))//only draw on actual points
@@ -77,15 +113,45 @@ public class Line
                 g.fillRect (xOff + i * mainFontSize - 1, yOff + textStartY, 2, UI.textHeight);//TODO make markers variable size
             }
         }
+        */
 
-        //render words
+        //render words in three stages to make sure any overlapping text overlaps exactly the way it should (i.e. so clearing doesn't cut off text)
         Main.options.getFont("textFont");
 
         int lastX = 0;
+        int characters = 0;
         for(FoundWord word:words)
         {
-            word.render(g, xOff, yOff);
-            lastX = word.endX() * mainFontSize + xOff;
+            // do this first to put it under the text
+            int width = word.getAdvancementWidth(g);
+            characters += word.getText().length();
+            if(markers.contains(characters) || splitPoints.contains(characters))//only draw on actual points
+            {
+                g.setColor(markers.contains(characters)? Main.options.getColor("markerCol"): Main.options.getColor("noMarkerCol"));
+
+                g.clearRect(xOff + lastX + width, yOff + textStartY, 2, UI.textHeight);
+                g.fillRect (xOff + lastX + width, yOff + textStartY, 2, UI.textHeight);//TODO make marker size configurable
+            }
+            word.renderClear(g, lastX, xOff, yOff);
+            lastX = width + lastX + 2;
+        }
+        lastX = 0;
+        for(FoundWord word:words)
+        {
+            int width = word.getAdvancementWidth(g);
+            word.renderBackground(g, lastX, xOff, yOff);
+            lastX = width + lastX + 2;
+        }
+        
+        wordLocations = new ArrayList<>();
+        wordLocations.add(0);
+        lastX = 0;
+        for(FoundWord word:words)
+        {
+            int width = word.getAdvancementWidth(g);
+            word.render(g, lastX, xOff, yOff);
+            lastX = width + lastX + 2;
+            wordLocations.add(lastX);
         }
         return lastX;
     }
