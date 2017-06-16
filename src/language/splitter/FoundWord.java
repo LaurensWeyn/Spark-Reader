@@ -144,14 +144,6 @@ public class FoundWord
         return rememberedAdvancementWidth;
     }
     
-    public int getRenderWidth(Graphics2D g)
-    {
-        options.getFont(g, "textFont");
-        // Can't use getStringBounds or stringWidth because they're imprecise for some characters in some fonts (like ─ in yozfont)
-        Rectangle2D rect = g.getFont().createGlyphVector(g.getFontRenderContext(), text).getOutline(0, 0).getBounds2D();
-        return (int)Math.round(rect.getWidth());
-    }
-    
     public void renderClear(Graphics2D g, int xStart, int xOff, int yOff)
     {
         g.setClip(0, 0, options.getOptionInt("windowWidth"), options.getOptionInt("maxHeight"));//render only over window

@@ -151,7 +151,7 @@ public class Line
             int width = word.getAdvancementWidth(g);
             word.render(g, lastX, xOff, yOff);
             lastX = width + lastX + 2;
-            wordLocations.add(lastX);
+            wordLocations.add(lastX+xOff);
         }
         return lastX;
     }
