@@ -284,7 +284,7 @@ public class FoundWord
             int y = UI.defStartY + g.getFontMetrics().getAscent();
             int defPosition = startPos;
             if(options.getOptionBool("defConstrainPosition"))
-                defPosition = Math.min(startPos, options.getOptionInt("windowWidth")-options.getOptionInt("defWidth"));
+                defPosition = Math.max(0, Math.min(startPos, options.getOptionInt("windowWidth")-options.getOptionInt("defWidth")));
             
             definitions.get(currentDef).render(g, defPosition, Math.max(width, options.getOptionInt("defWidth")), y);
         }
