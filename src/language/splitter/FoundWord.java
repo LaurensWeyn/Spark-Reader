@@ -190,7 +190,7 @@ public class FoundWord
         if(options.getOption("textBackMode").equals("outline"))
         {
             Shape outline = g.getFont().createGlyphVector(g.getFontRenderContext(), text).getOutline(startPos, yOff + UI.textStartY + g.getFontMetrics().getMaxAscent());
-            // We need it to be not 100% transparent to allow the word to be clicked
+            // We need it to be not 100% transparent to allow the word to be clicked.
             Color fakeBgColor = new Color(bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue(), 1);
             g.setColor(fakeBgColor);
             g.fillRect(startPos, yOff + UI.textStartY, bgEnd-startPos, g.getFontMetrics().getHeight());

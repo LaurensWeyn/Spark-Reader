@@ -130,6 +130,7 @@ public abstract class MouseHandler
 
     public void mouseMove(Point pos)
     {
+        if(pos == null) return;
         mousePos = pos;//keep track of where the mouse is
 
         int charPos = toCharPos(pos.x);
