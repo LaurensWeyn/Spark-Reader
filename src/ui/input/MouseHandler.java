@@ -95,10 +95,11 @@ public abstract class MouseHandler
         {
             WordPopup popup = null;
             int lineIndex = ui.getLineIndex(pos);
-            FoundWord word = currPage.getLine(lineIndex).getWordAt(pos.x);
+            Line line = currPage.getLine(lineIndex);
+            FoundWord word = line.getWordAt(pos.x);
             
             if(word != null)
-                popup = new WordPopup(word, ui);
+                popup = new WordPopup(line, word, ui);
             
             if(popup != null)
                 popup.show(pos.x, pos.y);

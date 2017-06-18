@@ -20,7 +20,11 @@ import hooker.ClipboardHook;
 import language.splitter.FoundWord;
 import main.Main;
 import main.Utils;
+import ui.Line;
 import ui.UI;
+import language.dictionary.DefSource;
+import language.dictionary.UserDefinition;
+import ui.WordEditUI;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -44,13 +48,14 @@ public class WordPopup extends JPopupMenu
     
     JMenuItem addBreak;
     JMenuItem exportLine;
+    JMenuItem makeDefinition;
     JMenuItem copy;
     JMenuItem append;
     JMenuItem copyFull;
     JCheckBoxMenuItem markKnown;
     int x, y;
     UI ui;
-    public WordPopup(FoundWord word, UI ui)
+    public WordPopup(Line line, FoundWord word, UI ui)
     {
         this.word = word;
         this.ui = ui;
@@ -62,6 +67,14 @@ public class WordPopup extends JPopupMenu
             {
                 setVisible(false);//ensure this menu's already gone for the screenshot
                 exportLine();
+            }
+        });
+        makeDefinition = new JMenuItem(new AbstractAction("Create new userdict entry")
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                makeDefPopup(line);
             }
         });
         copy = new JMenuItem(new AbstractAction("Copy word")
@@ -122,6 +135,7 @@ public class WordPopup extends JPopupMenu
         add(addBreak);
         add(exportLine);
         add(markKnown);
+        add(makeDefinition);
         add(new Separator());
         add(copy);
         if(Main.currPage.getText().contains(clipboard) && Main.currPage.getText().contains(clipboard + word.getText()))add(append);
@@ -238,6 +252,30 @@ public class WordPopup extends JPopupMenu
             }
 
         }catch(IOException | AWTException | InterruptedException err)
+        {
+            JOptionPane.showInputDialog(frame, "Error while exporting line:\n" + err);
+        }
+    }
+    public static void makeDefPopup(Line line)
+    {
+        JFrame frame = Main.ui.disp.getFrame();
+        try
+        {
+            String note = (String)
+            JOptionPane.showInputDialog(frame,
+                "Cut line down to undefined word",
+                "Exporting line",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                null,
+                line.toString());
+            if(note == null)return;//cancelled
+
+            Thread.sleep(500);//give the popup time to disappear
+            
+            new WordEditUI(note);
+        }
+        catch(InterruptedException err)
         {
             JOptionPane.showInputDialog(frame, "Error while exporting line:\n" + err);
         }

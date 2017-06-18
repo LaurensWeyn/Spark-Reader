@@ -17,6 +17,7 @@
 package ui;
 
 import language.dictionary.*;
+import main.Main;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -24,6 +25,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Used to edit words in the user dictionary
@@ -44,15 +48,15 @@ public class WordEditUI
     private static final String NO_READING = "Reading (Kanji words only)";
     private static final String NO_TAGS = "Extra tags (advanced)";
 
-    private Definition definition;
+    private UserDefinition definition;
 
     public WordEditUI(UserDefinition toEdit)
     {
         definition = toEdit;
-        buildUI(String.join(", ", toEdit.getSpellings()), String.join(", ", toEdit.getReadings()), "");
+        buildUI(String.join(";", toEdit.getSpellingsRaw()), String.join(";", toEdit.getReadings()), "");
         defText.setText(toEdit.getMeaningRaw().replace('/','\n'));
         //spelling.setText();
-        buildFrame("Editing " + toEdit.getSpellings()[0]);
+        buildFrame("Editing " + toEdit.getSpellingsRaw()[0]);
     }
 
     public WordEditUI()
@@ -60,6 +64,31 @@ public class WordEditUI
         buildUI("", "", "");
         definition = new UserDefinition(DefSource.getSource("Custom"));
         buildFrame("Adding new word");
+    }
+    public WordEditUI(String text)
+    {
+        buildUI(text, "", "");
+        definition = new UserDefinition(DefSource.getSource("Custom"));
+        buildFrame("Adding new word");
+    }
+    
+    private void updateDefinition()
+    {
+        String[] spellings = {spelling.getText()};
+        String[] readings = {reading.getText()};
+        Set<DefTag> tags = new HashSet<>();
+        DefTag tag = ((WordOption)tagSelect.getSelectedItem()).getTag();
+        if(tag != null)
+            tags.add(tag);
+        if(!advancedTags.getText().equals(""))
+            tags.add(DefTag.toTag(advancedTags.getText()));
+        definition.setSpellings(spellings);
+        System.out.println("Spellings set to " + spellings[0]);
+        definition.setReadings(readings);
+        definition.setMeaningRaw(defText.getText());
+        definition.setTags(tags);
+        if(definition.getID() == 0)
+            definition.setID((int)(7000000 + Math.random()*700000)); // Generate a random number in a range EDICT will ever really use
     }
 
     private void buildUI(String spellingText, String readingText, String tagText)
@@ -117,7 +146,13 @@ public class WordEditUI
             @Override
             public void actionPerformed(ActionEvent e)
             {
-
+                updateDefinition();
+                if(!definition.getSource().getDefinitions().contains(definition))
+                {
+                    definition.getSource().attach(definition);
+                    Main.dict.insertDefinition(definition);
+                }
+                frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
             }
         });
         cancelButton = new JButton(new AbstractAction("Cancel")
@@ -125,7 +160,7 @@ public class WordEditUI
             @Override
             public void actionPerformed(ActionEvent e)
             {
-
+                frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
             }
         });
         buttonPanel.add(saveButton, BorderLayout.EAST);
@@ -153,10 +188,9 @@ public class WordEditUI
     private enum WordOption
     {
         noun(DefTag.n, "Noun"),
-        v1(DefTag.v1),
-        v5("Godan verb"),
-        adj_i(DefTag.adj_i, "i adjective"),
-        none("Other (specify below)");
+        adj_i(DefTag.adj_i, "i-adjective"),
+        particle(DefTag.p, "Particle"),
+        none("Other (specify below, no parens)");
 
         DefTag tag;
         String displayName;
@@ -165,11 +199,6 @@ public class WordEditUI
         {
             tag = null;
             this.displayName = displayName;
-        }
-        WordOption(DefTag tag)
-        {
-            this.tag = tag;
-            this.displayName = tag.toString();
         }
         WordOption(DefTag tag, String displayName)
         {

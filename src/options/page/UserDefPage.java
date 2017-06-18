@@ -1,7 +1,6 @@
 package options.page;
 
-import language.dictionary.DefSource;
-import language.dictionary.UserDefinition;
+import language.dictionary.*;
 import main.Main;
 import ui.WordEditUI;
 
@@ -10,6 +9,10 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 
 /**
@@ -61,16 +64,49 @@ public class UserDefPage implements Page
                 }
             }
         });
+        JButton saveButton = new JButton(new AbstractAction("Save")
+        {
+            @Override
+            public void actionPerformed(ActionEvent act)
+            {
+                StringBuilder userDefs = new StringBuilder();
+                userDefs.append("\n");
+                for(Definition definition:source.getDefinitions())
+                {
+                    UserDefinition def = (UserDefinition)definition;
+                    userDefs.append(String.join(";",def.getSpellingsRaw()));
+                    userDefs.append(" ["); 
+                    userDefs.append(String.join(";",def.getReadings()));
+                    userDefs.append("] /");
+                    for(DefTag tag:def.getTags())
+                    {
+                        if(tag == null) continue;
+                        userDefs.append("(");
+                        userDefs.append(tag.name());
+                        userDefs.append(")");
+                    }
+                    userDefs.append(def.getMeaningRaw().replace("\n", "/"));
+                    userDefs.append("/EntL");
+                    userDefs.append(def.getID());
+                    userDefs.append("/\n");
+                }
+                try (PrintStream out = new PrintStream(new FileOutputStream(Dictionary.userdictFilename)))
+                {
+                    out.print(userDefs.toString());
+                }
+                catch (FileNotFoundException e)
+                { /* */ }
+            }
+        });
 
         buttonPanel.add(addButton);
         buttonPanel.add(editButton);
         buttonPanel.add(deleteButton);
-
-
+        buttonPanel.add(saveButton);
 
         mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(defScroll, BorderLayout.CENTER);
-        //mainPanel.add(buttonPanel, BorderLayout.NORTH);
+        mainPanel.add(buttonPanel, BorderLayout.NORTH);
     }
     @Override
     public JComponent getComponent()
