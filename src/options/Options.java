@@ -122,6 +122,7 @@ public class Options
 
         options.put("hookKeyboard", "false");
         options.put("showDefID", "false");
+        options.put("defConstrainPosition", "false");
 
     }
     public Options(File file)throws IOException

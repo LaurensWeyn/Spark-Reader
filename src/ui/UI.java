@@ -77,8 +77,12 @@ public class UI
     public UI()
     {
         currPage = new Page();
-        disp = new Overlay(options.getOptionInt("windowWidth") + options.getOptionInt("defWidth"),
-                options.getOptionInt("maxHeight"));
+        int windowWidth;
+        if(options.getOptionBool("defConstrainPosition"))
+            windowWidth = Math.max(options.getOptionInt("windowWidth"), options.getOptionInt("defWidth"));
+        else
+            windowWidth = options.getOptionInt("windowWidth") + options.getOptionInt("defWidth");
+        disp = new Overlay(windowWidth, options.getOptionInt("maxHeight"));
     }
     private void registerListeners()
     {

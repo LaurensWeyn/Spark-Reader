@@ -282,7 +282,11 @@ public class FoundWord
             g.setClip(null);//render this anywhere
             options.getFont(g, "defFont");
             int y = UI.defStartY + g.getFontMetrics().getAscent();
-            definitions.get(currentDef).render(g, startPos, Math.max(width, options.getOptionInt("defWidth")), y);
+            int defPosition = startPos;
+            if(options.getOptionBool("defConstrainPosition"))
+                defPosition = Math.min(startPos, options.getOptionInt("windowWidth")-options.getOptionInt("defWidth"));
+            
+            definitions.get(currentDef).render(g, defPosition, Math.max(width, options.getOptionInt("defWidth")), y);
         }
         
         return;
