@@ -184,7 +184,7 @@ public abstract class MouseHandler
         //scroll through definitions
         else if(onTextRange && ui.selectedWord != null)
         {
-            if(ui.selectedWord.inBounds(toCharPos(pos.x)))
+            if(ui.selectedWord == currPage.getLine(ui.getLineIndex(pos)).getWordAt(pos.x))
             {
                 if(scrollDir > 0)ui.selectedWord.scrollDown();
                 if(scrollDir < 0)ui.selectedWord.scrollUp();

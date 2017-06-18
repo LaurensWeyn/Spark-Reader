@@ -158,6 +158,7 @@ public class FoundWord
     }
     public void renderBackground(Graphics2D g, int xStart, int xOff, int yOff)
     {
+        g.setClip(0, 0, options.getOptionInt("windowWidth"), options.getOptionInt("maxHeight"));//render only over window
         int startPos = xStart + xOff;
         int bgEnd = startPos + getAdvancementWidth(g);
         
@@ -220,6 +221,7 @@ public class FoundWord
     
     public void render(Graphics2D g, int xStart, int xOff, int yOff)
     {
+        g.setClip(0, 0, options.getOptionInt("windowWidth"), options.getOptionInt("maxHeight"));//render only over window
         int startPos = xStart + xOff;
         
         boolean known = isKnown();

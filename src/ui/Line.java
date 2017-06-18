@@ -98,22 +98,6 @@ public class Line
             splitPoints.add(word.startX());
         }
         g.setClip(0, 0, Main.options.getOptionInt("windowWidth"), Main.options.getOptionInt("maxHeight"));//render only over window
-        //render markers
-        int length = calcLength();
-        
-        
-        /*
-        for (int i = 1; i < length; i++) // starting at 1: don't draw markers at the very beginning of the line 
-        {
-            if(markers.contains(i) || splitPoints.contains(i))//only draw on actual points
-            {
-                g.setColor(markers.contains(i)? Main.options.getColor("markerCol"): Main.options.getColor("noMarkerCol"));
-
-                g.clearRect(xOff + i * mainFontSize - 1, yOff + textStartY, 2, UI.textHeight);
-                g.fillRect (xOff + i * mainFontSize - 1, yOff + textStartY, 2, UI.textHeight);//TODO make markers variable size
-            }
-        }
-        */
 
         //render words in three stages to make sure any overlapping text overlaps exactly the way it should (i.e. so clearing doesn't cut off text)
         Main.options.getFont("textFont");
@@ -122,7 +106,7 @@ public class Line
         int characters = 0;
         for(FoundWord word:words)
         {
-            // do this first to put it under the text
+            // render markers first to put them under the text
             int width = word.getAdvancementWidth(g);
             characters += word.getText().length();
             if(markers.contains(characters) || splitPoints.contains(characters))//only draw on actual points
