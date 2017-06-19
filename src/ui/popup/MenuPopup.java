@@ -214,7 +214,7 @@ public class MenuPopup extends JPopupMenu
                 new WindowHookUI();
             }
         });
-        JMenuItem windowUnHook = new JMenuItem(new AbstractAction("Stick to window")
+        JMenuItem windowUnHook = new JMenuItem(new AbstractAction("Stop sticking to window")
         {
             @Override
             public void actionPerformed(ActionEvent e)
