@@ -16,15 +16,17 @@
  */
 package ui;
 
-import language.dictionary.Japanese;
+import hooker.WindowHook;
 import language.splitter.FoundWord;
 import main.Main;
+import options.Options;
 import ui.input.JNativeKeyHandler;
 import ui.input.KeyHandler;
 import ui.input.MouseHandler;
 import ui.input.SwingMouseHandler;
 
 import java.awt.*;
+import java.util.*;
 
 import static main.Main.*;
 
@@ -73,6 +75,8 @@ public class UI
 
     public MouseHandler mouseHandler;
     public KeyHandler keyHandler;
+    
+    public static java.util.List<Integer> stickToWindow = null;
 
     public UI()
     {
@@ -248,6 +252,11 @@ public class UI
         //update loop
         while(true)
         {
+            if(stickToWindow != null)
+            {
+                stickToWindow = WindowHook.hook.getCoord();
+                ui.disp.getFrame().setLocation(stickToWindow.get(0), stickToWindow.get(1));
+            }
             //check clipboard
             String clip = hook.check();
             if(clip != null)
@@ -289,7 +298,7 @@ public class UI
             else mpStatusText = null;
             try
             {
-                Thread.sleep(100);
+                Thread.sleep(Main.options.getOptionInt("uiThrottleMilliseconds"));
             }catch(InterruptedException ignored){}
 
             //UI has become inaccessible (most likely closed via alt+f4)

@@ -18,11 +18,13 @@ package ui.popup;
 
 import hooker.ClipboardHook;
 import hooker.MemoryHook;
+import hooker.WindowHook;
 import main.Main;
 import multiplayer.Client;
 import multiplayer.Host;
 import options.OptionsUI;
 import ui.UI;
+import ui.WindowHookUI;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -204,6 +206,23 @@ public class MenuPopup extends JPopupMenu
                 hook.refine();
             }
         }));
+        JMenuItem windowHook = new JMenuItem(new AbstractAction("Stick to window")
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                new WindowHookUI();
+            }
+        });
+        JMenuItem windowUnHook = new JMenuItem(new AbstractAction("Stick to window")
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                UI.stickToWindow = null;
+            }
+        });
+        
         add(settings);
         /*if(UI.hook instanceof MemoryHook)
         {
@@ -211,6 +230,12 @@ public class MenuPopup extends JPopupMenu
             add(memoryHookStop);
         }
         else add(memoryHookStart);*/
+        
+        if(WindowHook.hook != null && UI.stickToWindow == null)
+            add(windowHook);
+        else if(UI.stickToWindow != null)
+            add(windowUnHook);
+        
         add(imprt);
         add(mp);
         add(minimise);
