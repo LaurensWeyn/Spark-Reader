@@ -65,6 +65,8 @@ public class WordScannerNew extends WordScanner implements WordScanner.SubScanne
             return true;
         }));
 
+        ruleList.add(new StdRule("すぎる", "", "too much", DefTag.stem_ren, DefTag.v1));
+        
         ruleList.add(new StdRule("ください", "", "polite request", DefTag.stem_te, DefTag.adj_i));
 
         // te form
