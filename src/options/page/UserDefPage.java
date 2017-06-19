@@ -9,10 +9,7 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.ArrayList;
 
 /**
@@ -90,11 +87,11 @@ public class UserDefPage implements Page
                     userDefs.append(def.getID());
                     userDefs.append("/\n");
                 }
-                try (PrintStream out = new PrintStream(new FileOutputStream(Dictionary.userdictFilename)))
+                try (OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(Dictionary.userdictFilename), "UTF-8"))
                 {
-                    out.print(userDefs.toString());
+                    out.write(userDefs.toString());
                 }
-                catch (FileNotFoundException e)
+                catch (IOException e)
                 { /* */ }
             }
         });

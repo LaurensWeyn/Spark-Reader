@@ -75,7 +75,9 @@ public class WordEditUI
     private void updateDefinition()
     {
         String[] spellings = {spelling.getText()};
-        String[] readings = {reading.getText()};
+        String[] readings = {""};
+        if(!reading.getText().equals(NO_READING))
+            readings[0] = reading.getText();
         Set<DefTag> tags = new HashSet<>();
         DefTag tag = ((WordOption)tagSelect.getSelectedItem()).getTag();
         if(tag != null)
@@ -83,7 +85,6 @@ public class WordEditUI
         if(!advancedTags.getText().equals(""))
             tags.add(DefTag.toTag(advancedTags.getText()));
         definition.setSpellings(spellings);
-        System.out.println("Spellings set to " + spellings[0]);
         definition.setReadings(readings);
         definition.setMeaningRaw(defText.getText());
         definition.setTags(tags);
