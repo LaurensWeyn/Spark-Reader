@@ -123,7 +123,7 @@ public class Options
         options.put("hookKeyboard", "false");
         options.put("showDefID", "false");
         options.put("defConstrainPosition", "false");
-        options.put("uiThrottleMilliseconds", "50");
+        options.put("uiThrottleMilliseconds", "100");
 
     }
     public Options(File file)throws IOException
