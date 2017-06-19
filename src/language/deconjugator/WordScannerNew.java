@@ -265,6 +265,7 @@ public class WordScannerNew extends WordScanner implements WordScanner.SubScanne
         ruleList.add(new OnlyFinalRule("ね", "ぬ", "imperative", DefTag.v5n, DefTag.uninflectable));
         ruleList.add(new OnlyFinalRule("め", "む", "imperative", DefTag.v5m, DefTag.uninflectable));
         ruleList.add(new OnlyFinalRule("ろ", "る", "imperative", DefTag.v1, DefTag.uninflectable));
+        ruleList.add(new OnlyFinalRule("よ", "る", "imperative", DefTag.v1, DefTag.uninflectable)); // there are two
         // marginal categories
         ruleList.add(new OnlyFinalRule("え", "う", "imperative", DefTag.v5u_s, DefTag.uninflectable));
         ruleList.add(new OnlyFinalRule("け", "く", "imperative", DefTag.v5k_s, DefTag.uninflectable));
