@@ -34,7 +34,6 @@ public class Dictionary
     //can query for words
     private List<SubBook> books;
 
-
     private static int loadedWordCount = 0;
     
     public static String userdictFilename = "dictionaries/customDict.txt";
@@ -68,6 +67,11 @@ public class Dictionary
             else if(file.getName().equals("kanji.txt"))
             {
                 Kanji.load(file, Main.options.getOptionBool("addKanjiAsDef")?this:null, DefSource.getSource("Kanji deck"));
+            }
+            else if(file.getName().equals("freqlist.tsv"))
+            {
+                System.out.println("loading freq data");
+                FrequencySink.load(file, 6, 7, 0);
             }
             else if(file.getName().equalsIgnoreCase("edict2"))
             {

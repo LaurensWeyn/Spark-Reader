@@ -123,6 +123,24 @@ public class Japanese
         }
         return output.toString();
     }
+    public static String toKatakana(String input, boolean stripOthers)
+    {
+        StringBuilder output = new StringBuilder();
+        for (int i = 0; i < input.length(); i++)
+        {
+            char c = input.charAt(i);
+            if(isHiragana(c))
+            {
+                output.append((char) (c + (0x30a0 - 0x3040)));//shift
+            }
+            else if(isKatakana(c))
+            {
+                output.append(c);
+            }
+            else if(!stripOthers) output.append(c);//Kanji and others intentionally removed from output if needed (for reading extraction)
+        }
+        return output.toString();
+    }
 
     /**
      * Removes kana before and after a word. Used for Furigana rendering.

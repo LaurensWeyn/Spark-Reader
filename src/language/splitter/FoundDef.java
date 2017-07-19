@@ -63,7 +63,10 @@ public class FoundDef implements Comparable<FoundDef>
         //output ID (debug)
         if(options.getOptionBool("showDefID"))
             defText.addText(String.valueOf(foundDef.getID()), options.getColor("defTagCol"), options.getColor("defBackCol"));
-
+        //frequency data
+        FrequencySink.FreqData freqdata = FrequencySink.get(foundForm.getWord(), foundDef.getFurigana());
+        if(freqdata != null)
+            defText.addText(freqdata.toString(), options.getColor("defTagCol"), options.getColor("defBackCol"));
         
         String[] readings;
         if(foundDef instanceof EDICTDefinition)
