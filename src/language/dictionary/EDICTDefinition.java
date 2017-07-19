@@ -248,26 +248,40 @@ public class EDICTDefinition extends Definition
     {
         ArrayList<String> readings = new ArrayList<>();
         HashSet<String> already_added_readings = new HashSet<>();
-        if(showReading && reading.length != 0)
+        if(showReading)
         {
-            for(Map.Entry<String, TaggedSpelling> entry : spellings.entrySet())
+            if(reading.length != 0)
             {
-                String spelling = entry.getValue().word;
-                if(!already_added_readings.contains(spelling))
+                for(Map.Entry<String, TaggedSpelling> entry : spellings.entrySet())
                 {
-                    readings.add(spelling);
-                    already_added_readings.add(spelling);
+                    String spelling = entry.getValue().word;
+                    if(!already_added_readings.contains(spelling))
+                    {
+                        readings.add(spelling);
+                        already_added_readings.add(spelling);
+                    }
+                    
+                    // Edict has a couple malformed entries where not all spellings are given readings
+                    // like １コマ;一コマ;１こま;一こま;一齣;一駒(iK) [ひとコマ(一コマ);ひとこま(一こま,一齣,一駒)]  
+                    if(entry.getValue().readings.size() == 0) continue;
+                    
+                    String reading = entry.getValue().readings.get(0).reading;
+                    if(!already_added_readings.contains(reading))
+                    {
+                        readings.add(reading);
+                        already_added_readings.add(reading);
+                    }
                 }
-                
-                // Edict has a couple malformed entries where not all spellings are given readings
-                // like １コマ;一コマ;１こま;一こま;一齣;一駒(iK) [ひとコマ(一コマ);ひとこま(一こま,一齣,一駒)]  
-                if(entry.getValue().readings.size() == 0) continue;
-                
-                String reading = entry.getValue().readings.get(0).reading;
-                if(!already_added_readings.contains(reading))
+            }
+            else
+            {
+                for(Map.Entry<String, TaggedSpelling> entry : spellings.entrySet())
                 {
-                    readings.add(reading);
-                    already_added_readings.add(reading);
+                    String text = entry.getValue().word;
+                    if(text.equals(Japanese.toHiragana(text, true)) || text.equals(Japanese.toKatakana(text, true)))
+                    {
+                        readings.add(Japanese.toHiragana(text, true));
+                    }
                 }
             }
         }
