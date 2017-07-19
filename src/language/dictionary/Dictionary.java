@@ -127,7 +127,7 @@ public class Dictionary
     }
 
     /**
-     * Inserts a definition into the lookup data structure
+     * Inserts a generic definition into the lookup data structure
      * @param def the definition to insert
      */
     public void insertDefinition(Definition def)

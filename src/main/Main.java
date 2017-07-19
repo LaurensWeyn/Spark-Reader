@@ -63,7 +63,7 @@ public class Main
     {
         System.out.println(VERSION);
         initLoadingScreen();
-        try
+        //try
         {
             //load in configuration
             options = new Options(Options.SETTINGS_FILE);
@@ -77,11 +77,12 @@ public class Main
             loadDictionaries();
             splitter = new WordSplitter(dict);
 
-        }catch(Exception err)
-        {
-            JOptionPane.showMessageDialog(null, "Error starting Spark Reader:\n" + err, "Error", JOptionPane.ERROR_MESSAGE);
-            System.exit(1);
         }
+        //catch(Exception err)
+        //{
+        //    JOptionPane.showMessageDialog(null, "Error starting Spark Reader:\n" + err, "Error", JOptionPane.ERROR_MESSAGE);
+        //    System.exit(1);
+        //}
         System.out.println("init done");
         UI.runUI();
     }
