@@ -27,7 +27,7 @@ public class FrequencySink
     {
         try
         {
-            BufferedReader reader = new BufferedReader(new FileReader(freqFile));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(freqFile), "UTF-8"));
             String str;
             int i = 1;
             while((str = reader.readLine()) != null)
