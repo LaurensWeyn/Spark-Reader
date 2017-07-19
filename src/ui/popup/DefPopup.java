@@ -18,6 +18,7 @@ package ui.popup;
 
 import hooker.ClipboardHook;
 import language.dictionary.DefTag;
+import language.dictionary.FrequencySink;
 import language.dictionary.Japanese;
 import language.dictionary.Kanji;
 import language.splitter.FoundDef;
@@ -33,6 +34,7 @@ import java.nio.charset.Charset;
 import java.util.Set;
 
 import static language.dictionary.Japanese.isJapanese;
+import static main.Main.options;
 
 /**
  * When right clicking on the definition window
@@ -205,15 +207,29 @@ public class DefPopup extends JPopupMenu
             }
 
             if(note == null)return;//cancel export on pressing cancel
-
+            
+            if(Main.options.getOptionBool("ankiExportEdictID"))
+                fr.append(String.format("%d\t", def.getDefinition().getID()));
+                        
             fr.append(kanji)
-                    .append("\t").append(reading)
-                    .append("\t").append(definition)
-                    .append("\t").append(tagList.toString())
-                    .append("\t").append(Main.currPage.getText().replace("\n", "<br>"))
-                    .append("\t").append(kanjiDetails.toString())
-                    .append("\t").append(note)
-                    .append("\n");
+              .append("\t").append(reading)
+              .append("\t").append(definition)
+              .append("\t").append(tagList.toString())
+              .append("\t").append(Main.currPage.getText().replace("\n", "<br>"))
+              .append("\t").append(kanjiDetails.toString())
+              .append("\t").append(note);
+            
+            if(Main.options.getOptionBool("ankiExportFreqData"))
+            {
+                // TODO: make FrequencySink.get take a FoundDef or something so it can check all possible furigana/spelling
+                FrequencySink.FreqData freqdata = FrequencySink.get(word.getCurrentDef().getFoundForm().getWord(), def.getDefinition().getFurigana());
+                if(freqdata != null)
+                    fr.append(String.format("\t%d\t%.2f", freqdata.rank, freqdata.ppm));
+                else
+                    fr.append("\t\t");
+            }
+            
+            fr.append("\n");
 
             fr.close();
             exportedThisSession++;

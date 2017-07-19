@@ -124,7 +124,9 @@ public class Options
         options.put("showDefID", "false");
         options.put("defConstrainPosition", "false");
         options.put("uiThrottleMilliseconds", "100");
-
+        
+        options.put("ankiExportEdictID", "false");
+        options.put("ankiExportFreqData", "false");
     }
     public Options(File file)throws IOException
     {
