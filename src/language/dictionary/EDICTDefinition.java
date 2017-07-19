@@ -107,7 +107,6 @@ public class EDICTDefinition extends Definition
             }
         }
     }
-    protected Map<String, TaggedSpelling> taggedSpellings;
     protected String[] word, reading;
     protected Set<DefTag> tags;
 
@@ -171,6 +170,7 @@ public class EDICTDefinition extends Definition
     }
     
     Map<String, TaggedSpelling> spellings;
+    ArrayList<String> cleanOrderedSpellings;
     ArrayList<TaggedReading> readings;
     // takes a full unchanged spelling-reading string from edict, e.g. "障害(P);障がい;障碍;障礙 [しょうがい(P);しょうげ(障碍,障礙)]"
     private void MakeDefinitions(String format)
@@ -184,12 +184,14 @@ public class EDICTDefinition extends Definition
         
         spellings = new HashMap<>();
         readings = new ArrayList<>();
+        cleanOrderedSpellings = new ArrayList<>();
         
         for(String s : word)
         {
             TagInfo info = new TagInfo(s);
             TaggedSpelling spelling = new TaggedSpelling(info.text, info.tags);
             spellings.put(spelling.word, spelling);
+            cleanOrderedSpellings.add(spelling.word);
         }
         for(String s : reading)
         {
@@ -292,10 +294,10 @@ public class EDICTDefinition extends Definition
                 for(Map.Entry<String, TaggedSpelling> entry : spellings.entrySet())
                 {
                     String text = entry.getValue().word;
-                    if(text.equals(Japanese.toHiragana(text, true)) || text.equals(Japanese.toKatakana(text, true)))
-                    {
-                        readings.add(Japanese.toHiragana(text, true));
-                    }
+                    if(text.equals(Japanese.toHiragana(text, true)))
+                        readings.add(text);
+                    if(text.equals(Japanese.toKatakana(text, true)))
+                        readings.add(text);
                 }
             }
         }

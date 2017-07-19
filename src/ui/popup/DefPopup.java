@@ -222,7 +222,7 @@ public class DefPopup extends JPopupMenu
             if(Main.options.getOptionBool("ankiExportFreqData"))
             {
                 // TODO: make FrequencySink.get take a FoundDef or something so it can check all possible furigana/spelling
-                FrequencySink.FreqData freqdata = FrequencySink.get(word.getCurrentDef().getFoundForm().getWord(), def.getDefinition().getFurigana());
+                FrequencySink.FreqData freqdata = FrequencySink.get(word.getCurrentDef());
                 if(freqdata != null)
                     fr.append(String.format("\t%d\t%.2f", freqdata.rank, freqdata.ppm));
                 else

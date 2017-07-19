@@ -65,7 +65,7 @@ public class FoundDef implements Comparable<FoundDef>
             defText.addText(String.valueOf(foundDef.getID()), options.getColor("defTagCol"), options.getColor("defBackCol"));
         //frequency data
         // TODO: make FrequencySink.get take a FoundDef or something so it can check all possible furigana/spelling
-        FrequencySink.FreqData freqdata = FrequencySink.get(foundForm.getWord(), foundDef.getFurigana());
+        FrequencySink.FreqData freqdata = FrequencySink.get(this);
         if(freqdata != null)
             defText.addText(freqdata.toString(), options.getColor("defTagCol"), options.getColor("defBackCol"));
         
