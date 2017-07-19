@@ -64,6 +64,12 @@ public class EDICTDefinition extends Definition
             this.restrictSpelling = restrictSpelling;
             this.tags = tags;
         }
+        
+        @Override
+        public String toString()
+        {
+            return reading;
+        }
     }
     public class TaggedSpelling
     {
@@ -75,6 +81,11 @@ public class EDICTDefinition extends Definition
         TaggedSpelling(String spelling, Set<DefTag> tags)
         {
             word = spelling;
+            if(word.equals("皆"))
+            {
+                System.out.println("minna");
+                System.out.println(tags);
+            }
             this.readings = new ArrayList<>();
             this.tags = tags;
             
@@ -264,12 +275,15 @@ public class EDICTDefinition extends Definition
                     // Edict has a couple malformed entries where not all spellings are given readings
                     // like １コマ;一コマ;１こま;一こま;一齣;一駒(iK) [ひとコマ(一コマ);ひとこま(一こま,一齣,一駒)]  
                     if(entry.getValue().readings.size() == 0) continue;
-                    
-                    String reading = entry.getValue().readings.get(0).reading;
-                    if(!already_added_readings.contains(reading))
-                    {
-                        readings.add(reading);
-                        already_added_readings.add(reading);
+                        
+                    for(TaggedReading taggedreading : entry.getValue().readings)
+                    { 
+                        String reading = taggedreading.reading;
+                        if(!already_added_readings.contains(reading))
+                        {
+                            readings.add(reading);
+                            already_added_readings.add(reading);
+                        }
                     }
                 }
             }
