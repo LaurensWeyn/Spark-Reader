@@ -55,6 +55,7 @@ public class FrequencySink
     
     public static FreqData get(FoundDef def) 
     {
+        boolean overrodeSpelling = false;
         String spelling = def.getFoundForm().getWord();
         String reading = def.getDefinition().getFurigana();
         System.out.println(spelling);
@@ -89,14 +90,23 @@ public class FrequencySink
                 if(realSpelling.equals("")) // no non-kana spelling assigned, probably just a normal katakana word
                     ;
                 else // there is a real non-kana spelling for this word, use it
+                {
+                    overrodeSpelling = true;
                     spelling = realSpelling;
+                }
             }
         }
              
         String text = spelling + "-" + Japanese.toKatakana(reading, true);
         if(mapping.containsKey(text))
             return mapping.get(text);
-        else
-            return null;
+        else if (overrodeSpelling) // Didn't find it, but we overrode the spelling, try with the original spelling (not ideal but fixes まで etc)
+        {
+            text = def.getFoundForm().getWord() + "-" + Japanese.toKatakana(reading, true);
+            if(mapping.containsKey(text))
+                return mapping.get(text);
+        }
+        
+        return null;
     }
 }
