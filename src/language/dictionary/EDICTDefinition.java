@@ -233,7 +233,10 @@ public class EDICTDefinition extends Definition
     {
         if(showReading && reading.length != 0)
         {
-            return spellings.get(text).readings.get(0).reading;
+            if(spellings.containsKey(text))
+                return spellings.get(text).readings.get(0).reading;
+            else
+                return getFurigana();
         }
         else return "";
     }

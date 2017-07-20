@@ -55,58 +55,81 @@ public class FrequencySink
     
     public static FreqData get(FoundDef def) 
     {
-        boolean overrodeSpelling = false;
         String spelling = def.getFoundForm().getWord();
-        String reading = def.getDefinition().getFurigana();
+        String reading = def.getFurigana();
         System.out.println(spelling);
         System.out.println(def.toString());
-        // spelling is in kana, need to check if there's a non-kana spelling for this word within the definition
-        if(spelling.equals(Japanese.toHiragana(spelling, true)) || spelling.equals(Japanese.toKatakana(spelling, true)))
+        
+        if(reading.equals("") && Japanese.hasOnlyKana(spelling))
+            reading = Japanese.toKatakana(spelling, false);
+             
+        String text = spelling + "-" + Japanese.toKatakana(reading, false);
+        // Fast lane: easy successful lookup
+        if(mapping.containsKey(text))
         {
-            reading = Japanese.toHiragana(spelling, true);
+            System.out.println("simple mapping");
+            return mapping.get(text);
+        }
+        else
+        {
+            System.out.println("not a simple mapping");
+            // Slow lane: look for alternate spellings of this word in the edict definition
             if(def.getDefinition() instanceof EDICTDefinition)
             {
+                System.out.println("is edict");
                 EDICTDefinition realdef = (EDICTDefinition)def.getDefinition();
-                String realSpelling = "";
                 // ordered from most normal/common to least normal/common when possible
-                for(String edictSpelling : realdef.cleanOrderedSpellings)
+                for(String edictSpelling : realdef.cleanOrderedSpellings) // Loop over ORDERED spellings (more common first)
                 {
-                    boolean doublebreak = false;
-                    if(realdef.spellings.containsKey(edictSpelling))
+                    if(realdef.spellings.containsKey(edictSpelling))  
                     {
-                        for(EDICTDefinition.TaggedReading testReading : realdef.spellings.get(edictSpelling).readings)
+                        System.out.println("definition match contains this spelling");
+                        if(realdef.spellings.get(edictSpelling).readings.size() > 0)
                         {
-                            if(testReading.reading.equals(reading))
+                            System.out.println("Type: reading was looked up");
+                            for(EDICTDefinition.TaggedReading testReading : realdef.spellings.get(edictSpelling).readings)
                             {
-                                realSpelling = edictSpelling;
-                                doublebreak = true;
-                                break;
+                                System.out.println("Comparing:");
+                                System.out.println(testReading.reading);
+                                System.out.println(reading);
+                                if(testReading.reading.equals(reading))
+                                {
+                                    System.out.println("spelling has right reading");
+                                    text = edictSpelling + "-" + Japanese.toKatakana(reading, false);
+                                    if(mapping.containsKey(text))
+                                    {
+                                        System.out.println("we have frequency info for this spelling reading pair");
+                                        return mapping.get(text);
+                                    }
+                                }
                             }
                         }
+                        else if(Japanese.hasOnlyKana(edictSpelling) && Japanese.hasOnlyKana(edictSpelling))
+                        {
+                            System.out.println("Type: Reading is just the text itself");
+                            reading = Japanese.toHiragana(edictSpelling, false);
+                            String text1 = Japanese.toHiragana(edictSpelling, false) + "-" + Japanese.toKatakana(reading, false);
+                            String text2 = Japanese.toKatakana(edictSpelling, false) + "-" + Japanese.toKatakana(reading, false);
+                            if(mapping.containsKey(text1))
+                            {
+                                System.out.println("we have frequency info for this spelling reading pair");
+                                return mapping.get(text1);
+                            }
+                            if(mapping.containsKey(text2))
+                            {
+                                System.out.println("we have frequency info for this spelling reading pair");
+                                return mapping.get(text2);
+                            }
+                        }
+                        else
+                        {
+                            System.out.println("Type: Reading not known or disgusting EDICT entry");
+                        }
                     }
-                    if(doublebreak) break;
-                }
-                
-                if(realSpelling.equals("")) // no non-kana spelling assigned, probably just a normal katakana word
-                    ;
-                else // there is a real non-kana spelling for this word, use it
-                {
-                    overrodeSpelling = true;
-                    spelling = realSpelling;
                 }
             }
         }
-             
-        String text = spelling + "-" + Japanese.toKatakana(reading, true);
-        if(mapping.containsKey(text))
-            return mapping.get(text);
-        else if (overrodeSpelling) // Didn't find it, but we overrode the spelling, try with the original spelling (not ideal but fixes まで etc)
-        {
-            text = def.getFoundForm().getWord() + "-" + Japanese.toKatakana(reading, true);
-            if(mapping.containsKey(text))
-                return mapping.get(text);
-        }
-        
+        System.out.println("Failed to find frequency info");        
         return null;
     }
 }
