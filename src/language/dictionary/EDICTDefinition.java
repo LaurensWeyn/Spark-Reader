@@ -106,6 +106,14 @@ public class EDICTDefinition extends Definition
                 }
             }
         }
+        
+        boolean hasReading(String text)
+        {
+            // change any katakana to hiragana
+            text = Japanese.toHiragana(text, false);
+            for(TaggedReading r : readings) if(r.reading.equals(text)) return true;
+            return false;
+        }
     }
     protected String[] word, reading;
     protected Set<DefTag> tags;
@@ -229,16 +237,37 @@ public class EDICTDefinition extends Definition
         else return "";
     }
     
+    public TaggedSpelling getAppropriateSpelling(String text)
+    {
+        
+        if(spellings.containsKey(text))
+            return spellings.get(text);
+        else
+        {
+            for(String edictSpelling : cleanOrderedSpellings) // Loop over ORDERED spellings (more common first)
+            {
+                if(spellings.containsKey(edictSpelling))
+                {
+                    TaggedSpelling possibleSpelling = spellings.get(edictSpelling);
+                    if(possibleSpelling.word.equals(text) || possibleSpelling.word.equals(Japanese.toHiragana(text, false)) || possibleSpelling.hasReading(text))
+                        return possibleSpelling;
+                }
+            }
+        }
+        return null;
+    }
+    
     public String getFurigana(String text)
     {
         if(showReading && reading.length != 0)
         {
-            if(spellings.containsKey(text))
-                return spellings.get(text).readings.get(0).reading;
-            else
-                return getFurigana();
+            if(Japanese.hasOnlyKana(text))
+                return Japanese.toHiragana(text, false);
+            TaggedSpelling spelling = getAppropriateSpelling(text);
+            if(spelling != null)
+                return spelling.readings.get(0).reading;
         }
-        else return "";
+        return "";
     }
 
     @Override

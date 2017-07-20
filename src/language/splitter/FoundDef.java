@@ -146,7 +146,9 @@ public class FoundDef implements Comparable<FoundDef>
     public String getFurigana()
     {
         if(foundDef instanceof EDICTDefinition)
+        {
             return ((EDICTDefinition)foundDef).getFurigana(foundForm.getWord());
+        }
         else
             return foundDef.getFurigana();
     }
