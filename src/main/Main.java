@@ -27,7 +27,7 @@ import java.io.IOException;
  */
 public class Main
 {
-    public static final String VERSION = "Beta 0.7";
+    public static final String VERSION = "Beta 0.8";
 
     public static UI ui;
     /**

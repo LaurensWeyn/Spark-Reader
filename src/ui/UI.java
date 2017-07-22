@@ -49,6 +49,8 @@ public class UI
     public static int mainFontSize = 1;//1 default to stop division by 0
     public int xOffset = 0;
 
+    public static int currentWidth;//user set resize size
+
     
     public FoundWord selectedWord = null;
     
@@ -116,6 +118,7 @@ public class UI
             defStartY = textEndY;
         }
         buttonStartX = options.getOptionInt("windowWidth") - optionsButtonWidth - 1;
+        if(currentWidth == -1)currentWidth = options.getOptionInt("windowWidth");
     }
     public void render()
     {

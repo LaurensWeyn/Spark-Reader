@@ -25,6 +25,10 @@ public abstract class MouseHandler
     protected int mouseLine = -1;
     protected FoundWord mousedWord;
 
+    protected int resizeEdgeSize = 5;
+    protected boolean resizeState = false;//true if cursor is <-> icon
+
+
     public MouseHandler(UI ui)
     {
         this.ui= ui;
@@ -133,8 +137,11 @@ public abstract class MouseHandler
 
         int charPos = toCharPos(pos.x);
         int lineIndex = ui.getLineIndex(pos);
-        if(lineIndex >= currPage.getLineCount() || lineIndex < 0)return;
-        if(lineIndex != mouseLine || (mousedWord!= null && !mousedWord.inBounds(charPos)))
+        if(lineIndex >= currPage.getLineCount() || lineIndex < 0)//over definition text
+        {
+            clearWordMouseover();//disable any mouseover effects
+        }
+        else if(lineIndex != mouseLine || (mousedWord!= null && !mousedWord.inBounds(charPos)))//over different word
         {
             boolean reRender = false;
             if(mousedWord != null)
@@ -162,6 +169,23 @@ public abstract class MouseHandler
             }
 
             if(reRender)ui.render();
+        }
+        //TODO could be more efficient, revisit when width is consistent
+        boolean newResizeState = pos.getY() >= UI.textStartY && pos.getX() >= options.getOptionInt("windowWidth") - resizeEdgeSize;
+        if(newResizeState != resizeState)
+        {
+            resizeState = newResizeState;
+            if(resizeState)
+            {
+                //show that we can resize
+                //uncomment to display resize cursor
+                //ui.disp.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
+            }
+            else
+            {
+                //return to normal
+                ui.disp.getFrame().setCursor(Cursor.getDefaultCursor());
+            }
         }
     }
 
@@ -227,7 +251,18 @@ public abstract class MouseHandler
             ui.render();//update
         }
     }
-
+    protected void clearWordMouseover()
+    {
+        if(mousedWord != null)
+        {
+            mousedWord.setMouseover(false);
+            boolean rerender = mousedWord.updateOnMouse();
+            mousedWord = null;
+            if(rerender)ui.render();
+        }
+        mouseLine = -1;
+        mousePos = null;
+    }
     protected int toCharPos(int x)
     {
         x -= ui.xOffset;
