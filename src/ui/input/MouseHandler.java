@@ -25,6 +25,10 @@ public abstract class MouseHandler
     protected int mouseLine = -1;
     protected FoundWord mousedWord;
 
+    protected int resizeEdgeSize = 5;
+    protected boolean resizeState = false;//true if cursor is <-> icon
+
+
     public MouseHandler(UI ui)
     {
         this.ui= ui;
@@ -134,33 +138,54 @@ public abstract class MouseHandler
         if(pos == null) return;
         mousePos = pos;//keep track of where the mouse is
 
-        int charPos = toCharPos(pos.x);
         int lineIndex = ui.getLineIndex(pos);
-        if(lineIndex >= currPage.getLineCount() || lineIndex < 0)return;
         
-        FoundWord word = currPage.getLine(lineIndex).getWordAt(mousePos.x);
-        
-        if(lineIndex != mouseLine || (mousedWord != null && mousedWord != word))
+        if(lineIndex >= currPage.getLineCount() || lineIndex < 0)//over definition text
         {
-            boolean reRender = false;
-            if(mousedWord != null)
+            clearWordMouseover();//disable any mouseover effects
+        }
+        else
+        {
+            FoundWord word = currPage.getLine(lineIndex).getWordAt(mousePos.x);
+            if(lineIndex != mouseLine || (mousedWord != null && mousedWord != word))
             {
-                mousedWord.setMouseover(false);
-                if(mousedWord.updateOnMouse()) reRender = true;
-            }
-            mousedWord = null;//to recalculate
-            
-            mousedWord = word;
-            mouseLine = lineIndex;
+                boolean reRender = false;
+                if(mousedWord != null)
+                {
+                    mousedWord.setMouseover(false);
+                    if(mousedWord.updateOnMouse()) reRender = true;
+                }
+                mousedWord = null;//to recalculate
+                
+                mousedWord = word;
+                mouseLine = lineIndex;
+    
+                if(mousedWord != null)
+                {
+                    //System.out.println("mouseover'd word changed to " + mousedWord.getText());
+                    mousedWord.setMouseover(true);
+                    if(mousedWord.updateOnMouse())reRender = true;
+                }
 
-            if(mousedWord != null)
+                if(reRender)ui.render();
+            }
+        }
+        //TODO could be more efficient, revisit when width is consistent
+        boolean newResizeState = pos.getY() >= UI.textStartY && pos.getX() >= options.getOptionInt("windowWidth") - resizeEdgeSize;
+        if(newResizeState != resizeState)
+        {
+            resizeState = newResizeState;
+            if(resizeState)
             {
-                //System.out.println("mouseover'd word changed to " + mousedWord.getText());
-                mousedWord.setMouseover(true);
-                if(mousedWord.updateOnMouse())reRender = true;
+                //show that we can resize
+                //uncomment to display resize cursor
+                //ui.disp.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
             }
-
-            if(reRender)ui.render();
+            else
+            {
+                //return to normal
+                ui.disp.getFrame().setCursor(Cursor.getDefaultCursor());
+            }
         }
     }
 
@@ -226,7 +251,18 @@ public abstract class MouseHandler
             ui.render();//update
         }
     }
-
+    protected void clearWordMouseover()
+    {
+        if(mousedWord != null)
+        {
+            mousedWord.setMouseover(false);
+            boolean rerender = mousedWord.updateOnMouse();
+            mousedWord = null;
+            if(rerender)ui.render();
+        }
+        mouseLine = -1;
+        mousePos = null;
+    }
     protected int toCharPos(int x)
     {
         x -= ui.xOffset;

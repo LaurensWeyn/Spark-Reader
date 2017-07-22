@@ -120,15 +120,7 @@ public class SwingMouseHandler extends MouseHandler implements MouseListener, Mo
             ui.selectedWord = null;
             ui.render();
         }
-        if(mousedWord != null)
-        {
-            mousedWord.setMouseover(false);
-            boolean rerender = mousedWord.updateOnMouse();
-            mousedWord = null;
-            if(rerender)ui.render();
-        }
-        mouseLine = -1;
-        mousePos = null;
+        clearWordMouseover();
     }
 
     @Override
