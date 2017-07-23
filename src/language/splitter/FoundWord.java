@@ -164,7 +164,17 @@ public class FoundWord
         
         boolean known = isKnown();
         if(options.getOptionBool("unparsedWordsAltColor")) known = known|(getDefinitionCount()==0);
-        Color bgColor = showDef ? options.getColor("clickedTextBackCol") : known ? options.getColor("knownTextBackCol") : options.getColor("textBackCol");
+        
+        Color bgColor;
+        
+        if(showDef)
+            bgColor = options.getColor("clickedTextBackCol");
+        else if(known)
+            bgColor = options.getColor("knownTextBackCol");
+        else if(Main.wantToLearn.isWanted(this))
+            bgColor = options.getColor("wantTextBackCol");
+        else
+            bgColor = options.getColor("textBackCol");
         
         float textBackVar = 2.0f;
         try
@@ -237,7 +247,6 @@ public class FoundWord
             g.fill(outline);
         }
         
-
         if(showDef && !hasOpened)
         {
             attachEpwingDefinitions(Main.dict);//load these in only when needed
@@ -250,7 +259,7 @@ public class FoundWord
         String furiText = "";
         if(showDef)
         {
-            furiText = (currentDef + 1) + "/" + definitions.size();
+            if(!UI.showMenubar)furiText = (currentDef + 1) + "/" + definitions.size();
         }
         else if(showFurigana(known))
         {
@@ -293,7 +302,9 @@ public class FoundWord
     }
     private boolean showFurigana(boolean known)
     {
-        if(!hasKanji)return false;
+        if(!hasKanji)return false;//no point
+        if(UI.showMenubar)return false;//furigana disabled when menubar visible
+
         switch(options.getOption(known?"knownFuriMode":"unknownFuriMode"))
         {
             case "always":return true;

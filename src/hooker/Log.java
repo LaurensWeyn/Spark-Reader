@@ -90,9 +90,7 @@ public class Log
      */
     public int linePos(String line)
     {
-        int index = log.indexOf(line);
-        System.out.println("Searching for line \"" + line + "\"");
-        return index;
+        return log.indexOf(line);
     }
 
     public int getSize()
@@ -101,7 +99,7 @@ public class Log
     }
 
     /**
-     * Gets the most recent line in the backlog. Does not effect the current position in the log
+     * Gets the most recent line in the backlog. Does not effect the current position in the log.
      * @return The most recently added line, or a blank String if the log is empty
      */
     public String mostRecent()

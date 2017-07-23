@@ -16,6 +16,8 @@
  */
 package options;
 
+import main.Utils;
+
 import java.awt.*;
 import java.io.*;
 import java.nio.charset.Charset;
@@ -98,6 +100,13 @@ public class Options
         options.put("showOnNewLine", "true");
         options.put("takeFocus", "false");
 
+        options.put("enableKnown", "true");
+        options.put("knownKanaLength", "0");
+        options.put("knowKatakana", "false");
+        options.put("enableWantList", "false");
+        //options.put("exportUnmarksWant", "true");
+        options.put("wantTextBackCol", "100, 0, 100, 200");
+
         options.put("commentOnExport", "true");
         options.put("commentOnExportLine", "true");
         options.put("exportMarksKnown", "false");
@@ -127,6 +136,10 @@ public class Options
         
         options.put("ankiExportEdictID", "false");
         options.put("ankiExportFreqData", "false");
+
+        options.put("menubarOptionSpacing", "7");
+
+
     }
     public Options(File file)throws IOException
     {
@@ -148,9 +161,7 @@ public class Options
         StringBuilder output = new StringBuilder();
         if(file.exists())
         {
-            FileInputStream is = new FileInputStream(file);
-            InputStreamReader isr = new InputStreamReader(is, Charset.forName("UTF-8"));
-            BufferedReader br = new BufferedReader(isr);
+            BufferedReader br = Utils.UTF8Reader(file);
             String line = br.readLine();
             while(line != null)
             {
@@ -260,9 +271,7 @@ public class Options
     public void load()throws IOException
     {
         options = new HashMap<>();
-        FileInputStream is = new FileInputStream(file);
-        InputStreamReader isr = new InputStreamReader(is, Charset.forName("UTF-8"));
-        BufferedReader br = new BufferedReader(isr);
+        BufferedReader br = Utils.UTF8Reader(file);
         String line = br.readLine();
         while(line != null)
         {

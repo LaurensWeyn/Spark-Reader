@@ -136,7 +136,7 @@ public class DefPopup extends JPopupMenu
 
     public void show(int x, int y)
     {
-        show(ui.disp.getFrame(), x, y);
+        show(Main.getParentFrame(), x, y);
     }
 
     private static int exportedThisSession = 0;

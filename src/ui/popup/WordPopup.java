@@ -51,7 +51,6 @@ public class WordPopup extends JPopupMenu
     JMenuItem makeDefinition;
     JMenuItem copy;
     JMenuItem append;
-    JMenuItem copyFull;
     JCheckBoxMenuItem markKnown;
     int x, y;
     UI ui;
@@ -93,14 +92,6 @@ public class WordPopup extends JPopupMenu
                 ClipboardHook.setClipboard(clipboard + word.getText());
             }
         });
-        copyFull = new JMenuItem(new AbstractAction("Copy whole line")
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                ClipboardHook.setClipboard(Main.currPage.getText());
-            }
-        });
         addBreak = new JMenuItem(new AbstractAction("Toggle break here (middle click)")
         {
             @Override
@@ -134,12 +125,11 @@ public class WordPopup extends JPopupMenu
         
         add(addBreak);
         add(exportLine);
-        add(markKnown);
+        if(Main.options.getOptionBool("enableKnown"))add(markKnown);
         add(makeDefinition);
         add(new Separator());
         add(copy);
         if(Main.currPage.getText().contains(clipboard) && Main.currPage.getText().contains(clipboard + word.getText()))add(append);
-        add(copyFull);
 
         addPopupMenuListener(new IgnoreExitListener());
     }

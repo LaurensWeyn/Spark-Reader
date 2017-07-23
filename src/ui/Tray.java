@@ -59,7 +59,7 @@ public class Tray
                 {
                     if(e.getButton() == MouseEvent.BUTTON3)//right click
                     {
-                        new TrayPopup(parent, null).show(e.getX(), e.getY());
+                        new TrayPopup(parent).show(e.getX(), e.getY());
                     }
                     else if(e.getButton() == MouseEvent.BUTTON1)//left click
                     {

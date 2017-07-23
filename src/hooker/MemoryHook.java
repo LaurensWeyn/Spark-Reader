@@ -115,4 +115,37 @@ public class MemoryHook implements Hook
     {
 
     }
+
+    //Old UI code reference:
+    /*
+    memoryHookStart = new JMenuItem(new AbstractAction("Start memory hook")
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                MemoryHook newHook = new MemoryHook();
+                if(newHook.isRunning())
+                {
+                    Main.hook = newHook;
+                }
+            }
+        });
+        memoryHookStop = new JMenuItem(new AbstractAction("Stop memory hook")
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                Main.hook = new ClipboardHook();
+            }
+        });
+        memoryHookRefine = new JMenuItem((new AbstractAction("Rescan memory")
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                MemoryHook hook = (MemoryHook) Main.hook;
+                hook.refine();
+            }
+        }));
+     */
 }

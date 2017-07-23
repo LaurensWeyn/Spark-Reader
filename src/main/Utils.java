@@ -32,9 +32,7 @@ public class Utils
     {
         try
         {
-            FileInputStream is = new FileInputStream(file);
-            InputStreamReader isr = new InputStreamReader(is, Charset.forName("UTF-8"));
-            BufferedReader br = new BufferedReader(isr);
+            BufferedReader br = Utils.UTF8Reader(file);
             int count = 0;
             while(br.readLine() != null)count++;
             return count;
@@ -43,5 +41,18 @@ public class Utils
             return 0;
         }
 
+    }
+
+    /**
+     * Convenience function to read files in UTF-8
+     * @param file the file to read
+     * @return a BufferedReader set to read the given file as UTF-8
+     * @throws IOException if file isn't found
+     */
+    public static BufferedReader UTF8Reader(File file)throws IOException
+    {
+        FileInputStream is = new FileInputStream(file);
+        InputStreamReader isr = new InputStreamReader(is, Charset.forName("UTF-8"));
+        return new BufferedReader(isr);
     }
 }

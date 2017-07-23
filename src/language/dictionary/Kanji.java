@@ -16,6 +16,8 @@
  */
 package language.dictionary;
 
+import main.Utils;
+
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.HashMap;
@@ -40,9 +42,7 @@ public class Kanji
 
         System.out.println("loading Kanji");
         //C:\Users\Laurens\Desktop\Databases\KanjiDB\anki.csv
-        FileInputStream is = new FileInputStream(file);
-        InputStreamReader isr = new InputStreamReader(is, Charset.forName("UTF-8"));
-        BufferedReader br = new BufferedReader(isr);
+        BufferedReader br = Utils.UTF8Reader(file);
         //kanjiDefs = new HashMap<>();
         br.readLine();//first line is header, skip
         String line = br.readLine();

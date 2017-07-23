@@ -38,11 +38,9 @@ public class TrayPopup extends JPopupMenu
 
     int x, y;
     UI ui;
-    private Component invoker;
-    public TrayPopup(UI ui, Component invoker)
+    public TrayPopup(UI ui)
     {
         this.ui = ui;
-        this.invoker = invoker;
         close = new JMenuItem(new AbstractAction("Exit")
         {
             @Override
@@ -56,9 +54,7 @@ public class TrayPopup extends JPopupMenu
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                UI.hidden = false;
-                ui.tray.hideTray();
-                ui.render();
+                ui.restore();
             }
         });
         settings = new JMenuItem(new AbstractAction("Settings")
