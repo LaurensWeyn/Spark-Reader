@@ -117,6 +117,9 @@ public class Options
         options.put("hookKeyboard", "false");
         options.put("showDefID", "false");
 
+        options.put("menubarOptionSpacing", "7");
+
+
     }
     public Options(File file)throws IOException
     {

@@ -3,8 +3,8 @@ package ui.input;
 import language.splitter.FoundWord;
 import ui.Line;
 import ui.UI;
+import ui.menubar.Menubar;
 import ui.popup.DefPopup;
-import ui.popup.MenuPopup;
 import ui.popup.WordPopup;
 
 import java.awt.*;
@@ -51,11 +51,20 @@ public abstract class MouseHandler
 
     public void leftClick(Point pos)
     {
-        //settings button
-        if(pos.y < textStartY && pos.x > buttonStartX)
+        //minimise button
+        if(pos.y < textStartY && pos.x > minimiseStartX)
         {
-            new MenuPopup(ui).display();
+            ui.minimise();
+            return;
         }
+
+        if(UI.showMenubar)//on menubar
+        {
+            //TODO avoid triggering this when the user intends to move the window, not click a Menubar item
+            ui.menubar.processClick(pos);
+            return;
+        }
+
 
         if(pos.y >= textStartY && pos.y <= textEndY)
         {
@@ -83,12 +92,13 @@ public abstract class MouseHandler
     public void rightClick(Point pos)
     {
         //settings button
-        if(pos.y > furiganaStartY && pos.y < textStartY)
+        /*if(pos.y > furiganaStartY && pos.y < textStartY)
         {
             new MenuPopup(ui).display(pos);//no longer requires button; right click anywhere on bar works
-        }
+        }*/
+
         //word
-        else if(pos.y >= textStartY && pos.y <= textEndY)
+        if(pos.y >= textStartY && pos.y <= textEndY)
         {
             WordPopup popup = null;
             int lineIndex = ui.getLineIndex(pos);
@@ -134,16 +144,37 @@ public abstract class MouseHandler
     public void mouseMove(Point pos)
     {
         mousePos = pos;//keep track of where the mouse is
+        boolean reRender = false;//true if re-render needed
 
         int charPos = toCharPos(pos.x);
         int lineIndex = ui.getLineIndex(pos);
+
+        if(!UI.tempIgnoreMouseExit)
+        {
+            if(pos.getY() < UI.textStartY)//over furigana bar
+            {
+                if(!UI.showMenubar)
+                {
+                    UI.showMenubar = true;
+                    Menubar.ignoreNextClick = null;
+                    reRender = true;//render menu instead
+                }
+            }else//not over furigana bar
+            {
+                if(UI.showMenubar)
+                {
+                    UI.showMenubar = false;
+                    reRender = true;//render furigana instead
+                }
+            }
+        }
         if(lineIndex >= currPage.getLineCount() || lineIndex < 0)//over definition text
         {
-            clearWordMouseover();//disable any mouseover effects
+            reRender |= clearWordMouseover();//disable any mouseover effects
         }
         else if(lineIndex != mouseLine || (mousedWord!= null && !mousedWord.inBounds(charPos)))//over different word
         {
-            boolean reRender = false;
+
             if(mousedWord != null)
             {
                 mousedWord.setMouseover(false);
@@ -168,7 +199,7 @@ public abstract class MouseHandler
                 if(mousedWord.updateOnMouse())reRender = true;
             }
 
-            if(reRender)ui.render();
+
         }
         //TODO could be more efficient, revisit when width is consistent
         boolean newResizeState = pos.getY() >= UI.textStartY && pos.getX() >= options.getOptionInt("windowWidth") - resizeEdgeSize;
@@ -187,6 +218,30 @@ public abstract class MouseHandler
                 ui.disp.getFrame().setCursor(Cursor.getDefaultCursor());
             }
         }
+        if(reRender)ui.render();
+    }
+
+    public void mouseExit()
+    {
+        boolean rerender = false;
+        if(UI.showMenubar && !UI.tempIgnoreMouseExit)
+        {
+            UI.showMenubar = false;
+            rerender = true;
+        }
+        //temporary ignore loose focus
+        if(tempIgnoreMouseExit)return;
+
+        //collapse definitions
+        if(ui.selectedWord != null && options.getOptionBool("hideDefOnMouseLeave"))
+        {
+            ui.selectedWord.showDef(false);
+            ui.selectedWord = null;
+            rerender = true;
+        }
+        rerender |= clearWordMouseover();
+
+        if(rerender)ui.render();
     }
 
     public void mouseScroll(int scrollDir)
@@ -251,17 +306,19 @@ public abstract class MouseHandler
             ui.render();//update
         }
     }
-    protected void clearWordMouseover()
+    protected boolean clearWordMouseover()
     {
+        boolean rerender = false;
         if(mousedWord != null)
         {
             mousedWord.setMouseover(false);
-            boolean rerender = mousedWord.updateOnMouse();
+            rerender = mousedWord.updateOnMouse();
             mousedWord = null;
             if(rerender)ui.render();
         }
         mouseLine = -1;
         mousePos = null;
+        return rerender;
     }
     protected int toCharPos(int x)
     {

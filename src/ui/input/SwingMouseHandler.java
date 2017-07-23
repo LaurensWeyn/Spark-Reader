@@ -108,19 +108,7 @@ public class SwingMouseHandler extends MouseHandler implements MouseListener, Mo
     @Override
     public void mouseExited(MouseEvent e)
     {
-        //temporary ignore loose focus
-        if(tempIgnoreMouseExit)
-        {
-            return;
-        }
-        //collapse definitions
-        if(ui.selectedWord != null && options.getOptionBool("hideDefOnMouseLeave"))
-        {
-            ui.selectedWord.showDef(false);
-            ui.selectedWord = null;
-            ui.render();
-        }
-        clearWordMouseover();
+        mouseExit();
     }
 
     @Override

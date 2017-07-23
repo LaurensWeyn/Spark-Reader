@@ -31,14 +31,10 @@ public abstract class KeyHandler
                 break;
 
             case showWindow:
-                UI.hidden = false;
-                ui.tray.hideTray();
-                ui.render();
+                ui.restore();
                 break;
             case hideWindow:
-                UI.hidden = true;
-                ui.tray.showTray();
-                ui.render();
+                ui.minimise();
                 break;
             case toggleWindow:
                 if(UI.hidden)keyAction(KeyEvent.showWindow);

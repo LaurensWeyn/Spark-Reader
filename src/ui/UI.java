@@ -16,15 +16,25 @@
  */
 package ui;
 
+import hooker.ClipboardHook;
 import language.dictionary.Japanese;
 import language.splitter.FoundWord;
 import main.Main;
+import options.OptionsUI;
 import ui.input.JNativeKeyHandler;
 import ui.input.KeyHandler;
 import ui.input.MouseHandler;
 import ui.input.SwingMouseHandler;
+import ui.menubar.Menubar;
+import ui.menubar.MenubarBuilder;
+import ui.menubar.MenubarItem;
 
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import static main.Main.*;
 
@@ -49,7 +59,7 @@ public class UI
     public static int mainFontSize = 1;//1 default to stop division by 0
     public int xOffset = 0;
 
-    public static int currentWidth;//user set resize size
+    public static int currentWidth = -1;//user set resize size
 
     
     public FoundWord selectedWord = null;
@@ -63,25 +73,31 @@ public class UI
     public static int textHeight = 0;
     public static int furiHeight = 0;
     
-    public static int buttonStartX;
-    
+    //public static int exitStartX;
+    public static int minimiseStartX;
+
     public static final Color CLEAR = new Color(0, 0, 0, 0);
 
     public static String userComment;
 
-    public static int optionsButtonWidth = 10;
+    public static int optionsButtonWidth = 12;
     public static boolean renderBackground = true;
     public static boolean tempIgnoreMouseExit = false;
 
     public MouseHandler mouseHandler;
     public KeyHandler keyHandler;
 
+    public static boolean showMenubar = false;
+    public Menubar menubar;
+
     public UI()
     {
         currPage = new Page();
         disp = new Overlay(options.getOptionInt("windowWidth") + options.getOptionInt("defWidth"),
                 options.getOptionInt("maxHeight"));
+        menubar = MenubarBuilder.buildMenu();
     }
+
     private void registerListeners()
     {
         mouseHandler = new SwingMouseHandler(this);
@@ -117,7 +133,7 @@ public class UI
             textEndY = textStartY + lineHeight * currPage.getLineCount() - furiHeight;
             defStartY = textEndY;
         }
-        buttonStartX = options.getOptionInt("windowWidth") - optionsButtonWidth - 1;
+        minimiseStartX = options.getOptionInt("windowWidth") - optionsButtonWidth - 1;
         if(currentWidth == -1)currentWidth = options.getOptionInt("windowWidth");
     }
     public void render()
@@ -148,14 +164,13 @@ public class UI
                 }
             }
             //render furigana/window bar
-            options.getFont(g, "furiFont");
-
-            g.setColor(options.getColor("furiBackCol"));
-            g.fillRect(0, furiganaStartY, options.getOptionInt("windowWidth"), furiHeight - 1);
-            if(currPage.getText().equals(""))
+            if(showMenubar)menubar.render(g);
+            else
             {
-                g.setColor(options.getColor("furiCol"));
-                g.drawString("Spark Reader " + VERSION + ", by Laurens Weyn. Waiting for text...", 0,furiganaStartY + g.getFontMetrics().getAscent());
+                options.getFont(g, "furiFont");
+
+                g.setColor(options.getColor("furiBackCol"));
+                g.fillRect(0, furiganaStartY, options.getOptionInt("windowWidth"), furiHeight - 1);
             }
             
             int yOff = 0;
@@ -177,13 +192,12 @@ public class UI
                 g.drawString(mpStatusText, 0, defStartY + g.getFontMetrics().getAscent());
 
             }
-            
-            //render settings icon
-            //TODO do this better
+            //TODO Exit icon? ╳
+            //minimise button
             options.getFont(g, "furiFont");
-            String cog = "三";
+            String symbol = "－";
             g.setColor(Color.white);
-            g.drawString(cog, buttonStartX, g.getFontMetrics().getAscent() + furiganaStartY - 1);
+            g.drawString(symbol, minimiseStartX, g.getFontMetrics().getAscent() + furiganaStartY - 1);
         }
         disp.refresh();
     }
@@ -242,7 +256,7 @@ public class UI
                 //if we're here, we have a new line of text
                 userComment = null;
 
-                if(options.getOptionBool("showOnNewLine"))
+                if(options.getOptionBool("showOnNewLine") && !tempIgnoreMouseExit)
                 {
                     hidden = false;//force visibility on new line if needed
                     ui.tray.hideTray();
@@ -291,7 +305,19 @@ public class UI
 
 
     
+    public void minimise()
+    {
+        hidden = true;
+        tray.showTray();
+        render();
+    }
 
+    public void restore()
+    {
+        hidden = false;
+        tray.hideTray();
+        render();
+    }
 
     public void boundXOff()
     {

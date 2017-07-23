@@ -141,7 +141,7 @@ public class FoundWord
         String furiText = "";
         if(showDef)
         {
-            furiText = (currentDef + 1) + "/" + definitions.size();
+            if(!UI.showMenubar)furiText = (currentDef + 1) + "/" + definitions.size();
         }
         else if(showFurigana(known))
         {
@@ -178,7 +178,9 @@ public class FoundWord
     }
     private boolean showFurigana(boolean known)
     {
-        if(!hasKanji)return false;
+        if(!hasKanji)return false;//no point
+        if(UI.showMenubar)return false;//furigana disabled when menubar visible
+
         switch(options.getOption(known?"knownFuriMode":"unknownFuriMode"))
         {
             case "always":return true;
