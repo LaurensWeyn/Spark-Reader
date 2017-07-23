@@ -85,6 +85,8 @@ public class Options
         options.put("preferredDefsPath", "preferences/preferredDefs");
         options.put("blacklistDefsPath", "preferences/blacklistDefs");
         
+        options.put("persistPath", "preferences/persist.dat");
+
         options.put("windowWidth", "1280");
         options.put("maxHeight", "720");
         options.put("defWidth", "250");

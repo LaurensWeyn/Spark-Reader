@@ -287,6 +287,8 @@ public class UI
             if(clip != null)
             {
                 //if we're here, we have a new line of text
+                Main.persist.linesCaught++;
+                Main.persist.statsOnPage(Main.currPage);//take stats of 'completed' page before moving to the next one
                 userComment = null;
 
                 if(options.getOptionBool("showOnNewLine") && !tempIgnoreMouseExit)
@@ -332,6 +334,9 @@ public class UI
                 System.out.println("UI inaccessible");
                 Main.exit();
             }
+
+            //check persist update
+            if(!hidden)persist.checkForSave();
         }
         
     }
@@ -343,6 +348,7 @@ public class UI
         hidden = true;
         tray.showTray();
         render();
+        persist.save();
     }
 
     public void restore()

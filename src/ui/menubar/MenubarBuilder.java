@@ -139,6 +139,14 @@ public class MenubarBuilder
     private static MenubarItem buildHelpMenu()
     {
         MenubarItem item = new MenubarItem("Help");
+        item.addMenuItem(new AbstractAction("Statistics")
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                JOptionPane.showMessageDialog(Main.getParentFrame(), Main.persist.toString(), "Statistics", JOptionPane.PLAIN_MESSAGE);
+            }
+        });
         item.addMenuItem(new AbstractAction("View on GitHub")
         {
             @Override
@@ -158,7 +166,7 @@ public class MenubarBuilder
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                JOptionPane.showMessageDialog(Main.getParentFrame(), Main.ABOUT);
+                JOptionPane.showMessageDialog(Main.getParentFrame(), Main.ABOUT, "About Spark Reader", JOptionPane.PLAIN_MESSAGE);
             }
         });
         return item;

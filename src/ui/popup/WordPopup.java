@@ -189,6 +189,7 @@ public class WordPopup extends JPopupMenu
                     .append("\n");
             fr.close();
             exportedThisSession++;
+            Main.persist.exportCount++;
 
             //take a screenshot with the exported line
             if(Main.options.getOptionBool("exportImage"))

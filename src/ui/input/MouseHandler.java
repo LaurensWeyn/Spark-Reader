@@ -1,6 +1,7 @@
 package ui.input;
 
 import language.splitter.FoundWord;
+import main.Main;
 import ui.Line;
 import ui.UI;
 import ui.menubar.Menubar;
@@ -135,7 +136,11 @@ public abstract class MouseHandler
             Set<Integer> markers = currPage.getLine(lineIndex).getMarkers();
             //toggle markers
             if(markers.contains(point))markers.remove(point);
-            else markers.add(point);
+            else
+            {
+                Main.persist.manualSpacesPlaced++;
+                markers.add(point);
+            }
 
             ui.updateText(currPage.getText());//reflow (TODO don't pass text to itself)
             ui.render();//redraw
