@@ -71,7 +71,7 @@ public class NumberOption extends UIOption
         }
         throw new IllegalArgumentException("Unsupported preset " + preset);
     }
-    public static enum NumberPreset
+    public enum NumberPreset
     {
         resolution,
         posNeg,

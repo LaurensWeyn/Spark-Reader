@@ -11,6 +11,7 @@ import multiplayer.MPController;
 import options.Known;
 import options.Options;
 import options.PrefDef;
+import options.WantToLearn;
 import ui.Page;
 import ui.UI;
 
@@ -52,6 +53,7 @@ public class Main
     public static Hook hook;
     public static Dictionary dict;
     public static Known known;
+    public static WantToLearn wantToLearn;
     public static PrefDef prefDef;
     /**
      * The currently active configuration
@@ -68,7 +70,8 @@ public class Main
         {
             //load in configuration
             options = new Options(Options.SETTINGS_FILE);
-            known = new Known(options.getFile("knownWordsPath"));
+            known = new Known(options.getOptionBool("enableKnown")? options.getFile("knownWordsPath"):null);
+            wantToLearn = new WantToLearn(known);
             prefDef = new PrefDef(options.getFile("preferredDefsPath"));
 
             hook = new ClipboardHook();//default hook

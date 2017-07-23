@@ -102,7 +102,6 @@ public class OptionsUI extends JFrame
 
             backs.add(new OptionLabel("Text:", null));
             backs.add(new ColourOption("textBackCol", "Main text background colour", "The colour used for normal words."));
-            backs.add(new ColourOption("knownTextBackCol", "known word colour", "Colour used for words marked as known."));
             backs.add(new ColourOption("clickedTextBackCol", "selected word colour", "Colour used for words while their definition is visible."));
             backs.add(new OptionLabel("Word splits:", null));
             backs.add(new ColourOption("markerCol", "Manual seperator colour", "These are the word spacers you place when you middle click on text."));
@@ -114,6 +113,19 @@ public class OptionsUI extends JFrame
             splitter.add(new RadioOption("splitterMode", parserConfig, "Auto text splitter mode", null)); // If enabled, text will undergo a basic automatic parsing pass. Note that punctuation always causes segmentations.
             splitter.add(new RadioOption("deconMode", deconConfig, "Deconjugation mode", null)); // If enabled, text will undergo a basic automatic parsing pass. Note that punctuation always causes segmentations.
         root.add(splitter);
+
+        OptionPage wordList = new OptionPage("Word lists");
+        wordList.add(new OptionLabel("Known words:", null));
+        wordList.add(new ToggleOption("enableKnown", "Enable known word tracking (requires restart)", "If unticked, all words are treated the same and the known word functions are hidden."));;
+        wordList.add(new NumberOption("knownKanaLength", "Automatically mark Kana-only 'words' of this length or less as known", "<html>For people who don't want to mark every particle as known.<br>Set to 0 to disable. Set to some high value to only let Kanji words be unknown.", NumberOption.NumberPreset.posOnly));
+        wordList.add(new ToggleOption("knowKatakana", "Automatically mark Katakana-only words as known", null));
+        wordList.add(new ToggleOption("exportMarksKnown", "Mark exported words as known", "If ticked, exported words are also added to the known word list."));
+        wordList.add(new ColourOption("knownTextBackCol", "known word colour", "Colour used for words marked as known."));
+        wordList.add(new OptionLabel("Want to learn list:", null));
+        wordList.add(new ToggleOption("enableWantList", "Enable want to learn tracking (requires restart)", "If ticked, you can import a list of words (e.g. a JLPT list) to help in seeing which words you should export as flashcards."));;
+        //wordList.add(new ToggleOption("exportUnmarksWant", "Unmark exported words", "Consider words 'being learnt' as you export them."));;
+        wordList.add(new ColourOption("wantTextBackCol", "known word colour", "Colour used for words you want to learn."));
+        root.add(wordList);
 
         PageGroup defs = new PageGroup("Definitions", "Settings related to displaying and storing definitions");
             OptionPage defWindow = new OptionPage("Window");
@@ -151,7 +163,6 @@ public class OptionsUI extends JFrame
             xport.add(new OptionLabel("Words:", null));
             xport.add(new ToggleOption("commentOnExport", "Ask for comment when exporting words", "<html>If ticked, you will be prompted for extra information when exporting a word."
                                                    + "<br>If unticked, this field is always left blank"));
-            xport.add(new ToggleOption("exportMarksKnown", "Automatically mark exported words as known", "If ticked, exported words are also added to the known word list."));
             xport.add(new OptionLabel("Lines:", null));
             xport.add(new ToggleOption("commentOnExportLine", "Ask for comment when exporting lines", "<html>If ticked, you will be prompted for extra information when exporting a word."
                     + "<br>If unticked, this field is always left blank"));

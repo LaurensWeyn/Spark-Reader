@@ -112,7 +112,7 @@ public class WordPopup extends JPopupMenu
         
         add(addBreak);
         add(exportLine);
-        add(markKnown);
+        if(Main.options.getOptionBool("enableKnown"))add(markKnown);
         add(new Separator());
         add(copy);
         if(Main.currPage.getText().contains(clipboard) && Main.currPage.getText().contains(clipboard + word.getText()))add(append);

@@ -93,6 +93,14 @@ public class Japanese
         }
         return true;
     }
+    public static boolean hasOnlyKatakana(String text)
+    {
+        for (int i = 0; i < text.length(); i++)
+        {
+            if(!isKatakana(text.charAt(i)))return false;
+        }
+        return true;
+    }
     public static boolean isKana(char c)
     {
         return (0x3040 <= c && c <= 0x30ff) || c == '○';

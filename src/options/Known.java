@@ -21,6 +21,7 @@ import language.dictionary.Japanese;
 import language.splitter.FoundDef;
 import language.splitter.FoundWord;
 import main.Main;
+import main.Utils;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -41,32 +42,28 @@ public class Known
     {
         table = new HashSet<>();
         this.file = file;
-        if(file.exists() == false)return;
+        if(file == null || !file.exists())return;
         
         loadFile(file);
     }
     private void loadFile(File input)throws IOException
     {
-        FileInputStream is = new FileInputStream(input);
-        InputStreamReader isr = new InputStreamReader(is, Charset.forName("UTF-8"));
-        BufferedReader br = new BufferedReader(isr);
+        BufferedReader br = Utils.UTF8Reader(input);
         String line = br.readLine();
         while(line != null)
         {
-            if(line.equals("") == false)table.add(line);
+            if(!line.equals(""))table.add(line);
             line = br.readLine();
         }
         br.close();
     }
     public void importCsv(File input, String sep)throws IOException
     {
-        FileInputStream is = new FileInputStream(input);
-        InputStreamReader isr = new InputStreamReader(is, Charset.forName("UTF-8"));
-        BufferedReader br = new BufferedReader(isr);
+        BufferedReader br = Utils.UTF8Reader(input);
         String line = br.readLine();
         while(line != null)
         {
-            if(line.equals("") == false && Japanese.isJapanese(line))//not empty, has Japanese characters
+            if(!line.equals("") && Japanese.isJapanese(line))//not empty, has Japanese characters
             {
                 //String word = line.split(sep)[col - 1];
                 for(String word:line.split(sep))
@@ -89,11 +86,16 @@ public class Known
             {
                 if(match.equals(word))
                 {
-                    table.add(word);//the things I do to save RAM...
+                    table.add(match);//saving RAM works better if you add the correct one
                     dueChanges++;
                 }
             }
         }
+    }
+
+    boolean hasEntryFor(String text)
+    {
+        return table.contains(text);
     }
     
     public void save()throws IOException
@@ -102,7 +104,7 @@ public class Known
         Writer fr = new OutputStreamWriter(new FileOutputStream(file, false), Charset.forName("UTF-8"));
         for(String word:table)
         {
-            fr.append(word + "\n");
+            fr.append(word).append("\n");
         }
         fr.close();
         dueChanges = 0;
@@ -145,6 +147,9 @@ public class Known
     }
     public boolean isKnown(FoundWord word)
     {
+        if(Japanese.hasOnlyKatakana(word.getText()) && Main.options.getOptionBool("knowKatakana"))return true;
+        if(Japanese.hasOnlyKana(word.getText()) && word.getText().length() <= Main.options.getOptionInt("knownKanaLength"))return true;
+
         if(word.getFoundDefs() == null)return false;
         
         for(FoundDef def:word.getFoundDefs())

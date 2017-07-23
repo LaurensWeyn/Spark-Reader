@@ -19,6 +19,7 @@ package options;
 import language.dictionary.Definition;
 import language.splitter.FoundDef;
 import main.Main;
+import main.Utils;
 
 import javax.swing.*;
 import java.io.*;
@@ -45,11 +46,9 @@ public class PrefDef
             System.out.println("WARN: no preferred definition file");
             return;
         }
-        
-        
-        FileInputStream is = new FileInputStream(file);
-        InputStreamReader isr = new InputStreamReader(is, Charset.forName("UTF-8"));
-        BufferedReader br = new BufferedReader(isr);
+
+
+        BufferedReader br = Utils.UTF8Reader(file);
         String line = br.readLine();
         while(line != null)
         {

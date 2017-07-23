@@ -18,6 +18,7 @@ package language.dictionary;
 
 import fuku.eb4j.*;
 import main.Main;
+import main.Utils;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -72,6 +73,11 @@ public class Dictionary
                 //edict file encoding
                 loadEdict(file, DefSource.getSource("Edict"));
             }
+            else if(file.getName().contains("want"))
+            {
+                //target word list
+                if(Main.options.getOptionBool("enableWantList"))Main.wantToLearn.addFile(file);
+            }
             else if(file.getName().endsWith(".txt"))
             {
                 //UTF-8 dictionary
@@ -108,9 +114,7 @@ public class Dictionary
     }
     public void loadUserDict(File file, DefSource source)throws IOException
     {
-        FileInputStream is = new FileInputStream(file);
-        InputStreamReader isr = new InputStreamReader(is, Charset.forName("UTF-8"));
-        BufferedReader reader = new BufferedReader(isr);
+        BufferedReader reader = Utils.UTF8Reader(file);
         reader.readLine();//first line is design info
         String line = reader.readLine();
         while(line != null)

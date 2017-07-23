@@ -122,8 +122,16 @@ public class FoundWord
         int startPos = g.getFontMetrics().charWidth('べ') * startX + xOff;
         int width = g.getFontMetrics().charWidth('べ') * text.length();
         boolean known = isKnown();
-        //TODO make colour setting text more readable
-        g.setColor(showDef? options.getColor("clickedTextBackCol") : (known? options.getColor("knownTextBackCol"):options.getColor("textBackCol")));
+
+        if(showDef)
+            g.setColor(options.getColor("clickedTextBackCol"));
+        else if(known)
+            g.setColor(options.getColor("knownTextBackCol"));
+        else if(Main.wantToLearn.isWanted(this))
+            g.setColor(options.getColor("wantTextBackCol"));
+        else
+            g.setColor(options.getColor("textBackCol"));
+
         g.clearRect(startPos + 1,yOff + UI.textStartY, width - 2, g.getFontMetrics().getHeight());//remove background
         g.fillRect (startPos + 1,yOff + UI.textStartY, width - 2, g.getFontMetrics().getHeight());//set to new color
         g.setColor(options.getColor("textCol"));
