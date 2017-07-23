@@ -203,6 +203,7 @@ public class DefPopup extends JPopupMenu
 
             fr.close();
             exportedThisSession++;
+            Main.persist.exportCount++;
 
             if(Main.options.getOptionBool("exportMarksKnown"))
             {

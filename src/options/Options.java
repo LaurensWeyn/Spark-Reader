@@ -79,7 +79,8 @@ public class Options
         options.put("ankiExportPath", "forAnki.csv");
         options.put("knownWordsPath", "preferences/knownWords");
         options.put("preferredDefsPath", "preferences/preferredDefs");
-        
+        options.put("persistPath", "preferences/persist.dat");
+
         options.put("windowWidth", "1280");
         options.put("maxHeight", "720");
         options.put("defWidth", "250");

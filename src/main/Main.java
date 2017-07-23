@@ -61,6 +61,11 @@ public class Main
     public static Options options;
     public static WordSplitter splitter;
 
+    /**
+     * Machine readable only persistence data (stats, last window hooked to etc.)
+     */
+    public static Persist persist;
+
 
     public static void main(String[] args)throws Exception
     {
@@ -70,6 +75,7 @@ public class Main
         {
             //load in configuration
             options = new Options(Options.SETTINGS_FILE);
+            persist = Persist.load(options.getFile("persistPath"));
             known = new Known(options.getOptionBool("enableKnown")? options.getFile("knownWordsPath"):null);
             wantToLearn = new WantToLearn(known);
             prefDef = new PrefDef(options.getFile("preferredDefsPath"));
@@ -86,6 +92,7 @@ public class Main
             System.exit(1);
         }
         System.out.println("init done");
+        persist.startupCount++;
         UI.runUI();
     }
     private static void loadDictionaries()throws IOException
@@ -107,6 +114,7 @@ public class Main
         {
             if(known != null)Main.known.save();
             if(prefDef != null)Main.prefDef.save();
+            persist.save();
         }catch(IOException err)
         {
             JOptionPane.showMessageDialog(getParentFrame(), "Error while saving changes:\n" + err);
