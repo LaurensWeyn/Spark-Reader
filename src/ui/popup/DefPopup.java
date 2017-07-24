@@ -18,6 +18,7 @@ package ui.popup;
 
 import hooker.ClipboardHook;
 import language.dictionary.DefTag;
+import language.dictionary.FrequencySink;
 import language.dictionary.Japanese;
 import language.dictionary.Kanji;
 import language.splitter.FoundDef;
@@ -33,6 +34,7 @@ import java.nio.charset.Charset;
 import java.util.Set;
 
 import static language.dictionary.Japanese.isJapanese;
+import static main.Main.options;
 
 /**
  * When right clicking on the definition window
@@ -43,7 +45,7 @@ public class DefPopup extends JPopupMenu
     private UI ui;
     private FoundDef def;
     private JMenuItem anki, copy, copyAll, lookup;
-    private JCheckBoxMenuItem setDef;
+    private JCheckBoxMenuItem setDef, setBlacklist;
 
     public DefPopup(FoundWord word, UI ui, int mouseY)
     {
@@ -63,6 +65,19 @@ public class DefPopup extends JPopupMenu
             }
         });
         setDef.setSelected(word.isShowingFirstDef());
+
+        setBlacklist = new JCheckBoxMenuItem(new AbstractAction("Blacklist definition for this spelling")
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                Main.blacklistDef.toggleBlacklist(def);
+                //word.resortDefs();
+                //word.resetScroll();
+                ui.render();
+            }
+        });
+        setBlacklist.setSelected(Main.blacklistDef.isBlacklisted(word.getCurrentDef().getDefinition().getID(), word.getCurrentDef().getDictForm()));
 
         anki = new JMenuItem(new AbstractAction("Add as flashcard")
         {
@@ -103,6 +118,7 @@ public class DefPopup extends JPopupMenu
 
         add(anki);
         add(setDef);
+        add(setBlacklist);
         add(new Separator());
         add(copy);
         if(isJapanese(defLine))add(lookup);
@@ -191,15 +207,29 @@ public class DefPopup extends JPopupMenu
             }
 
             if(note == null)return;//cancel export on pressing cancel
-
+            
+            if(Main.options.getOptionBool("ankiExportEdictID"))
+                fr.append(String.format("%d\t", def.getDefinition().getID()));
+                        
             fr.append(kanji)
-                    .append("\t").append(reading)
-                    .append("\t").append(definition)
-                    .append("\t").append(tagList.toString())
-                    .append("\t").append(Main.currPage.getText().replace("\n", "<br>"))
-                    .append("\t").append(kanjiDetails.toString())
-                    .append("\t").append(note)
-                    .append("\n");
+              .append("\t").append(reading)
+              .append("\t").append(definition)
+              .append("\t").append(tagList.toString())
+              .append("\t").append(Main.currPage.getText().replace("\n", "<br>"))
+              .append("\t").append(kanjiDetails.toString())
+              .append("\t").append(note);
+            
+            if(Main.options.getOptionBool("ankiExportFreqData"))
+            {
+                // TODO: make FrequencySink.get take a FoundDef or something so it can check all possible furigana/spelling
+                FrequencySink.FreqData freqdata = FrequencySink.get(word.getCurrentDef());
+                if(freqdata != null)
+                    fr.append(String.format("\t%d\t%.2f", freqdata.rank, freqdata.ppm));
+                else
+                    fr.append("\t\t");
+            }
+            
+            fr.append("\n");
 
             fr.close();
             exportedThisSession++;

@@ -1,5 +1,7 @@
 package language.dictionary;
 
+import java.util.Set;
+
 /**
  * An editable EDICT-style definition
  * Created by Laurens on 2/25/2017.
@@ -30,7 +32,17 @@ public class UserDefinition extends EDICTDefinition
     {
         this.reading = reading;
     }
+    public void setTags(Set<DefTag> tags)
+    {
+        this.tags = tags;
+    }
+    public void setID(long id)
+    {
+        this.ID = id;
+    }
 
-
-
+    public String[] getSpellingsRaw()
+    {
+        return word;
+    }
 }

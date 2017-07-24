@@ -4,6 +4,8 @@ package hooker;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.platform.win32.BaseTSD;
+import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinDef.RECT;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
@@ -50,10 +52,12 @@ public interface User32 extends W32APIOptions {
             return null;
         }
     }  
+    BaseTSD.LONG_PTR GetWindowLongPtr(Pointer hWnd, int index);  
     boolean GetWindowInfo(Pointer hWnd, WINDOWINFO pwi);  
-    boolean GetWindowRect(Pointer hWnd, RECT rect);  
+    boolean GetWindowRect(Pointer hWnd, WinDef.RECT rect);  
+    boolean ClientToScreen(Pointer hWnd, WinDef.POINT point);  
     int GetWindowTextW(Pointer hWnd, char[] lpString, int nMaxCount);
-    int GetWindowTextLength(Pointer hWnd);  
+    int GetWindowTextLengthW(Pointer hWnd);  
     int GetWindowModuleFileName(Pointer hWnd, byte[] lpszFileName, int cchFileNameMax);  
     int GetWindowThreadProcessId(Pointer hWnd, IntByReference lpdwProcessId);  
     interface WNDENUMPROC extends StdCallCallback {  

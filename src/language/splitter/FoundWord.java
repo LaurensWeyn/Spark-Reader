@@ -25,9 +25,12 @@ import main.Main;
 import ui.UI;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.util.*;
 import java.util.List;
 
+import static java.awt.BasicStroke.CAP_ROUND;
+import static java.awt.BasicStroke.JOIN_ROUND;
 import static main.Main.options;
 
 /**
@@ -115,28 +118,135 @@ public class FoundWord
         return definitions.size();
     }
     
-    public void render(Graphics2D g, int xOff, int yOff)
+    
+    ArrayList<Integer> cachedWidths = null;
+    int rememberedAdvancementWidth = 0;
+    public int getCachedWidth(int numchars)
+    {
+        if(numchars < cachedWidths.size()) return cachedWidths.get(numchars);
+        else return rememberedAdvancementWidth;
+    }
+    public int getAdvancementWidth(Graphics2D g)
+    {
+        options.getFont(g, "textFont");
+        Rectangle2D rect = g.getFontMetrics().getStringBounds(text, g);
+        
+        // Java doesn't give a reasonable way to get the character at a given physical distance into a string so this has to be done manually and it's awful
+        int newAdvancementWidth = (int)Math.round(rect.getWidth());
+        if(newAdvancementWidth != rememberedAdvancementWidth)
+        {
+            cachedWidths = new ArrayList<>();
+            cachedWidths.add(0);
+            for(int i = 1; i < text.length(); i++)
+                cachedWidths.add((int)Math.round(g.getFontMetrics().getStringBounds(text.substring(0,i), g).getWidth()));
+        }
+        rememberedAdvancementWidth = newAdvancementWidth;
+        return rememberedAdvancementWidth;
+    }
+    
+    public void renderClear(Graphics2D g, int xStart, int xOff, int yOff)
     {
         g.setClip(0, 0, options.getOptionInt("windowWidth"), options.getOptionInt("maxHeight"));//render only over window
         options.getFont(g, "textFont");
-        int startPos = g.getFontMetrics().charWidth('べ') * startX + xOff;
-        int width = g.getFontMetrics().charWidth('べ') * text.length();
+        
+        int bgStart = xStart + xOff;
+        int bgEnd = bgStart + getAdvancementWidth(g);
+        
+        //TODO make colour setting text more readable
+        g.clearRect(bgStart, yOff + UI.textStartY, bgEnd-bgStart, g.getFontMetrics().getHeight());//remove background
+        
+    }
+    public void renderBackground(Graphics2D g, int xStart, int xOff, int yOff)
+    {
+        g.setClip(0, 0, options.getOptionInt("windowWidth"), options.getOptionInt("maxHeight"));//render only over window
+        int startPos = xStart + xOff;
+        int bgEnd = startPos + getAdvancementWidth(g);
+        
         boolean known = isKnown();
-
+        if(options.getOptionBool("unparsedWordsAltColor")) known = known|(getDefinitionCount()==0);
+        
+        Color bgColor;
+        
         if(showDef)
-            g.setColor(options.getColor("clickedTextBackCol"));
+            bgColor = options.getColor("clickedTextBackCol");
         else if(known)
-            g.setColor(options.getColor("knownTextBackCol"));
+            bgColor = options.getColor("knownTextBackCol");
         else if(Main.wantToLearn.isWanted(this))
-            g.setColor(options.getColor("wantTextBackCol"));
+            bgColor = options.getColor("wantTextBackCol");
         else
-            g.setColor(options.getColor("textBackCol"));
-
-        g.clearRect(startPos + 1,yOff + UI.textStartY, width - 2, g.getFontMetrics().getHeight());//remove background
-        g.fillRect (startPos + 1,yOff + UI.textStartY, width - 2, g.getFontMetrics().getHeight());//set to new color
-        g.setColor(options.getColor("textCol"));
-        g.drawString(text, startPos, yOff + UI.textStartY + g.getFontMetrics().getMaxAscent());
-
+            bgColor = options.getColor("textBackCol");
+        
+        float textBackVar = 2.0f;
+        try
+        {
+            textBackVar = Float.valueOf(options.getOption("textBackVariable").trim());
+        }
+        catch (NumberFormatException e)
+        { /* */ }
+        
+        // for the Shape outline;-based text rendering mode 
+        boolean aaEnabled = options.getFontAA("textFont");
+        if(aaEnabled)
+        {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+        }
+        else
+        {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+            g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
+        }
+        
+        if(options.getOption("textBackMode").equals("outline"))
+        {
+            Shape outline = g.getFont().createGlyphVector(g.getFontRenderContext(), text).getOutline(startPos, yOff + UI.textStartY + g.getFontMetrics().getMaxAscent());
+            // We need it to be not 100% transparent to allow the word to be clicked.
+            Color fakeBgColor = new Color(bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue(), 1);
+            g.setColor(fakeBgColor);
+            g.fillRect(startPos, yOff + UI.textStartY, bgEnd-startPos, g.getFontMetrics().getHeight());
+            
+            
+            // Render it
+            g.setColor(bgColor);
+            g.setStroke(new BasicStroke(textBackVar*2.0f, CAP_ROUND, JOIN_ROUND));
+            g.draw(outline);
+        }
+        else if(options.getOption("textBackMode").equals("dropshadow"))
+        {
+            // We need it to be not 100% transparent to allow the word to be clicked
+            Color fakeBgColor = new Color(bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue(), 1);
+            g.setColor(fakeBgColor);
+            g.fillRect(startPos, yOff + UI.textStartY, bgEnd-startPos, g.getFontMetrics().getHeight());
+            
+            // Now draw the dropshadow text
+            g.setColor(bgColor);
+            g.drawString(text, startPos + textBackVar, yOff + UI.textStartY + textBackVar + g.getFontMetrics().getMaxAscent());
+        }
+        else
+        {
+            g.setColor(bgColor);
+            g.fillRect(startPos, yOff + UI.textStartY, bgEnd-startPos, g.getFontMetrics().getHeight());//set to new color
+        }
+    }
+    
+    public void render(Graphics2D g, int xStart, int xOff, int yOff)
+    {
+        g.setClip(0, 0, options.getOptionInt("windowWidth"), options.getOptionInt("maxHeight"));//render only over window
+        int startPos = xStart + xOff;
+        
+        boolean known = isKnown();
+        
+        int width = getAdvancementWidth(g);
+        
+        g.setColor((known ? options.getColor("knownTextCol") : options.getColor("textCol")));
+        if(!options.getOptionBool("textFontUnhinted"))
+            g.drawString(text, startPos, yOff + UI.textStartY + g.getFontMetrics().getMaxAscent());
+        else
+        {
+            Shape outline = g.getFont().createGlyphVector(g.getFontRenderContext(), text).getOutline(startPos, yOff + UI.textStartY + g.getFontMetrics().getMaxAscent());
+            g.fill(outline);
+        }
+        
         if(showDef && !hasOpened)
         {
             attachEpwingDefinitions(Main.dict);//load these in only when needed
@@ -181,8 +291,14 @@ public class FoundWord
             g.setClip(null);//render this anywhere
             options.getFont(g, "defFont");
             int y = UI.defStartY + g.getFontMetrics().getAscent();
-            definitions.get(currentDef).render(g, startPos, Math.max(width, options.getOptionInt("defWidth")), y);
+            int defPosition = startPos;
+            if(options.getOptionBool("defConstrainPosition"))
+                defPosition = Math.max(0, Math.min(startPos, options.getOptionInt("windowWidth")-options.getOptionInt("defWidth")));
+            
+            definitions.get(currentDef).render(g, defPosition, Math.max(width, options.getOptionInt("defWidth")), y);
         }
+        
+        return;
     }
     private boolean showFurigana(boolean known)
     {
@@ -198,12 +314,9 @@ public class FoundWord
             default:return false;
         }
     }
-    public void toggleWindow(int pos)
+    public void toggleWindow()
     {
-        if(inBounds(pos))
-        {
-            showDef(!showDef);
-        }else showDef(false);
+        showDef(!showDef);
     }
     public void showDef(boolean mode)
     {

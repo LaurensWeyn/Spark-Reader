@@ -16,6 +16,10 @@
  */
 package ui;
 
+import hooker.WindowHook;
+import language.splitter.FoundWord;
+import main.Main;
+import options.Options;
 import hooker.ClipboardHook;
 import language.dictionary.Japanese;
 import language.splitter.FoundWord;
@@ -31,6 +35,7 @@ import ui.menubar.MenubarItem;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.*;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.URI;
@@ -86,6 +91,8 @@ public class UI
 
     public MouseHandler mouseHandler;
     public KeyHandler keyHandler;
+    
+    public static java.util.List<Integer> stickToWindow = null;
 
     public static boolean showMenubar = false;
     public Menubar menubar;
@@ -93,8 +100,14 @@ public class UI
     public UI()
     {
         currPage = new Page();
-        disp = new Overlay(options.getOptionInt("windowWidth") + options.getOptionInt("defWidth"),
-                options.getOptionInt("maxHeight"));
+        
+        int windowWidth;
+        if(options.getOptionBool("defConstrainPosition"))
+            windowWidth = Math.max(options.getOptionInt("windowWidth"), options.getOptionInt("defWidth"));
+        else
+            windowWidth = options.getOptionInt("windowWidth") + options.getOptionInt("defWidth");
+        disp = new Overlay(windowWidth, options.getOptionInt("maxHeight"));
+        
         menubar = MenubarBuilder.buildMenu();
     }
 
@@ -149,20 +162,35 @@ public class UI
 
         if(!hidden)
         {
-            //render background
-            if(renderBackground)
+            Color generalColor;
+            if(options.getOptionBool("unparsedWordsAltColor"))
+                generalColor = options.getColor("knownTextBackCol");
+            else
+                generalColor = options.getColor("textBackCol");
+            g.setColor(generalColor);
+            
+            //render background unless it's supposed to be for dropshadows only
+            if(renderBackground && !(options.getOption("textBackMode").equals("dropshadow") || options.getOption("textBackMode").equals("outline")))
+                g.fillRect(0, textStartY - 1, options.getOptionInt("windowWidth"), currPage.getLineCount() * lineHeight - furiHeight + 1); // general background beside short text
+            
+            options.getFont(g, "furiFont");
+            int i = 0;
+            while(i < currPage.getLineCount())
             {
-                g.setColor(options.getColor("textBackCol"));
-                g.fillRect(0, textStartY - 1, options.getOptionInt("windowWidth"), currPage.getLineCount() * lineHeight - furiHeight + 1);
-                g.setColor(options.getColor("windowBackCol"));
-                int i = 1;
-                while(i < currPage.getLineCount())
+                // furigana bar for lines other than the first
+                if (i != 0)
                 {
+                    g.setColor(options.getColor("windowBackCol"));
                     g.clearRect(0, (textStartY - 1) + (i * lineHeight) - furiHeight + 1, options.getOptionInt("windowWidth"), furiHeight - 1);
                     g.fillRect (0, (textStartY - 1) + (i * lineHeight) - furiHeight + 1, options.getOptionInt("windowWidth"), furiHeight - 1);
-                    i++;
                 }
+                // the 1px line immediately beneath it that's blanked in outline/dropshadow mode for some reason
+                // (fixme: is this needed because of a design bug? if it's not rendered you can click through it because it got cleared)
+                g.setColor(generalColor);
+                g.fillRect(0, (textStartY - 1) + (i * lineHeight), options.getOptionInt("windowWidth"), 1);
+                i++;
             }
+            
             //render furigana/window bar
             if(showMenubar)menubar.render(g);
             else
@@ -249,6 +277,11 @@ public class UI
         //update loop
         while(true)
         {
+            if(stickToWindow != null)
+            {
+                stickToWindow = WindowHook.hook.getCoord();
+                ui.disp.getFrame().setLocation(stickToWindow.get(0), stickToWindow.get(1));
+            }
             //check clipboard
             String clip = hook.check();
             if(clip != null)
@@ -264,7 +297,7 @@ public class UI
                     ui.tray.hideTray();
                 }
                 
-                clip = Japanese.toFullWidth(clip);
+                //clip = Japanese.toFullWidth(clip);
 
                 log.addLine(clip);//add line to log
                 if(!options.getOptionBool("splitLines"))clip = clip.replace("\n", "");//all on one line if not splitting
@@ -292,7 +325,7 @@ public class UI
             else mpStatusText = null;
             try
             {
-                Thread.sleep(100);
+                Thread.sleep(Main.options.getOptionInt("uiThrottleMilliseconds"));
             }catch(InterruptedException ignored){}
 
             //UI has become inaccessible (most likely closed via alt+f4)

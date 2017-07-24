@@ -35,8 +35,9 @@ public class Dictionary
     //can query for words
     private List<SubBook> books;
 
-
     private static int loadedWordCount = 0;
+    
+    public static String userdictFilename = "dictionaries/customDict.txt";
 
     public Dictionary()throws IOException
     {
@@ -68,6 +69,11 @@ public class Dictionary
             {
                 Kanji.load(file, Main.options.getOptionBool("addKanjiAsDef")?this:null, DefSource.getSource("Kanji deck"));
             }
+            else if(file.getName().equals("freqlist.tsv"))
+            {
+                System.out.println("loading freq data");
+                FrequencySink.load(file, 6, 7, 0);
+            }
             else if(file.getName().equalsIgnoreCase("edict2"))
             {
                 //edict file encoding
@@ -81,9 +87,9 @@ public class Dictionary
             else if(file.getName().endsWith(".txt"))
             {
                 //UTF-8 dictionary
+                userdictFilename = file.getAbsolutePath();
                 loadUserDict(file, DefSource.getSource("Custom"));
             }
-
         }
     }
     public boolean loadEpwing(File file)
@@ -129,7 +135,7 @@ public class Dictionary
     }
 
     /**
-     * Inserts a definition into the lookup data structure
+     * Inserts a generic definition into the lookup data structure
      * @param def the definition to insert
      */
     public void insertDefinition(Definition def)
@@ -169,7 +175,19 @@ public class Dictionary
     public List<Definition> find(String word)
     {
         //System.out.println("looking up " + word);
-        return lookup.get(word);
+        if(lookup.get(word) == null) return null;
+        // FIXME: this is a pile of crap and probably really slow
+        List<Definition> stored = new ArrayList<>(lookup.get(word));
+        for(int i = 0; i < stored.size(); i++)
+        {
+            Definition def = stored.get(i);
+            if(Main.blacklistDef.isBlacklisted(def.getID(), word))
+            {
+                stored.remove(i);
+                i--;
+            }
+        }
+        return stored;
     }
     public boolean hasEpwingDef(String word)
     {

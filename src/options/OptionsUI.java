@@ -55,6 +55,7 @@ public class OptionsUI extends JFrame
     private final static String parserConfig ="full=Full;partial=Basic;none=Disable";
     private final static String deconConfig ="recursive=Recursive (better, slow);legacy=Legacy (faster, less accurate)";
     private final static String furiConfig ="sameForm=Conjugated as in text;original=Dictionary form;stripKana=Kanji readings only";
+    private final static String textBackConfig ="normal=Simple background;dropshadow=Dropshadow;outline=Outline";
 
     public OptionsUI() throws HeadlessException
     {
@@ -94,14 +95,22 @@ public class OptionsUI extends JFrame
             mainUI.add(new ToggleOption("splitLines", "Retain newlines", "If disabled, all text is shown on one line, making the UI more compact"));
             //mainUI.add(new ToggleOption("reflowToFit", "Move text to next line if it doesn't fit", "If disabled, you can scroll through the text to see the rest of the line."));
             mainUI.add(new OptionLabel("Theme:", null));
-            mainUI.add(new ColourOption("textCol", "Main text colour", "The colour used for the main font."));
+            mainUI.add(new ToggleOption("unparsedWordsAltColor", "Color unparsed text like known words", "If enabled, segments with no definitions will be rendered as if they're marked as known"));
+            mainUI.add(new ToggleOption("textFontUnhinted", "Don't hint main text", "If disabled, main text will not be hinted if antialiasing is enabled. Works well with outlines. Uses a different text rendering method."));
+            mainUI.add(new ColourOption("textCol", "Main text colour", "The colour used for the main text."));
+            mainUI.add(new ColourOption("knownTextCol", "Known text colour", "The colour used for main text if it's marked as known."));
             mainUI.add(new FontOption("textFont", "Main text font", "The font used for the captured Japanese text."));
             window.add(mainUI);
 
             OptionPage backs = new OptionPage("Background colours");
 
             backs.add(new OptionLabel("Text:", null));
+            
+            backs.add(new RadioOption("textBackMode", textBackConfig, "Text background mode", null));
+            backs.add(new NumberOption("textBackVariable", "Dropshadow/outline distance/thickness", "", NumberOption.NumberPreset.posOnly));
             backs.add(new ColourOption("textBackCol", "Main text background colour", "The colour used for normal words."));
+            backs.add(new ColourOption("knownTextBackCol", "Known text background colour", "Colour used for words marked as known."));
+            
             backs.add(new ColourOption("clickedTextBackCol", "selected word colour", "Colour used for words while their definition is visible."));
             backs.add(new OptionLabel("Word splits:", null));
             backs.add(new ColourOption("markerCol", "Manual seperator colour", "These are the word spacers you place when you middle click on text."));

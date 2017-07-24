@@ -8,6 +8,7 @@ import language.dictionary.Dictionary;
 import language.dictionary.EPWINGDefinition;
 import language.splitter.WordSplitter;
 import multiplayer.MPController;
+import options.BlacklistDef;
 import options.Known;
 import options.Options;
 import options.PrefDef;
@@ -55,6 +56,7 @@ public class Main
     public static Known known;
     public static WantToLearn wantToLearn;
     public static PrefDef prefDef;
+    public static BlacklistDef blacklistDef;
     /**
      * The currently active configuration
      */
@@ -71,7 +73,7 @@ public class Main
     {
         System.out.println(VERSION);
         initLoadingScreen();
-        try
+        //try
         {
             //load in configuration
             options = new Options(Options.SETTINGS_FILE);
@@ -79,6 +81,7 @@ public class Main
             known = new Known(options.getOptionBool("enableKnown")? options.getFile("knownWordsPath"):null);
             wantToLearn = new WantToLearn(known);
             prefDef = new PrefDef(options.getFile("preferredDefsPath"));
+            blacklistDef = new BlacklistDef(options.getFile("blacklistDefsPath"));
 
             hook = new ClipboardHook();//default hook
             log = new Log(50);//new log
@@ -86,11 +89,12 @@ public class Main
             loadDictionaries();
             splitter = new WordSplitter(dict);
 
-        }catch(Exception err)
-        {
-            JOptionPane.showMessageDialog(null, "Error starting Spark Reader:\n" + err, "Error", JOptionPane.ERROR_MESSAGE);
-            System.exit(1);
         }
+        //catch(Exception err)
+        //{
+        //    JOptionPane.showMessageDialog(null, "Error starting Spark Reader:\n" + err, "Error", JOptionPane.ERROR_MESSAGE);
+        //    System.exit(1);
+        //}
         System.out.println("init done");
         persist.startupCount++;
         UI.runUI();
@@ -114,6 +118,7 @@ public class Main
         {
             if(known != null)Main.known.save();
             if(prefDef != null)Main.prefDef.save();
+            if(blacklistDef != null)Main.blacklistDef.save();
             persist.save();
         }catch(IOException err)
         {

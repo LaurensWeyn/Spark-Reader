@@ -46,7 +46,8 @@ public abstract class Definition
         StringBuilder tagList = new StringBuilder();
         for(DefTag tag:tags)
         {
-            tagList.append(tag.name()).append(" ");
+            if(tag != null)
+                tagList.append(tag.name()).append(" ");
         }
         return tagList.toString().trim();
     }

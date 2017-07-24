@@ -1,10 +1,13 @@
 package ui.menubar;
 
 import hooker.ClipboardHook;
+import hooker.WindowHook;
 import main.Main;
 import multiplayer.Client;
 import multiplayer.Host;
 import options.OptionsUI;
+import ui.UI;
+import ui.WindowHookUI;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -104,22 +107,29 @@ public class MenubarBuilder
     private static MenubarItem buildConnectMenu()
     {
         MenubarItem item = new MenubarItem("Connect");
-        item.addMenuItem(new AbstractAction("Hook to window")
+
+        JMenuItem windowHook = new JMenuItem(new AbstractAction("Stick to window")
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-            }
-        }, false);
-        JCheckBoxMenuItem pinToWindow = new JCheckBoxMenuItem(new AbstractAction("Pin to window")
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
+                new WindowHookUI();
             }
         });
-        pinToWindow.setEnabled(false);
-        item.addMenuItem(pinToWindow);
+        JMenuItem windowUnHook = new JMenuItem(new AbstractAction("Stop sticking to window")
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                UI.stickToWindow = null;
+            }
+        });
+        
+        if(WindowHook.hook != null && UI.stickToWindow == null)
+            item.addMenuItem(windowHook);
+        else if(UI.stickToWindow != null)
+            item.addMenuItem(windowUnHook);
+        
         item.addSpacer();
         item.addMenuItem(buildSourceSubMenu());
         item.addMenuItem(buildMPSubMenu());
@@ -235,6 +245,9 @@ public class MenubarBuilder
             mpJoin.setEnabled(false);
             mpHost.setEnabled(false);
         }
+        
+        
+        
         JMenu mp = new JMenu("Multiplayer");
         mp.add(mpHost);
         mp.add(mpJoin);

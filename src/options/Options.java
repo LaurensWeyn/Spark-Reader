@@ -45,6 +45,7 @@ public class Options
         //all default settings hardcoded here//
         ///////////////////////////////////////
 
+        options.put("textFontUnhinted", "false");
         options.put("textFont", "Meiryo, A, 30");
         options.put("furiFont", "MS Gothic,, 12");
         options.put("defFont", "Meiryo,, 15");
@@ -55,10 +56,13 @@ public class Options
         options.put("furiBackCol", "0, 0, 0, 128");
         options.put("windowBackCol", "0, 0, 0, 175");
 
+        options.put("textBackMode", "background");
+        options.put("textBackVariable", "2");
         options.put("textBackCol", "0, 0, 0, 200");
         options.put("knownTextBackCol", "0, 0, 100, 200");
         options.put("clickedTextBackCol", "0, 100, 0, 200");
         options.put("textCol", "255, 255, 255, 255");
+        options.put("knownTextCol", "255, 255, 255, 255");
 
         options.put("defReadingCol", "0, 255, 255, 255");
         options.put("defKanjiCol", "255, 255, 255, 255");
@@ -79,6 +83,8 @@ public class Options
         options.put("ankiExportPath", "forAnki.csv");
         options.put("knownWordsPath", "preferences/knownWords");
         options.put("preferredDefsPath", "preferences/preferredDefs");
+        options.put("blacklistDefsPath", "preferences/blacklistDefs");
+        
         options.put("persistPath", "preferences/persist.dat");
 
         options.put("windowWidth", "1280");
@@ -123,9 +129,15 @@ public class Options
         options.put("splitterMode", "full");
         options.put("deconMode", "recursive");
         options.put("furiMode", "original");
+        options.put("unparsedWordsAltColor", "false");
 
         options.put("hookKeyboard", "false");
         options.put("showDefID", "false");
+        options.put("defConstrainPosition", "false");
+        options.put("uiThrottleMilliseconds", "100");
+        
+        options.put("ankiExportEdictID", "false");
+        options.put("ankiExportFreqData", "false");
 
         options.put("menubarOptionSpacing", "7");
 
