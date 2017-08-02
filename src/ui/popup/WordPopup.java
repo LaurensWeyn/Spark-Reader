@@ -252,6 +252,7 @@ public class WordPopup extends JPopupMenu
         JFrame frame = Main.ui.disp.getFrame();
         try
         {
+            //TODO move this line substring select UI to the WordEditUI
             String note = (String)
             JOptionPane.showInputDialog(frame,
                 "Cut line down to undefined word",

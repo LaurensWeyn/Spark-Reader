@@ -1,22 +1,13 @@
 package ui.menubar;
 
 import main.Main;
-import multiplayer.Client;
-import multiplayer.Host;
 import ui.UI;
 
 import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.io.File;
-import java.io.IOException;
-import java.net.Socket;
 import java.util.ArrayList;
-
-import static main.Main.options;
 
 /**
  * Manages the menu bar on the main ui, for quick access to settings.
@@ -118,6 +109,42 @@ public class Menubar
     }
 
 
+    /**
+     * Gets a menu item by name. Used for updating elements after the menubar has been built.
+     * @param menuName the name of the menu/category
+     * @param elementName the name of the element in that menu
+     * @return the component with the given name, or null if not found
+     */
+    public MenuElement getMenuItem(String menuName, String elementName)
+    {
+        for(MenubarItem menu:items)
+        {
+            if(menu.getName().equals(menuName))
+            {
+                return getSubMenuItem(menu.getMenu(), elementName);
+            }
+        }
+        return null;
+    }
 
+    /**
+     * Searches for a menu item by name. Recursively checks sub-menus.
+     * @param menu the menu to search
+     * @param elementName the element to search for
+     * @return the element if found in this menu, null if not found
+     */
+    private MenuElement getSubMenuItem(MenuElement menu, String elementName)
+    {
+        if(elementName.equals(menu.getComponent().getName()))return menu;
+        if(menu.getSubElements() != null)
+        {
+            for(MenuElement subItem:menu.getSubElements())
+            {
+                MenuElement found = getSubMenuItem(subItem, elementName);
+                if(found != null)return found;
+            }
+        }
+        return null;
+    }
 
 }

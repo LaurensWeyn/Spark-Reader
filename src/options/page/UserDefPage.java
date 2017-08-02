@@ -15,6 +15,7 @@ import java.util.ArrayList;
 /**
  * OptionPage to allow editing user definitions
  * Created by Laurens on 2/25/2017.
+ * TODO move to different window?
  */
 public class UserDefPage implements Page
 {
@@ -61,7 +62,7 @@ public class UserDefPage implements Page
                 }
             }
         });
-        JButton saveButton = new JButton(new AbstractAction("Save")
+        JButton saveButton = new JButton(new AbstractAction("Save changes")
         {
             @Override
             public void actionPerformed(ActionEvent act)

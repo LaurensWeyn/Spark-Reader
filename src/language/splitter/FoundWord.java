@@ -152,7 +152,6 @@ public class FoundWord
         int bgStart = xStart + xOff;
         int bgEnd = bgStart + getAdvancementWidth(g);
         
-        //TODO make colour setting text more readable
         g.clearRect(bgStart, yOff + UI.textStartY, bgEnd-bgStart, g.getFontMetrics().getHeight());//remove background
         
     }
@@ -163,7 +162,7 @@ public class FoundWord
         int bgEnd = startPos + getAdvancementWidth(g);
         
         boolean known = isKnown();
-        if(options.getOptionBool("unparsedWordsAltColor")) known = known|(getDefinitionCount()==0);
+        if(options.getOptionBool("unparsedWordsAltColor")) known |= (getDefinitionCount()==0);//TODO see if we can move this to isKnown
         
         Color bgColor;
         

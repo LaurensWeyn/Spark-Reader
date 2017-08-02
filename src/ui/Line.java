@@ -56,7 +56,7 @@ public class Line
             word.showDef(false);
         }
     }
-    
+    //TODO check and document this later
     List<Integer> wordLocations = null; // must be stored in ascending order
     public FoundWord getWordAt(int x)
     {

@@ -1,6 +1,7 @@
 package language.dictionary;
 
 import language.splitter.FoundDef;
+import main.Utils;
 
 import java.io.*;
 import java.util.HashMap;
@@ -29,7 +30,7 @@ public class FrequencySink
     {
         try
         {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(freqFile), "UTF-8"));
+            BufferedReader reader = Utils.UTF8Reader(freqFile);
             String str;
             int i = 1;
             while((str = reader.readLine()) != null)

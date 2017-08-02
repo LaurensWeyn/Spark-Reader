@@ -104,10 +104,10 @@ public class OptionsUI extends JFrame
 
             OptionPage backs = new OptionPage("Background colours");
 
-            backs.add(new OptionLabel("Text:", null));
-            
             backs.add(new RadioOption("textBackMode", textBackConfig, "Text background mode", null));
             backs.add(new NumberOption("textBackVariable", "Dropshadow/outline distance/thickness", "", NumberOption.NumberPreset.posOnly));
+
+            backs.add(new OptionLabel("Text:", null));
             backs.add(new ColourOption("textBackCol", "Main text background colour", "The colour used for normal words."));
             backs.add(new ColourOption("knownTextBackCol", "Known text background colour", "Colour used for words marked as known."));
             

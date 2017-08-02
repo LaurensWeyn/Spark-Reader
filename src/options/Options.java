@@ -56,7 +56,7 @@ public class Options
         options.put("furiBackCol", "0, 0, 0, 128");
         options.put("windowBackCol", "0, 0, 0, 175");
 
-        options.put("textBackMode", "background");
+        options.put("textBackMode", "normal");
         options.put("textBackVariable", "2");
         options.put("textBackCol", "0, 0, 0, 200");
         options.put("knownTextBackCol", "0, 0, 100, 200");

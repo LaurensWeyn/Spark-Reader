@@ -16,7 +16,6 @@
  */
 package options;
 
-import language.dictionary.Definition;
 import language.splitter.FoundDef;
 import main.Main;
 
@@ -27,6 +26,9 @@ import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+/**
+ * TODO look into moving this into the Dictionary data structure
+ */
 public class BlacklistDef
 {
     private TreeMap<Long, ArrayList<String>> table;

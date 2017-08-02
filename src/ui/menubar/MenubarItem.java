@@ -47,15 +47,16 @@ public class MenubarItem
         return menu;
     }
 
-    public void addMenuItem(Action a)
+    public void addMenuItem(Action a, String name)
     {
-        addMenuItem(a, true);
+        addMenuItem(a, true, name);
     }
 
-    public void addMenuItem(Action a, boolean enabled)
+    public void addMenuItem(Action a, boolean enabled, String name)
     {
         JMenuItem item = new JMenuItem(a);
         item.setEnabled(enabled);
+        item.setName(name);
         menu.add(item);
     }
 

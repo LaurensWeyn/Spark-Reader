@@ -49,7 +49,7 @@ public class MenubarBuilder
             {
                 importPrompt();
             }
-        });
+        }, "Import");
         item.addMenuItem(new AbstractAction("Options")
         {
             @Override
@@ -63,7 +63,7 @@ public class MenubarBuilder
                     JOptionPane.showMessageDialog(ui.disp.getFrame(), "Error editing configuration: " + e);
                 }
             }
-        });
+        }, "Options");
         item.addMenuItem(new AbstractAction("Exit")
         {
             @Override
@@ -71,7 +71,7 @@ public class MenubarBuilder
             {
                 Main.exit();
             }
-        });
+        }, "Exit");
         return item;
     }
 
@@ -85,7 +85,7 @@ public class MenubarBuilder
             {
                 ClipboardHook.setClipboard(currPage.getText());
             }
-        });
+        }, "CopyLine");
         item.addSpacer();
         item.addMenuItem(new AbstractAction("Add new word")
         {
@@ -93,14 +93,14 @@ public class MenubarBuilder
             public void actionPerformed(ActionEvent e)
             {
             }
-        }, false);
+        }, false, "NewWord");
         item.addMenuItem(new AbstractAction("Edit dictionary")
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
             }
-        }, false);
+        }, false, "EditDict");
         return item;
     }
 
@@ -108,28 +108,25 @@ public class MenubarBuilder
     {
         MenubarItem item = new MenubarItem("Connect");
 
-        JMenuItem windowHook = new JMenuItem(new AbstractAction("Stick to window")
+        item.addMenuItem(new AbstractAction("Stick to window")
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                new WindowHookUI();
+                JMenuItem thisItem = (JMenuItem)ui.menubar.getMenuItem(item.getName(), "Stick").getComponent();
+                if(UI.stickToWindow == null)
+                {
+                    new WindowHookUI();//enable
+                    thisItem.setText("Stop sticking to window");//rename option
+                }
+                else
+                {
+                    UI.stickToWindow = null;//disable
+                    thisItem.setText("Stick to window");//rename option
+                }
             }
-        });
-        JMenuItem windowUnHook = new JMenuItem(new AbstractAction("Stop sticking to window")
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                UI.stickToWindow = null;
-            }
-        });
-        
-        if(WindowHook.hook != null && UI.stickToWindow == null)
-            item.addMenuItem(windowHook);
-        else if(UI.stickToWindow != null)
-            item.addMenuItem(windowUnHook);
-        
+        }, "Stick");
+
         item.addSpacer();
         item.addMenuItem(buildSourceSubMenu());
         item.addMenuItem(buildMPSubMenu());
@@ -146,7 +143,7 @@ public class MenubarBuilder
             {
                 JOptionPane.showMessageDialog(Main.getParentFrame(), Main.persist.toString(), "Statistics", JOptionPane.PLAIN_MESSAGE);
             }
-        });
+        }, "Stats");
         item.addMenuItem(new AbstractAction("View on GitHub")
         {
             @Override
@@ -160,7 +157,7 @@ public class MenubarBuilder
                     err.printStackTrace();
                 }
             }
-        });
+        }, "Git");
         item.addMenuItem(new AbstractAction("About")
         {
             @Override
@@ -168,7 +165,7 @@ public class MenubarBuilder
             {
                 JOptionPane.showMessageDialog(Main.getParentFrame(), Main.ABOUT, "About Spark Reader", JOptionPane.PLAIN_MESSAGE);
             }
-        });
+        }, "About");
         return item;
     }
 
