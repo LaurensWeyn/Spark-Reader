@@ -181,13 +181,9 @@ public class UI
                 if (i != 0)
                 {
                     g.setColor(options.getColor("windowBackCol"));
-                    g.clearRect(0, (textStartY - 1) + (i * lineHeight) - furiHeight + 1, options.getOptionInt("windowWidth"), furiHeight - 1);
-                    g.fillRect (0, (textStartY - 1) + (i * lineHeight) - furiHeight + 1, options.getOptionInt("windowWidth"), furiHeight - 1);
+                    g.clearRect(0, (textStartY - 1) + (i * lineHeight) - furiHeight + 1, options.getOptionInt("windowWidth"), furiHeight);
+                    g.fillRect (0, (textStartY - 1) + (i * lineHeight) - furiHeight + 1, options.getOptionInt("windowWidth"), furiHeight);
                 }
-                // the 1px line immediately beneath it that's blanked in outline/dropshadow mode for some reason
-                // (fixme: is this needed because of a design bug? if it's not rendered you can click through it because it got cleared)
-                g.setColor(generalColor);
-                g.fillRect(0, (textStartY - 1) + (i * lineHeight), options.getOptionInt("windowWidth"), 1);
                 i++;
             }
             
@@ -198,7 +194,7 @@ public class UI
                 options.getFont(g, "furiFont");
 
                 g.setColor(options.getColor("furiBackCol"));
-                g.fillRect(0, furiganaStartY, options.getOptionInt("windowWidth"), furiHeight - 1);
+                g.fillRect(0, furiganaStartY, options.getOptionInt("windowWidth"), furiHeight);
             }
             
             int yOff = 0;
