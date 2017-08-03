@@ -64,8 +64,11 @@ public class UI
     public static int mainFontSize = 1;//1 default to stop division by 0
     public int xOffset = 0;
 
-    public static int currentWidth = -1;//user set resize size
-
+    // window sizing
+    public static int currentWidth = -1;
+    public static int currentMaxHeight = -1;
+    // for scrolling
+    public static int widestLineWidth = -1;
     
     public FoundWord selectedWord = null;
     
@@ -147,7 +150,12 @@ public class UI
             defStartY = textEndY;
         }
         minimiseStartX = options.getOptionInt("windowWidth") - optionsButtonWidth - 1;
-        if(currentWidth == -1)currentWidth = options.getOptionInt("windowWidth");
+        if(currentWidth != options.getOptionInt("windowWidth") || currentMaxHeight != options.getOptionInt("maxHeight"))
+        {
+            currentWidth = options.getOptionInt("windowWidth");
+            currentMaxHeight = options.getOptionInt("maxHeight");
+            disp.setSize(currentWidth, currentMaxHeight);
+        }
     }
     public void render()
     {
@@ -171,7 +179,7 @@ public class UI
             
             //render background unless it's supposed to be for dropshadows only
             if(renderBackground && !(options.getOption("textBackMode").equals("dropshadow") || options.getOption("textBackMode").equals("outline")))
-                g.fillRect(0, textStartY - 1, options.getOptionInt("windowWidth"), currPage.getLineCount() * lineHeight - furiHeight + 1); // general background beside short text
+                g.fillRect(0, textStartY - 1, currentWidth, currPage.getLineCount() * lineHeight - furiHeight + 1); // general background beside short text
             
             options.getFont(g, "furiFont");
             int i = 0;
@@ -181,13 +189,9 @@ public class UI
                 if (i != 0)
                 {
                     g.setColor(options.getColor("windowBackCol"));
-                    g.clearRect(0, (textStartY - 1) + (i * lineHeight) - furiHeight + 1, options.getOptionInt("windowWidth"), furiHeight - 1);
-                    g.fillRect (0, (textStartY - 1) + (i * lineHeight) - furiHeight + 1, options.getOptionInt("windowWidth"), furiHeight - 1);
+                    g.clearRect(0, (textStartY - 1) + (i * lineHeight) - furiHeight + 1, currentWidth, furiHeight);
+                    g.fillRect (0, (textStartY - 1) + (i * lineHeight) - furiHeight + 1, currentWidth, furiHeight);
                 }
-                // the 1px line immediately beneath it that's blanked in outline/dropshadow mode for some reason
-                // (fixme: is this needed because of a design bug? if it's not rendered you can click through it because it got cleared)
-                g.setColor(generalColor);
-                g.fillRect(0, (textStartY - 1) + (i * lineHeight), options.getOptionInt("windowWidth"), 1);
                 i++;
             }
             
@@ -198,14 +202,16 @@ public class UI
                 options.getFont(g, "furiFont");
 
                 g.setColor(options.getColor("furiBackCol"));
-                g.fillRect(0, furiganaStartY, options.getOptionInt("windowWidth"), furiHeight - 1);
+                g.fillRect(0, furiganaStartY, currentWidth, furiHeight);
             }
             
             int yOff = 0;
             //render lines
+            widestLineWidth = -1;
             for(Line line:currPage)
             {
-                line.render(g, xOffset, yOff);
+                int lineWidth = line.render(g, xOffset, yOff);
+                widestLineWidth = Math.max(widestLineWidth, lineWidth);
                 yOff += lineHeight;
             }
 
@@ -367,8 +373,7 @@ public class UI
             return;
         }
         if(xOffset > 0)xOffset = 0;
-        int maxChars = (options.getOptionInt("windowWidth") - options.getOptionInt("defWidth")) / mainFontSize;
-        int maxX = (currPage.getMaxTextLength() - maxChars) * mainFontSize;
+        int maxX = widestLineWidth - currentWidth;
         if(-xOffset > maxX)xOffset = Math.min(-maxX, 0);
     }
 
