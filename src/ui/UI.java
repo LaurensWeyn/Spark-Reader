@@ -256,16 +256,6 @@ public class UI
 
     public static void runUI()throws Exception
     {
-
-        
-        try
-        {
-            if(options.getOptionBool("useNativeUI"))javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
-        }catch(Exception e)
-        {
-            //fall back to default if this fails
-        }
-        
         ui = new UI();
         ui.registerListeners();
         //random sample text to copy for testing

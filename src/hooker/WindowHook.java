@@ -12,6 +12,7 @@ import static com.sun.jna.platform.win32.WinUser.*;
  */
 public class WindowHook
 {
+    //TODO this could use some work later
     User32 libuser32 = null;
     String name;
     boolean available = true;
@@ -44,6 +45,13 @@ public class WindowHook
         else
             return null;
     }
+
+    public void sendAdvanceKey()
+    {
+        if(!available || name == null)return;
+        KernelController.sendAdvanceKey(libuser32.FindWindowW(null, name.toCharArray()));
+    }
+
     public String[] getAvailableWindows()
     {
         List<String> names = new ArrayList<String>();

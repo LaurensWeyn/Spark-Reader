@@ -1,5 +1,7 @@
 package ui.input;
 
+import hooker.WindowHook;
+import main.Main;
 import ui.UI;
 
 /**
@@ -41,7 +43,9 @@ public abstract class KeyHandler
                 else keyAction(KeyEvent.hideWindow);
                 break;
 
-
+            case advanceText:
+                if(Main.options.getOptionBool("forwardKeys"))WindowHook.hook.sendAdvanceKey();
+                break;
         }
     }
 
@@ -60,6 +64,9 @@ public abstract class KeyHandler
         hideWindow,
         showWindow,
         toggleWindow,
+
+        //game controls
+        advanceText,
 
         //keyboard only-controls
         //to be implemented later, rough below

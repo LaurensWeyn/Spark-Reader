@@ -121,8 +121,8 @@ public class KernelController
     }
 
     /**
-     * Gets the currently focussed window
-     * @return pointer to the focussed window, or null if not possible
+     * Gets the currently focused window
+     * @return pointer to the focused window, or null if not possible
      */
     public static Pointer getFocusedWindow()
     {
@@ -151,5 +151,22 @@ public class KernelController
         WinDef.RECT rect = new WinDef.RECT();
         user32.GetWindowRect(hWnd, rect);
         return new Rectangle(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
+    }
+
+    /**
+     * Sends key to advance dialogue to a window, even if that window is not focused.
+     * @param hWnd the window to send the key to.
+     */
+    public static void sendAdvanceKey(Pointer hWnd)
+    {
+        if(!isKernelAvailable() || hWnd == null)return;
+
+        int WM_KEYDOWN = 0x0100;
+        int WM_KEYUP = 0x0101;
+        //keycodes: https://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
+        int VK_RETURN = 0x0D;
+
+        user32.PostMessage(hWnd, WM_KEYDOWN, VK_RETURN, 0);
+        user32.PostMessage(hWnd, WM_KEYUP, VK_RETURN, 0);
     }
 }

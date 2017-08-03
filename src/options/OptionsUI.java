@@ -76,6 +76,7 @@ public class OptionsUI extends JFrame
             display.add(new OptionLabel("Other:", null));
             display.add(new ToggleOption("reduceSave", "Reduce file I/O", "<html>If ticked, writing to files is avoided until the program is closed or a lot of changes have been made.<br>Turning this on will improve performance, but if the program crashes some progress may be lost."));
             display.add(new ToggleOption("hookKeyboard", "Enable keyboard controls", "<html>If enabled, Spark Reader uses a tool to listen for keystrokes while the window is unfocused.<br>Requires restart."));
+            display.add(new ToggleOption("forwardKeys", "Forward enter key if focused", "<html>Sends enter presses to the hooked window.<br>Use for games that need Spark Reader to stay focused.<br>Requires 'keyboard controls', 'take focus', and an active window hook to be useful."));
         root.add(display);
         PageGroup window = new PageGroup("Overlay", "Graphical settings related to the on-screen overlay window");
 
@@ -96,7 +97,7 @@ public class OptionsUI extends JFrame
             mainUI.add(new ToggleOption("splitLines", "Retain newlines", "If disabled, all text is shown on one line, making the UI more compact"));
             //mainUI.add(new ToggleOption("reflowToFit", "Move text to next line if it doesn't fit", "If disabled, you can scroll through the text to see the rest of the line."));
             mainUI.add(new OptionLabel("Theme:", null));
-            mainUI.add(new ToggleOption("unparsedWordsAltColor", "Color unparsed text like known words", "If enabled, segments with no definitions will be rendered as if they're marked as known"));
+            mainUI.add(new ToggleOption("unparsedWordsAltColor", "Color unparsed text like known words", "If enabled, segments with no definitions will be rendered as if they're marked as known."));
             mainUI.add(new ToggleOption("textFontUnhinted", "Don't hint main text", "If disabled, main text will not be hinted if antialiasing is enabled. Works well with outlines. Uses a different text rendering method."));
             mainUI.add(new ColourOption("textCol", "Main text colour", "The colour used for the main text."));
             mainUI.add(new ColourOption("knownTextCol", "Known text colour", "The colour used for main text if it's marked as known."));

@@ -1,6 +1,7 @@
 package ui;
 
 import hooker.WindowHook;
+import main.Utils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,8 +40,8 @@ public class WindowHookUI
         
         mainPanel.add(list);
         mainPanel.add(select);
-        
-        frame.setLocationByPlatform(true);
+
+        Utils.centerWindow(frame);
         frame.setVisible(true);
     }
 }

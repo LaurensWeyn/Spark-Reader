@@ -79,6 +79,8 @@ public class JNativeKeyHandler extends KeyHandler implements NativeKeyListener
             case NativeKeyEvent.VC_ESCAPE:
                 keyAction(KeyEvent.hideWindow);
                 break;
+            case NativeKeyEvent.VC_ENTER:
+                keyAction(KeyEvent.advanceText);
         }
     }
 

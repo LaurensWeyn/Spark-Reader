@@ -74,6 +74,13 @@ public class Main
         System.out.println(VERSION);
         options = new Options(Options.SETTINGS_FILE);
         persist = Persist.load(options.getFile("persistPath"));
+        try
+        {
+            if(options.getOptionBool("useNativeUI"))javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
+        }catch(Exception e)
+        {
+            //fall back to default if this fails
+        }
         initLoadingScreen();
         //try
         {

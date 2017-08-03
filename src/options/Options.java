@@ -132,8 +132,9 @@ public class Options
         options.put("unparsedWordsAltColor", "false");
 
         options.put("hookKeyboard", "false");
+        options.put("forwardKeys", "false");
         options.put("showDefID", "false");
-        options.put("defConstrainPosition", "false");
+        options.put("defConstrainPosition", "true");//TODO UI doesn't work properly if this is set to false
         options.put("uiThrottleMilliseconds", "100");
         
         options.put("ankiExportEdictID", "false");

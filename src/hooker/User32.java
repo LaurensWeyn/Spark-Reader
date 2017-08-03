@@ -99,5 +99,8 @@ public interface User32 extends W32APIOptions {
     //get state of all keys
     boolean GetKeyboardState(byte[] state);
     //get state of one key
-    short GetAsyncKeyState(int vKey);  
+    short GetAsyncKeyState(int vKey);
+
+    //Send keystrokes to other, possibly unfocused windows
+    int PostMessage(Pointer hWnd, int Msg, int wParam, int lParam);
 }
