@@ -64,9 +64,11 @@ public class UI
     public static int mainFontSize = 1;//1 default to stop division by 0
     public int xOffset = 0;
 
-    public static int currentWidth = -1;//user set resize size
+    // window sizing
+    public static int currentWidth = -1;
     public static int currentMaxHeight = -1;
-
+    // for scrolling
+    public static int widestLineWidth = -1;
     
     public FoundWord selectedWord = null;
     
@@ -205,9 +207,11 @@ public class UI
             
             int yOff = 0;
             //render lines
+            widestLineWidth = -1;
             for(Line line:currPage)
             {
-                line.render(g, xOffset, yOff);
+                int lineWidth = line.render(g, xOffset, yOff);
+                widestLineWidth = Math.max(widestLineWidth, lineWidth);
                 yOff += lineHeight;
             }
 
@@ -369,9 +373,7 @@ public class UI
             return;
         }
         if(xOffset > 0)xOffset = 0;
-        //int maxChars = (options.getOptionInt("windowWidth") - options.getOptionInt("defWidth")) / mainFontSize;
-        //int maxX = (currPage.getMaxTextLength() - maxChars) * mainFontSize;
-        int maxX = currentWidth;
+        int maxX = widestLineWidth - currentWidth;
         if(-xOffset > maxX)xOffset = Math.min(-maxX, 0);
     }
 
