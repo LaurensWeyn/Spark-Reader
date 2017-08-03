@@ -196,49 +196,76 @@ public class OptionsUI extends JFrame
         lowerButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         optionScroll.getVerticalScrollBar().setUnitIncrement(12);
         menuScroll.getVerticalScrollBar().setUnitIncrement(12);
-
-        lowerButtons.add(new JButton(new AbstractAction("Revert changes")
+        lowerButtons.add(new JButton(new AbstractAction("OK")
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                try
-                {
-                    changedOptions.load();
-                } catch (IOException ex)
-                {
-                    //TODO deal with this error
-                }
-                
-                //reload old settings into all components:
-                for(Page page:root.getPages())
-                {
-                    page.update();
-                }
-                
+                saveChanges();
+                closeWindow();
             }
         }));
-        lowerButtons.add(new JButton(new AbstractAction("Apply changes")
+        lowerButtons.add(new JButton(new AbstractAction("Apply")
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                try
-                {
-                    changedOptions.save();
-                    if(Main.options != null) Main.options.load();
-                }catch(IOException err)
-                {
-                    //TODO deal with this error
-                }
-                if(Main.ui != null)
-                {
-                    Main.ui.render();//update settings
-                    Main.ui.render();//twice to ensure things render correctly
-                }
+                saveChanges();
+            }
+        }));
+        lowerButtons.add(new JButton(new AbstractAction("Cancel")
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                revertChanges();
+                closeWindow();
+
             }
         }));
     }
+
+    private void revertChanges()
+    {
+        try
+        {
+            changedOptions.load();
+        } catch (IOException err)
+        {
+            JOptionPane.showMessageDialog(Main.getParentFrame(), "Error restoring options:\n" + err);
+            err.printStackTrace();
+        }
+
+        //reload old settings into all components:
+        for(Page page:root.getPages())
+        {
+            page.update();
+        }
+    }
+
+    private void saveChanges()
+    {
+        try
+        {
+            changedOptions.save();
+            if(Main.options != null) Main.options.load();
+        }catch(IOException err)
+        {
+            JOptionPane.showMessageDialog(Main.getParentFrame(), "Error applying changes:\n" + err);
+            err.printStackTrace();
+        }
+        if(Main.ui != null)
+        {
+            Main.ui.render();//update settings
+            Main.ui.render();//twice to ensure things render correctly
+        }
+    }
+
+    private void closeWindow()
+    {
+        dispose();
+    }
+
     public void initComponents()
     {
         setSize(720, 480);

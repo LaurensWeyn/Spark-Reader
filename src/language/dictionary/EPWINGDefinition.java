@@ -65,7 +65,6 @@ public class EPWINGDefinition extends Definition
         String lines[] = (String[])hook.getObject();
         if(lines.length >= Main.options.getOptionInt("epwingBlacklistMinLines"))//safe to filter
         {
-            //Blacklist must've blocked the only text. Re-parse without blacklist
             hook = new EpwingAdapter(book, blacklist);
             result.getText(hook);
             lines = (String[])hook.getObject();

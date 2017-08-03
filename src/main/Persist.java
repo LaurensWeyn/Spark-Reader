@@ -22,18 +22,20 @@ public class Persist implements Serializable
     public long manualSpacesPlaced;
 
     //useful persist data
+    public int lastDictSize;//to estimate startup %
     public int lastWindowWidth;//to use when live resizing works
     public Point lastWindowPos;
     public String lastWindowHookName;
 
     //non persist data (but persist specific settings)
-    private static long SerialVersionUID = 1L;
+    private static long serialVersionUID = 1L;
     private transient long lastSyncTime;
     private static long syncPeriod = 600000L;//10 minutes
 
     public Persist()
     {
         firstStartup = new Date();
+        lastDictSize = 377089;//good first guess
     }
 
     public static Persist load(File file)

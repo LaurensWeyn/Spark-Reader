@@ -57,7 +57,6 @@ public class UserDefPage implements Page
                 {
                     Main.dict.removeDefinition(definition);
                     source.getDefinitions().remove(definition);
-                    //TODO save these changes
                     listModel.update();
                 }
             }
