@@ -65,6 +65,7 @@ public class Overlay
     {
         front = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         display = new ImageIcon(front);
+        frame.getContentPane().removeAll();
         frame.getContentPane().add(new JLabel(display));
         frame.setSize(width, height);
     }
