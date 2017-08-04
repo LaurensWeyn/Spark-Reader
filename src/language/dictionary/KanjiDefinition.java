@@ -87,9 +87,4 @@ public class KanjiDefinition extends Definition
         return constituents;
     }
 
-    @Override
-    public String getMeaningLine()
-    {
-        return null;//TODO make the Definition class handle this
-    }
 }

@@ -31,7 +31,10 @@ public abstract class Definition
     public abstract String[] getSpellings();
     public abstract String[] getMeaning();
     
-    public abstract String getMeaningLine();
+    public String getMeaningLine()
+    {
+        return String.join("<br>", getMeaning());
+    }
     
     public Set<DefTag> getTags()
     {
