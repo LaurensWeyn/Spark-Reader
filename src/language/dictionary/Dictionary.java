@@ -17,6 +17,8 @@
 package language.dictionary;
 
 import fuku.eb4j.*;
+import language.dictionary.JMDict.JMParser;
+import language.dictionary.JMDict.Spelling;
 import main.Main;
 import main.Utils;
 
@@ -77,7 +79,11 @@ public class Dictionary
             else if(file.getName().equalsIgnoreCase("edict2"))
             {
                 //edict file encoding
-                loadEdict(file, DefSource.getSource("Edict"));
+                //loadEdict(file, DefSource.getSource("Edict"));
+            }
+            else if(file.getName().equalsIgnoreCase("JMDict"))
+            {
+                JMParser.parseJMDict(file, this, DefSource.getSource("Edict"));
             }
             else if(file.getName().contains("want"))
             {
@@ -140,10 +146,10 @@ public class Dictionary
      */
     public void insertDefinition(Definition def)
     {
-        for(String spelling:def.getSpellings())//for each possible spelling...
+        for(Spelling spelling:def.getSpellings())//for each possible spelling...
         {
             //create if it doesn't exist
-            List<Definition> meanings = lookup.computeIfAbsent(spelling, k -> new LinkedList<>());
+            List<Definition> meanings = lookup.computeIfAbsent(spelling.getText(), k -> new LinkedList<>());
             meanings.add(def);//add this definition for this spelling
             loadedWordCount++;
         }
@@ -155,19 +161,19 @@ public class Dictionary
      */
     public void removeDefinition(Definition def)
     {
-        for(String spelling:def.getSpellings())//for each possible spelling...
+        for(Spelling spelling:def.getSpellings())//for each possible spelling...
         {
-            List<Definition> meanings = lookup.get(spelling);
+            List<Definition> meanings = lookup.get(spelling.getText());
             if(meanings == null)continue;
             meanings.remove(def);
             loadedWordCount--;
-            if(meanings.isEmpty())lookup.remove(spelling);
+            if(meanings.isEmpty())lookup.remove(spelling.getText());
         }
     }
 
     public void loadKanji(KanjiDefinition def)
     {
-        String kanji = def.getSpellings()[0].charAt(0) + "";
+        String kanji = def.getSpellings()[0].getText().charAt(0) + "";
         //create if it doesn't exist
         List<Definition> meanings = lookup.computeIfAbsent(kanji, k -> new ArrayList<>());
         meanings.add(def);//add this definition for this spelling

@@ -18,6 +18,8 @@ package language.splitter;
 
 import language.deconjugator.ValidWord;
 import language.dictionary.*;
+import language.dictionary.JMDict.Sense;
+import language.dictionary.JMDict.Spelling;
 import main.Main;
 import ui.TextBlockRenderer;
 
@@ -69,18 +71,13 @@ public class FoundDef implements Comparable<FoundDef>
         if(freqdata != null)
             defText.addText(freqdata.toString(), options.getColor("defTagCol"), options.getColor("defBackCol"));
         
-        String[] readings;
-        if(foundDef instanceof EDICTDefinition)
-            readings = ((EDICTDefinition)foundDef).getSpellings(foundForm.getWord());
-        else
-            readings = foundDef.getSpellings();
-        for(String reading:readings)
+        for(Spelling reading:foundDef.getSpellings(foundForm))
         {
-            if(Japanese.hasKanji(reading) && !options.getOptionBool("showAllKanji"))continue; // note: showAllKanji currently broken
+            if(reading.isKanji() && !options.getOptionBool("showAllKanji"))continue; // note: showAllKanji currently broken
             //output readings if not in this form already
-            if(!reading.equals(foundForm.getWord()))
+            if(!reading.getText().equals(foundForm.getWord()))
             {
-                defText.addText(reading, options.getColor("defReadingCol"), options.getColor("defBackCol"));
+                defText.addText(reading.getText(), options.getColor("defReadingCol"), options.getColor("defBackCol"));
             }
         }
         if(!(foundDef instanceof KanjiDefinition))
@@ -96,12 +93,11 @@ public class FoundDef implements Comparable<FoundDef>
                 }
             }
         }
-        for(String def:foundDef.getMeaning())
+        for(Sense def:foundDef.getMeanings(foundForm))
         {
-            //output non-empty definitions
-            if(!def.equals("") && !def.equals("(P)"))
+            for(String defLine:def.getMeaningLines())
             {
-                defText.addText(def, options.getColor("defCol"), options.getColor("defBackCol"));
+                defText.addText(defLine, options.getColor("defCol"), options.getColor("defBackCol"));
             }
         }
         resetScroll();
@@ -145,12 +141,7 @@ public class FoundDef implements Comparable<FoundDef>
     }
     public String getFurigana()
     {
-        if(foundDef instanceof EDICTDefinition)
-        {
-            return ((EDICTDefinition)foundDef).getFurigana(foundForm.getWord());
-        }
-        else
-            return foundDef.getFurigana();
+        return foundDef.getFurigana(foundForm);
     }
     public String getDictForm()
     {
@@ -169,7 +160,7 @@ public class FoundDef implements Comparable<FoundDef>
         score += foundDef.getSource().getPriority() * 100;
         if (Main.prefDef.isPreferred(foundDef)) score += 1000;//HIGHLY favour definitions the user preferred
 
-        Set<DefTag> tags = foundDef.getTags();
+        Set<DefTag> tags = foundDef.getTags(foundForm);
         if (tags != null)
         {
             if (tags.contains(DefTag.obs) || tags.contains(DefTag.obsc) || tags.contains(DefTag.rare) || tags.contains(DefTag.arch))

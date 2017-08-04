@@ -16,7 +16,11 @@
  */
 package language.dictionary;
 
-import java.util.Set;
+import language.deconjugator.ValidWord;
+import language.dictionary.JMDict.Sense;
+import language.dictionary.JMDict.Spelling;
+
+import java.util.*;
 
 /**
  *
@@ -24,26 +28,93 @@ import java.util.Set;
  */
 public abstract class Definition
 {
-    public abstract String getFurigana();
+    public abstract String getFurigana(ValidWord context);
+
+    /**
+     * Get the unique ID of this definition.
+     * @return the ID
+     */
     public abstract long getID();
 
+    /**
+     * Get the dictionary this definition was sourced from
+     * @return the source of this entry
+     */
     public abstract DefSource getSource();
-    public abstract String[] getSpellings();
-    public abstract String[] getMeaning();
+
+    /**
+     * Get a list of all possible spellings
+     * @return all spellings associated with this definition
+     */
+    public abstract Spelling[] getSpellings();
+
+    /**
+     * Get a list of all spellings valid for the given context
+     * @param context the context the word appears in
+     * @return a list of relevant spellings
+     */
+    public List<Spelling> getSpellings(ValidWord context)
+    {
+        return Arrays.asList(getSpellings());
+    }
+
+    public abstract Sense[] getMeanings();
+
+    public List<Sense> getMeanings(ValidWord context)
+    {
+        List<Sense> meanings = new ArrayList<>();
+        for(Sense sense:getMeanings())
+        {
+            if(sense.getRestrictedSpellings() != null)
+            {
+                boolean match = false;
+                for(Spelling restrict:sense.getRestrictedSpellings())
+                {
+                    if(restrict.getText().equals(context.getWord()))
+                    {
+                        match = true;
+                        break;
+                    }
+                }
+                if(!match)continue;//invalid; skip
+            }
+            meanings.add(sense);
+        }
+        return meanings;
+    }
     
     public String getMeaningLine()
     {
-        return String.join("<br>", getMeaning());
+        Sense[] senses = getMeanings();
+        if(senses.length == 0)return null;
+        if(senses.length == 1)return senses[0].getMeaningAsLine();
+        StringBuilder output = new StringBuilder("1) " + senses[0].getMeaningAsLine());
+        for(int i = 1; i < senses.length; i++)
+        {
+            output.append('\n').append(i + 1).append(") ").append(senses[i].getMeaningAsLine());
+        }
+        return output.toString();
     }
     
-    public Set<DefTag> getTags()
+    public Set<DefTag> getTags(ValidWord context)
     {
         return null;
     }
 
+    /**
+     * Holds tags in a single primitive for faster comparison
+     * @return a long representing the most crucial tags attached to this Definition
+     */
+    public long getQuickTags()
+    {
+        Set<DefTag> tags = getTags(null);
+        if(tags == null)return 0;
+        else return DefTag.toQuickTag(tags);
+    }
+
     public String getTagLine()
     {
-        Set<DefTag> tags = getTags();
+        Set<DefTag> tags = getTags(null);
         if(tags == null)return null;
 
         StringBuilder tagList = new StringBuilder();

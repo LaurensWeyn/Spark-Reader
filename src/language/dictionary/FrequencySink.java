@@ -56,11 +56,13 @@ public class FrequencySink
     
     public static FreqData get(FoundDef def) 
     {
-        String intext = def.getFoundForm().getWord();
+        //FIXME I have no idea how this works, look into porting this to the new system
+
+        /*String intext = def.getFoundForm().getWord();
         
         String spelling;
         if(def.getDefinition() instanceof EDICTDefinition)
-            spelling = ((EDICTDefinition)def.getDefinition()).getAppropriateSpelling(intext).word;
+            spelling = def.getDefinition().getAppropriateSpelling(intext).word;
         else
             spelling = intext;
         
@@ -123,7 +125,7 @@ public class FrequencySink
                     }
                 }
             }
-        }    
+        }  */
         return null;
     }
 }

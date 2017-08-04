@@ -17,6 +17,7 @@
 package options;
 
 import language.dictionary.Definition;
+import language.dictionary.JMDict.Spelling;
 import language.dictionary.Japanese;
 import language.splitter.FoundDef;
 import language.splitter.FoundWord;
@@ -82,11 +83,11 @@ public class Known
         List<Definition> defs = Main.dict.find(word);
         if(defs != null)//if this word isn't known, don't bother adding it as a known word
         {
-            for(String match:defs.get(0).getSpellings())
+            for(Spelling match:defs.get(0).getSpellings())
             {
-                if(match.equals(word))
+                if(match.getText().equals(word))
                 {
-                    table.add(match);//saving RAM works better if you add the correct one
+                    table.add(match.getText());
                     dueChanges++;
                 }
             }

@@ -16,7 +16,12 @@
  */
 package language.dictionary;
 
-import java.util.*;
+import language.deconjugator.ValidWord;
+import language.dictionary.JMDict.Sense;
+import language.dictionary.JMDict.Spelling;
+
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,95 +31,6 @@ import java.util.regex.Pattern;
  */
 public class EDICTDefinition extends Definition
 {
-    private class TagInfo
-    {
-        Set<DefTag> tags;
-        Set<String> strings;
-        String text;
-        TagInfo(String s)
-        {
-            tags = new HashSet<>();
-            strings = new HashSet<>();
-            text = s;
-            Matcher bracketFinder = FIND_TAGS.matcher(text);
-
-            while (bracketFinder.find())
-            {
-                String tag = bracketFinder.group(1);
-                for(String subTag:tag.split(","))
-                {
-                    DefTag found = DefTag.toTag(subTag);
-                    if(found == null)
-                        strings.add(subTag);
-                    else if(!tags.contains(found))
-                        tags.add(found);
-                }
-                text = text.replaceFirst(Pattern.quote("(" + tag + ")"), "");
-            }
-        }
-    }
-    public class TaggedReading
-    {
-        String reading;
-        Set<DefTag> tags;
-        Set<String> restrictSpelling;
-        TaggedReading(String spelling, Set<String> restrictSpelling, Set<DefTag> tags)
-        {
-            reading = spelling;
-            this.restrictSpelling = restrictSpelling;
-            this.tags = tags;
-        }
-        
-        @Override
-        public String toString()
-        {
-            return reading;
-        }
-    }
-    public class TaggedSpelling
-    {
-        String word;
-        ArrayList<TaggedReading> readings;
-        boolean isCommon;
-        String tagstring;
-        Set<DefTag> tags;
-        TaggedSpelling(String spelling, Set<DefTag> tags)
-        {
-            word = spelling;
-            if(word.equals("皆"))
-            {
-                System.out.println("minna");
-                System.out.println(tags);
-            }
-            this.readings = new ArrayList<>();
-            this.tags = tags;
-            
-            if(tags != null)
-            {
-                for(DefTag t : tags)
-                {
-                    if(t == DefTag.P)
-                        isCommon = true;
-                }
-                if(tags.size() == 0)
-                    tagstring = spelling;
-                else
-                {
-                    StringJoiner joiner = new StringJoiner(")(", "(", ")");
-                    for(DefTag t : tags) joiner.add(t.toString());
-                    tagstring = spelling + " " + joiner.toString();
-                }
-            }
-        }
-        
-        boolean hasReading(String text)
-        {
-            // change any katakana to hiragana
-            text = Japanese.toHiragana(text, false);
-            for(TaggedReading r : readings) if(r.reading.equals(text)) return true;
-            return false;
-        }
-    }
     protected String[] word, reading;
     protected Set<DefTag> tags;
 
@@ -123,8 +39,8 @@ public class EDICTDefinition extends Definition
     protected long ID;
     
     protected String meaning;
-    
-    private static final Pattern FIND_TAGS = Pattern.compile("\\((([^()]*)|(([^(]*\\([^)]*\\)[^(]*)*))\\)");//regex voodoo magic
+
+    private static final Pattern FIND_TAGS = Pattern.compile("\\((.*?)\\)");//regex voodoo magic
 
     public EDICTDefinition(String line, DefSource source)
     {
@@ -138,16 +54,40 @@ public class EDICTDefinition extends Definition
         //remove tags and process lines
         for (int i = 0; i < bits.length - 1; i++)
         {
+            String defLine = bits[i];
+            Matcher bracketFinder = FIND_TAGS.matcher(defLine);
+
+            while (bracketFinder.find())
+            {
+                String tag = bracketFinder.group(1);
+                int findCount = 0;
+                for(String subTag:tag.split(","))
+                {
+                    DefTag found = DefTag.toTag(subTag);
+                    if(found != null && !tags.contains(found))
+                    {
+                        tags.add(found);
+                        findCount++;
+                    }
+                }
+                if(findCount != 0 || i == 0)
+                {
+
+                    defLine = defLine.replace("(" + tag + ")", "");
+                }
+
+            }
+
             if(i == 0)
             {
-                MakeDefinitions(bits[i]);
-            }
-            else
-            {
-                TagInfo info = new TagInfo(bits[i]);
-                tags.addAll(info.tags);
-                meaningArr[i - 1] = info.text.trim();
-            }
+                String readingClasses[] = defLine.split("\\[");
+                word = readingClasses[0].trim().split(";");//Kanji readings
+                if(readingClasses.length == 2)//kana readings exist
+                {
+                    reading = readingClasses[1].replace("] ", "").replace("]", "").split(";");
+                }else reading = new String[0];
+            }else meaningArr[i - 1] = defLine.trim();
+
         }
         //reconstruct meaning list
         StringBuilder meaningBuilder = new StringBuilder();
@@ -176,98 +116,14 @@ public class EDICTDefinition extends Definition
         }
 
     }
-    
-    Map<String, TaggedSpelling> spellings;
-    ArrayList<String> cleanOrderedSpellings;
-    ArrayList<TaggedReading> readings;
-    // takes a full unchanged spelling-reading string from edict, e.g. "障害(P);障がい;障碍;障礙 [しょうがい(P);しょうげ(障碍,障礙)]"
-    private void MakeDefinitions(String format)
-    {
-        String readingClasses[] = format.split("\\[");
-        word = readingClasses[0].trim().split(";");//Kanji readings
-        if(readingClasses.length == 2)//kana readings exist
-            reading = readingClasses[1].replace("] ", "").replace("]", "").split(";");
-        else
-            reading = new String[0];
-        
-        spellings = new HashMap<>();
-        readings = new ArrayList<>();
-        cleanOrderedSpellings = new ArrayList<>();
-        
-        for(String s : word)
-        {
-            TagInfo info = new TagInfo(s);
-            TaggedSpelling spelling = new TaggedSpelling(info.text, info.tags);
-            spellings.put(spelling.word, spelling);
-            cleanOrderedSpellings.add(spelling.word);
-        }
-        for(String s : reading)
-        {
-            TagInfo info = new TagInfo(s);
-            TaggedReading reading = new TaggedReading(info.text, info.strings, info.tags);
-            readings.add(reading);
-            if(reading.restrictSpelling.size() == 0)
-            {
-                for(Map.Entry<String, TaggedSpelling> entry : spellings.entrySet())
-                {
-                    TaggedSpelling spelling = entry.getValue();
-                    spelling.readings.add(reading);
-                }
-            }
-            else
-            {
-                for(String text : reading.restrictSpelling)
-                {
-                    if(!spellings.containsKey(text)) continue;
-                    TaggedSpelling spelling = spellings.get(text);
-                    
-                    spelling.readings.add(reading);
-                }
-            }
-        }
-    }
-    
     @Override
-    public String getFurigana()
+    public String getFurigana(ValidWord context)
     {
         if(showReading && reading.length != 0)
         {
             return reading[0];
         }
         else return "";
-    }
-    
-    public TaggedSpelling getAppropriateSpelling(String text)
-    {
-        
-        if(spellings.containsKey(text))
-            return spellings.get(text);
-        else
-        {
-            for(String edictSpelling : cleanOrderedSpellings) // Loop over ORDERED spellings (more common first)
-            {
-                if(spellings.containsKey(edictSpelling))
-                {
-                    TaggedSpelling possibleSpelling = spellings.get(edictSpelling);
-                    if(possibleSpelling.word.equals(text) || possibleSpelling.word.equals(Japanese.toHiragana(text, false)) || possibleSpelling.hasReading(text))
-                        return possibleSpelling;
-                }
-            }
-        }
-        return null;
-    }
-    
-    public String getFurigana(String text)
-    {
-        if(showReading && reading.length != 0)
-        {
-            if(Japanese.hasOnlyKana(text))
-                return Japanese.toHiragana(text, false);
-            TaggedSpelling spelling = getAppropriateSpelling(text);
-            if(spelling != null)
-                return spelling.readings.get(0).reading;
-        }
-        return "";
     }
 
     @Override
@@ -283,96 +139,27 @@ public class EDICTDefinition extends Definition
     }
     
     @Override
-    public Set<DefTag> getTags()
+    public Set<DefTag> getTags(ValidWord context)
     {
         return tags;
     }
 
     @Override
-    public String[] getSpellings()
+    public Spelling[] getSpellings()
     {
-        ArrayList<String> readings = new ArrayList<>();
-        HashSet<String> already_added_readings = new HashSet<>();
-        if(showReading)
+        //now made on the fly on request instead of being stored
+        Spelling[] spellings = new Spelling[word.length + reading.length];
+        /*System.arraycopy(word, 0, spellings, 0, word.length);
+        System.arraycopy(reading, 0, spellings, word.length, reading.length);*/
+        for(int i = 0; i < word.length; i++)
         {
-            if(reading.length != 0)
-            {
-                for(Map.Entry<String, TaggedSpelling> entry : spellings.entrySet())
-                {
-                    String spelling = entry.getValue().word;
-                    if(!already_added_readings.contains(spelling))
-                    {
-                        readings.add(spelling);
-                        already_added_readings.add(spelling);
-                    }
-                    
-                    // Edict has a couple malformed entries where not all spellings are given readings
-                    // like １コマ;一コマ;１こま;一こま;一齣;一駒(iK) [ひとコマ(一コマ);ひとこま(一こま,一齣,一駒)]  
-                    if(entry.getValue().readings.size() == 0) continue;
-                        
-                    for(TaggedReading taggedreading : entry.getValue().readings)
-                    { 
-                        String reading = taggedreading.reading;
-                        if(!already_added_readings.contains(reading))
-                        {
-                            readings.add(reading);
-                            already_added_readings.add(reading);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                for(Map.Entry<String, TaggedSpelling> entry : spellings.entrySet())
-                {
-                    String text = entry.getValue().word;
-                    if(text.equals(Japanese.toHiragana(text, true)))
-                        readings.add(text);
-                    if(text.equals(Japanese.toKatakana(text, true)))
-                        readings.add(text);
-                }
-            }
+            spellings[i] = new Spelling(true, word[i]);
         }
-        return readings.toArray(new String[0]);
-    }
-    public String[] getSpellings(String text)
-    {
-        ArrayList<String> readings = new ArrayList<>();
-        HashSet<String> already_added_readings = new HashSet<>();
-        if(showReading && reading.length != 0)
+        for(int i = 0; i < reading.length; i++)
         {
-            for(Map.Entry<String, TaggedSpelling> entry : spellings.entrySet())
-            {
-                String spelling = entry.getValue().word;
-                if(!already_added_readings.contains(spelling))
-                {
-                    readings.add(spelling);
-                    already_added_readings.add(spelling);
-                }
-            }
-            if(spellings.get(text) != null)
-            {
-                if(spellings.get(text).readings.size() != 0) 
-                {
-                    String reading = spellings.get(text).readings.get(0).reading;
-                    if(!already_added_readings.contains(reading))
-                    {
-                        readings.add(reading);
-                        already_added_readings.add(reading);
-                    }
-                }
-            }
-            else
-            {
-                readings.add(text);
-                if(!already_added_readings.contains(text))
-                {
-                    readings.add(text);
-                    already_added_readings.add(text);
-                }
-            }
+            spellings[i + word.length] = new Spelling(false, reading[i]);
         }
-        return readings.toArray(new String[0]);
+        return spellings;
     }
 
     public String[] getWord()
@@ -381,10 +168,11 @@ public class EDICTDefinition extends Definition
     }
     
     @Override
-    public String[] getMeaning()
+    public Sense[] getMeanings()
     {
-        return meaning.split("/");
+        return new Sense[]{(new Sense(meaning.split("/"), null, tags))};
     }
+
     @Override
     public String getMeaningLine()
     {

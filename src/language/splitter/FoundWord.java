@@ -427,7 +427,7 @@ public class FoundWord
             List<EPWINGDefinition> extraDefs = dict.findEpwing(foundDef.getDictForm());
             for(EPWINGDefinition extraDef:extraDefs)
             {
-                extraDef.setTags(foundDef.getDefinition().getTags());
+                extraDef.setTags(foundDef.getDefinition().getTags(foundDef.getFoundForm()));
                 addDefinition(new FoundDef(foundDef.getFoundForm(), extraDef));
             }
         }

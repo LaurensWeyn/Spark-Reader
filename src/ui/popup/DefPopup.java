@@ -172,7 +172,7 @@ public class DefPopup extends JPopupMenu
             String definition = def.getDefinition().getMeaningLine();
 
             StringBuilder tagList = new StringBuilder();
-            Set<DefTag> tags = def.getDefinition().getTags();
+            Set<DefTag> tags = def.getDefinition().getTags(def.getFoundForm());
             if(tags != null)for(DefTag tag:tags)
             {
                 tagList.append(tag.name()).append(" ");

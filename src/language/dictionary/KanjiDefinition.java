@@ -1,5 +1,10 @@
 package language.dictionary;
 
+import language.deconjugator.ValidWord;
+import language.dictionary.JMDict.Sense;
+import language.dictionary.JMDict.Spelling;
+import language.splitter.FoundWord;
+
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -8,10 +13,9 @@ import java.util.regex.Pattern;
  */
 public class KanjiDefinition extends Definition
 {
-    public static final int SOURCENUM = 5;
     private final DefSource source;
-    String spellings[];
-    String meanings[];
+    Spelling spellings[];
+    Sense meaning;
     String constituents;
     private static final Pattern stripHTML = Pattern.compile("<(?:.|\\n)*?>");
     private int id;
@@ -29,32 +33,33 @@ public class KanjiDefinition extends Definition
             id = bits[0].hashCode();
         }
         constituents = bits[7];
-        meanings = new String[5];
+        String[] meanings = new String[5];
         meanings[0] = ">" + clean(bits[3]) + "<";//heading/meaning line
         meanings[1] = clean(bits[10]);//my story
         meanings[2] = clean(bits[11]);//Heisig
         meanings[3] = clean(bits[13]);//Koohii 1
         meanings[4] = clean(bits[14]);//Koohii 2
-        ArrayList<String> spellList = new ArrayList<>();
-        spellList.add(bits[4]);
+        meaning = new Sense(meanings, null, null);
+        ArrayList<Spelling> spellList = new ArrayList<>();
+        spellList.add(new Spelling(true, bits[4]));
         for(String onYomi:bits[17].split("、"))
         {
-            spellList.add(onYomi.split("\\.")[0]);
+            spellList.add(new Spelling(false, onYomi.split("\\.")[0]));
         }
         for(String kunYomi:bits[18].split("、"))
         {
-            spellList.add(kunYomi.split("\\.")[0]);
+            spellList.add(new Spelling(false, kunYomi.split("\\.")[0]));
         }
-        spellings = spellList.toArray(new String[spellList.size()]);
+        spellings = spellList.toArray(new Spelling[spellList.size()]);
     }
     private static String clean(String input)
     {
         return stripHTML.matcher(input).replaceAll("");
     }
     @Override
-    public String getFurigana()
+    public String getFurigana(ValidWord context)
     {
-        return spellings[1];//spelling 0 is Kanji
+        return spellings[1].getText();//spelling 0 is Kanji
     }
 
     @Override
@@ -70,15 +75,15 @@ public class KanjiDefinition extends Definition
     }
 
     @Override
-    public String[] getSpellings()
+    public Spelling[] getSpellings()
     {
         return spellings;
     }
 
     @Override
-    public String[] getMeaning()
+    public Sense[] getMeanings()
     {
-        return meanings;
+        return new Sense[]{meaning};
     }
 
     @Override

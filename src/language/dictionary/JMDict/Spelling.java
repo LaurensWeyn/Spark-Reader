@@ -40,7 +40,7 @@ public class Spelling
         return isKanji;
     }
 
-    public String getSpelling()
+    public String getText()
     {
         return spelling;
     }

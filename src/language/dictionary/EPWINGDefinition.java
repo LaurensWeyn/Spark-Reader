@@ -20,6 +20,9 @@ import fuku.eb4j.EBException;
 import fuku.eb4j.Result;
 import fuku.eb4j.SubBook;
 import fuku.eb4j.hook.Hook;
+import language.deconjugator.ValidWord;
+import language.dictionary.JMDict.Sense;
+import language.dictionary.JMDict.Spelling;
 import main.Main;
 
 import java.util.HashSet;
@@ -31,8 +34,8 @@ import java.util.Set;
  */
 public class EPWINGDefinition extends Definition
 {
-    private String[] spellings;
-    private String[] defLines;
+    private Spelling[] spellings;
+    private Sense sense;
     private SubBook book;
     private DefSource source;
     private long id;
@@ -76,18 +79,23 @@ public class EPWINGDefinition extends Definition
         }
         else
         {
-            defLines = lines;
             //first line presumably contains spellings
-            spellings = Japanese.splitJapaneseWriting(lines[0]);
+            String spellingText[] = Japanese.splitJapaneseWriting(lines[0]);
+            spellings = new Spelling[spellingText.length];
+            for(int i = 0; i < spellings.length; i++)
+            {
+                spellings[i] = new Spelling(Japanese.hasKanji(spellingText[i]), spellingText[i]);
+            }
         }
+        sense = new Sense(lines, null, null);
 
     }
     @Override
-    public String getFurigana()
+    public String getFurigana(ValidWord context)
     {
-        for(String spelling:spellings)
+        for(Spelling spelling:spellings)
         {
-            if(!Japanese.hasKanji(spelling))return spelling;
+            if(spelling.isKanji())return spelling.getText();
         }
         return "";
     }
@@ -105,31 +113,19 @@ public class EPWINGDefinition extends Definition
     }
 
     @Override
-    public String[] getSpellings()
+    public Spelling[] getSpellings()
     {
         return spellings;
     }
 
     @Override
-    public String[] getMeaning()
+    public Sense[] getMeanings()
     {
-        return defLines;
+        return new Sense[]{sense};
     }
 
     @Override
-    public String getMeaningLine()
-    {
-        StringBuilder sb = new StringBuilder();
-        for(String line:defLines)
-        {
-            if(sb.length() == 0)sb.append(line);
-            sb.append("<br>").append(line);
-        }
-        return sb.toString();
-    }
-
-    @Override
-    public Set<DefTag> getTags()
+    public Set<DefTag> getTags(ValidWord context)
     {
         return tags;
     }

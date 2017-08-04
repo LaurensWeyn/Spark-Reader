@@ -27,7 +27,8 @@ import java.util.*;
  */
 public class ValidWord
 {
-    private String word, originalWord;
+    private String word;
+    private String originalWord;
     private Set<DefTag> neededTags;
     private Set<String> seenForms;
     private List<DefTag> conjugationTags;
@@ -60,10 +61,20 @@ public class ValidWord
     {
         return process.size();
     }
+
+    /**
+     * Get the state of the word, before conjugation (as it stands in text)
+     * @return the original word
+     */
     public String getOriginalWord()
     {
         return originalWord;
     }
+
+    /**
+     * Get the word with current deconjugations applied. Processes aim to make this approach the dictionary form
+     * @return the deconjugated word
+     */
     public String getWord()
     {
         return word;
@@ -94,14 +105,14 @@ public class ValidWord
      */
     public boolean defMatches(Definition def)
     {
-
-        if(def.getTags() == null && getNeededTags().isEmpty())return true;//still accept if no tags needed
-        else if (def.getTags() == null)return false;//does not have needed tags
+        Set<DefTag> tags = def.getTags(this);
+        if(tags == null && getNeededTags().isEmpty())return true;//still accept if no tags needed
+        else if (tags == null)return false;//does not have needed tags
 
         for(DefTag needed:getNeededTags())
         {
             if(needed.toString().equals("")) return false;
-            if(!def.getTags().contains(needed))
+            if(!tags.contains(needed))
             {
                 return false;
             }
