@@ -51,7 +51,7 @@ public class ClipboardHook implements Hook
     public String check()
     {
         String clip = getClipboard();
-        if(!lastClip.contains(clip))//new line (not word lookup or something)
+        if(!lastClip.equals(clip))//new line (not word lookup or something)
         {
             lastClip = clip;
             System.out.println("clipboard updated to " + clip);
@@ -100,10 +100,7 @@ public class ClipboardHook implements Hook
     }
     public static void setClipboard(String text)
     {
-        if(!lastClip.contains(text))
-        {
-            ignoreNextLine = true;//don't include this change or else we'll trigger
-        }
+        ignoreNextLine = true;//don't include this change or else we'll trigger
         setClipBoardAndUpdate(text);//update avoided
     }
 
