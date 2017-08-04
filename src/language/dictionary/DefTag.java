@@ -1,5 +1,7 @@
 package language.dictionary;
 
+import java.util.Collection;
+
 /**
  *
  * @author laure
@@ -37,9 +39,9 @@ public enum DefTag
     stem_adj_base(-1, "adjective stem"),
     
     // non-custom
-    adj_i(0, "adjective (keiyoushi)"),
-    adj_na(0, "adjectival nouns or quasi_adjectives (keiyodoshi)"),
-    adj_no(0, "nouns which may take the genitive case particle `no'"),
+    adj_i(0, "adjective (keiyoushi)", 0),
+    adj_na(0, "adjectival nouns or quasi_adjectives (keiyodoshi)", 1),
+    adj_no(0, "nouns which may take the genitive case particle `no'", 2),
     adj_pn(0, "pre_noun adjectival (rentaishi)"),
     adj_t(0, "`taru' adjective"),
     adj_f(0, "noun or verb acting prenominally (other than the above)"),
@@ -47,56 +49,57 @@ public enum DefTag
     adj(0, "former adjective classification (being removed)"),
     adv(0, "adverb (fukushi)"),
     adv_n(0, "adverbial noun"),
-    adv_to(0, "adverb taking the `to' particle"),
-    aux(0, "auxiliary"),
+    adv_to(0, "adverb taking the `to' particle", 3),
+    aux(0, "auxiliary", 4),
     aux_v(0, "auxiliary verb"),
-    aux_adj(0, "auxiliary adjective"),
+    aux_adj(0, "auxiliary adjective", 5),
     conj(0, "conjunction"),
     ctr(0, "counter"),
     exp(0, "Expressions (phrases, clauses, etc.)"),
     INT(0, "interjection (kandoushi)"),
     iv(0, "irregular verb"),
-    n(0, "noun (common) (futsuumeishi)"),
+    n(0, "noun (common) (futsuumeishi)", 6),
+    n_pr(0, "proper noun"),
     n_adv(0, "adverbial noun (fukushitekimeishi)"),
     n_pref(0, "noun, used as a prefix"),
     n_suf(0, "noun, used as a suffix"),
     n_t(0, "noun (temporal) (jisoumeishi)"),
     num(0, "numeric"),
     pn(0, "pronoun"),
-    pref(0, "prefix"),
+    pref(0, "prefix", 7),
     prt(0, "particle"),
-    suf(0, "suffix"),
-    
-    v1(0, "Ichidan verb"),
-    v5b(0, "Godan verb with `bu' ending"),
-    v5g(0, "Godan verb with `gu' ending"),
-    v5k(0, "Godan verb with `ku' ending"),
-    v5m(0, "Godan verb with `mu' ending"),
-    v5n(0, "Godan verb with `nu' ending"),
-    v5r(0, "Godan verb with `ru' ending"),
-    v5s(0, "Godan verb with `su' ending"),
-    v5t(0, "Godan verb with `tsu' ending"),
-    v5u(0, "Godan verb with `u' ending"),
-    v5z(0, "Godan verb with `zu' ending"),
+    suf(0, "suffix", 8),
+
+    v1(0, "Ichidan verb", 9),
+    v5b(0, "Godan verb with `bu' ending", 10),
+    v5g(0, "Godan verb with `gu' ending", 11),
+    v5k(0, "Godan verb with `ku' ending", 12),
+    v5m(0, "Godan verb with `mu' ending", 13),
+    v5n(0, "Godan verb with `nu' ending", 14),
+    v5r(0, "Godan verb with `ru' ending", 15),
+    v5s(0, "Godan verb with `su' ending", 16),
+    v5t(0, "Godan verb with `tsu' ending", 17),
+    v5u(0, "Godan verb with `u' ending", 18),
+    v5z(0, "Godan verb with `zu' ending", 19),
     
     v2a_s(0, "Nidan verb with 'u' ending (archaic)"),
     v4h(0, "Yodan verb with `hu/fu' ending (archaic)"),
-    v4r(0, "Yodan verb with `ru' ending (archaic)"),
+    v4r(0, "Yodan verb with `ru' ending (archaic)", 20),
     v5(0, "Godan verb (not completely classified)"),
-    v5aru(0, "Godan verb - -aru special class"),
-    v5k_s(0, "Godan verb - iku/yuku special class"),
-    v5r_i(0, "Godan verb with `ru' ending (irregular verb)"),
-    v5u_s(0, "Godan verb with `u' ending (special class)"),
+    v5aru(0, "Godan verb - -aru special class", 21),
+    v5k_s(0, "Godan verb - iku/yuku special class", 22),
+    v5r_i(0, "Godan verb with `ru' ending (irregular verb)", 23),
+    v5u_s(0, "Godan verb with `u' ending (special class)", 24),
     v5uru(0, "Godan verb - uru old class verb (old form of Eru)"),
     
     vz(0, "Ichidan verb - zuru verb - (alternative form of -jiru verbs)"),
     
     vi(0, "intransitive verb"),
-    vk(0, "kuru verb - special class"),
+    vk(0, "kuru verb - special class", 25),
     vn(0, "irregular nu verb"),
     vs(0, "noun or participle which takes the aux. verb suru"),
     vs_c(0, "su verb - precursor to the modern suru"),
-    vs_i(0, "suru verb - irregular"),
+    vs_i(0, "suru verb - irregular", 26),
     vs_s(0, "suru verb - special class"),
     vt(0, "transitive verb"),
     
@@ -109,6 +112,20 @@ public enum DefTag
     food(1, "food term"),
     geom(1, "geometry term"),
     gram(1, "grammatical term"),
+    joc(1, "jocular, humorous term"),
+    sports(1, "sports term"),
+    law(1, "law, etc. term"),
+    geol(1, "geology, etc. term"),
+    proverb(1, "proverb"),
+    yoji(1, "yojijukugo"),
+    intr(1, "interjection (kandoushi)"),
+    finc(1, "finance term"),
+    med(1, "medicine, etc. term"),
+    biol(1, "biology term"),
+    chem(1, "chemistry term"),
+    astron(1, "astronomy, etc. term"),
+    bot(1, "botany term"),
+    baseb(1, "baseball term"),
     ling(1, "linguistics terminology"),
     math(1, "mathematics"),
     mil(1, "military"),
@@ -160,10 +177,17 @@ public enum DefTag
     p(4, ""), P(4, "");
     private int group;
     private String name;
+    private int shortBit = -1;
     DefTag(int group, String name)
     {
         this.group = group;
         this.name = name;
+    }
+    DefTag(int group, String name, int bitNum)
+    {
+        this.group = group;
+        this.name = name;
+        this.shortBit = 1 << bitNum;
     }
     public String toString()
     {
@@ -176,6 +200,10 @@ public enum DefTag
     public static DefTag toTag(String text)
     {
         //System.out.println("tagging " + text);
+        switch(text)
+        {
+            case "int":return intr;
+        }
         try
         {
             return valueOf(text.toLowerCase().replace('-', '_'));
@@ -183,6 +211,23 @@ public enum DefTag
         {
             return null;
         }
+    }
+
+    /**
+     * Converts a DefTag collection to a single primitive value for quick comparison operations.
+     * Tags not relevant for the short code are ignored.
+     * @param tags the tags to include
+     * @return the tags encoded in binary
+     */
+    public long toShortTag(Collection<DefTag> tags)
+    {
+        long out = 0;
+        for(DefTag tag:tags)
+        {
+            if(tag.shortBit != -1)
+                out |= tag.shortBit;
+        }
+        return out;
     }
     
 }
