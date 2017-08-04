@@ -10,14 +10,34 @@ import java.util.Set;
  */
 public class Sense
 {
-    String meaningLines[];
-    Spelling restrictedSpellings[];
-    Set<DefTag> tags;
+    private String meaningLines[];
+    private Spelling restrictedSpellings[];
+    private Set<DefTag> tags;
 
     public Sense(String[] meaningLines, Spelling[] restrictedSpellings, Set<DefTag> tags)
     {
         this.meaningLines = meaningLines;
         this.restrictedSpellings = restrictedSpellings;
         this.tags = tags;
+    }
+
+    public String[] getMeaningLines()
+    {
+        return meaningLines;
+    }
+
+    public String getMeaningAsLine()
+    {
+        return String.join("<br>", meaningLines);
+    }
+
+    public Spelling[] getRestrictedSpellings()
+    {
+        return restrictedSpellings;
+    }
+
+    public Set<DefTag> getTags()
+    {
+        return tags;
     }
 }

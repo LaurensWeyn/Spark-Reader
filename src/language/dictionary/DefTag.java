@@ -219,8 +219,9 @@ public enum DefTag
      * @param tags the tags to include
      * @return the tags encoded in binary
      */
-    public long toShortTag(Collection<DefTag> tags)
+    public static long toQuickTag(Collection<DefTag> tags)
     {
+        if(tags == null)return 0;
         long out = 0;
         for(DefTag tag:tags)
         {

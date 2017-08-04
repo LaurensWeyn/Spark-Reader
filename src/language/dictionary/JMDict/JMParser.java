@@ -50,6 +50,7 @@ public class JMParser
                     spellings.toArray(new Spelling[spellings.size()]));
 
             //System.out.println("loaded " + newDef.getID());
+            target.insertDefinition(newDef);
             count++;
 
             line = br.readLine();
@@ -114,7 +115,7 @@ public class JMParser
                 if(readingRestrictions == null)readingRestrictions = new LinkedList<>();
                 for(Spelling spelling:spellings)
                 {
-                    if(spelling.getSpelling().equals(toFind))
+                    if(spelling.getText().equals(toFind))
                     {
                         readingRestrictions.add(spelling);
                         break;
@@ -127,7 +128,7 @@ public class JMParser
                 if(readingRestrictions == null)readingRestrictions = new LinkedList<>();
                 for(Spelling spelling:spellings)
                 {
-                    if(spelling.getSpelling().equals(toFind))
+                    if(spelling.getText().equals(toFind))
                     {
                         readingRestrictions.add(spelling);
                         break;
@@ -202,7 +203,7 @@ public class JMParser
                 {
                     for(Spelling check:spellings)
                     {
-                        if(check.getSpelling().equals(readingRestrictions.get(i)))reqSpellings[i] = check;
+                        if(check.getText().equals(readingRestrictions.get(i)))reqSpellings[i] = check;
                     }
                 }
                 newSpelling.setDependencies(reqSpellings);
