@@ -104,14 +104,19 @@ public class UI
     {
         currPage = new Page();
         
+        disp = new Overlay(getDesiredWindowWidth(), options.getOptionInt("maxHeight"));
+        
+        menubar = MenubarBuilder.buildMenu();
+    }
+    
+    private int getDesiredWindowWidth()
+    {
         int windowWidth;
         if(options.getOptionBool("defConstrainPosition"))
             windowWidth = Math.max(options.getOptionInt("windowWidth"), options.getOptionInt("defWidth"));
         else
             windowWidth = options.getOptionInt("windowWidth") + options.getOptionInt("defWidth");
-        disp = new Overlay(windowWidth, options.getOptionInt("maxHeight"));
-        
-        menubar = MenubarBuilder.buildMenu();
+        return windowWidth;
     }
 
     private void registerListeners()
@@ -154,7 +159,7 @@ public class UI
         {
             currentWidth = options.getOptionInt("windowWidth");
             currentMaxHeight = options.getOptionInt("maxHeight");
-            disp.setSize(currentWidth, currentMaxHeight);
+            disp.setSize(getDesiredWindowWidth(), currentMaxHeight);
         }
     }
     public void render()
