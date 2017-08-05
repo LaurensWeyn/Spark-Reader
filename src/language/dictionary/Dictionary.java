@@ -41,12 +41,20 @@ public class Dictionary
 
     public Dictionary()throws IOException
     {
-        lookup = new HashMap<>();
+        this(0);
+    }
+    public Dictionary(int expectedHashSize)
+    {
+        lookup = new HashMap<>(expectedHashSize + expectedHashSize / 4 + 100);// >125%
         books = new ArrayList<>();
     }
     public Dictionary(File dictFolder)throws IOException
     {
-        this();
+        this(dictFolder, 0);
+    }
+    public Dictionary(File dictFolder, int expectedHashSize)throws IOException
+    {
+        this(expectedHashSize);
         loadDirectory(dictFolder);
         loadEpwing(dictFolder);//special case: this folder may itself be a valid epwing dictionary
     }
@@ -226,5 +234,10 @@ public class Dictionary
     public static int getLoadedWordCount()
     {
         return loadedWordCount;
+    }
+
+    public int getHashSize()
+    {
+        return lookup.size();
     }
 }

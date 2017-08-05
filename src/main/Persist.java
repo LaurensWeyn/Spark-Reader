@@ -23,6 +23,7 @@ public class Persist implements Serializable
 
     //useful persist data
     public int lastDictSize;//to estimate startup %
+    public int lastDictHashSize;//to presize hashtable
     public int lastWindowWidth;//to use when live resizing works
     public Point lastWindowPos;
     public String lastWindowHookName;

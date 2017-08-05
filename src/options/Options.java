@@ -91,6 +91,7 @@ public class Options
         options.put("maxHeight", "720");
         options.put("defWidth", "250");
         options.put("useNativeUI", "false");
+        options.put("useOpenGL", "true");
 
         options.put("splitLines", "true");
         options.put("reflowToFit", "false");

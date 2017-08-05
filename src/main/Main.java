@@ -76,6 +76,7 @@ public class Main
         persist = Persist.load(options.getFile("persistPath"));
         try
         {
+            if(options.getOptionBool("useOpenGL"))System.setProperty("sun.java2d.opengl","True");
             if(options.getOptionBool("useNativeUI"))javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
         }catch(Exception e)
         {
@@ -110,9 +111,10 @@ public class Main
     {
         EPWINGDefinition.loadBlacklist();
 
-        dict = new Dictionary(new File(Main.options.getOption("dictionaryPath")));
-        System.out.println("loaded " + Dictionary.getLoadedWordCount() + " in total");
+        dict = new Dictionary(new File(Main.options.getOption("dictionaryPath")), persist.lastDictHashSize);
+        System.out.println("loaded " + Dictionary.getLoadedWordCount() + " in total, HashTable " + dict.getHashSize());
         persist.lastDictSize = Dictionary.getLoadedWordCount();//keep this in mind for next startup estimate
+        persist.lastDictHashSize = dict.getHashSize();
         WordScanner.init();
     }
 
