@@ -1,5 +1,7 @@
 package language.dictionary;
 
+import language.dictionary.JMDict.JMDictDefinition;
+import language.dictionary.JMDict.Spelling;
 import language.splitter.FoundDef;
 import main.Utils;
 
@@ -56,76 +58,32 @@ public class FrequencySink
     
     public static FreqData get(FoundDef def) 
     {
-        //FIXME I have no idea how this works, look into porting this to the new system
-
-        /*String intext = def.getFoundForm().getWord();
-        
-        String spelling;
-        if(def.getDefinition() instanceof EDICTDefinition)
-            spelling = def.getDefinition().getAppropriateSpelling(intext).word;
-        else
-            spelling = intext;
-        
-        String reading = def.getFurigana();
-        
-        if(reading.equals("") && Japanese.hasOnlyKana(spelling))
+        for(Spelling spelling : def.getDefinition().getSpellings()) // Handles kanji spellings first, then readings
         {
-            reading = Japanese.toKatakana(spelling, false);
-        }
-        
-        String text = spelling + "-" + Japanese.toKatakana(reading, false);
-        // Fast lane: easy successful lookup
-        if(mapping.containsKey(text))
-        {
-            return mapping.get(text);
-        }
-        
-        // Slow lane: look for alternate spellings of this word in the edict definition
-        if(def.getDefinition() instanceof EDICTDefinition)
-        {
-            EDICTDefinition realdef = (EDICTDefinition)def.getDefinition();
-            // ordered from most normal/common to least normal/common when possible
-            for(String edictSpelling : realdef.cleanOrderedSpellings) // Loop over ORDERED spellings (more common first)
+            String spellingtext = spelling.getText();
+            if(spelling.getReadings().size() == 0)
             {
-                if(realdef.spellings.containsKey(edictSpelling))  
+                String readingtext = Japanese.toKatakana(spellingtext, false);
+                String text = spellingtext + "-" + readingtext;
+                // Fast lane: easy successful lookup
+                if(mapping.containsKey(text))
                 {
-                    if(realdef.spellings.get(edictSpelling).readings.size() > 0)
-                    {
-                        for(EDICTDefinition.TaggedReading testReading : realdef.spellings.get(edictSpelling).readings)
-                        {
-                            if(testReading.reading.equals(reading))
-                            {
-                                text = edictSpelling + "-" + Japanese.toKatakana(reading, false);
-                                if(mapping.containsKey(text))
-                                {
-                                    return mapping.get(text);
-                                }
-                            }
-                        }
-                    }
-                    if(Japanese.hasOnlyKana(edictSpelling) && Japanese.hasOnlyKana(edictSpelling))
-                    {
-                        reading = Japanese.toHiragana(edictSpelling, false);
-                        String text1 = Japanese.toHiragana(edictSpelling, false) + "-" + Japanese.toKatakana(reading, false);
-                        String text2 = Japanese.toKatakana(edictSpelling, false) + "-" + Japanese.toKatakana(reading, false);
-                        if(mapping.containsKey(text1))
-                        {
-                            return mapping.get(text1);
-                        }
-                        if(mapping.containsKey(text2))
-                        {
-                            return mapping.get(text2);
-                        }
-                    }
-                    
-                    text = def.getFoundForm().getWord() + "-" + Japanese.toKatakana(reading, true);
-                    if(mapping.containsKey(text))
-                    {
-                        return mapping.get(text);
-                    }
+                    return mapping.get(text);
                 }
             }
-        }  */
+            else
+            {
+                for(Spelling reading : spelling.getReadings())
+                {
+                    String readingtext = Japanese.toKatakana(reading.getText(), false);
+                    
+                    String text = spellingtext + "-" + readingtext;
+                    // Fast lane: easy successful lookup
+                    if(mapping.containsKey(text))
+                        return mapping.get(text);
+                }
+            }
+        }
         return null;
     }
 }

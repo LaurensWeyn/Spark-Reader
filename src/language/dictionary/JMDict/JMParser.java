@@ -26,6 +26,7 @@ public class JMParser
             readSubtag("entry", line);
             long id = Long.parseLong(readCDATA("ent_seq", br.readLine()));
             List<Spelling> spellings = new LinkedList<>();
+            List<Spelling> readings = new LinkedList<>();
             line = br.readLine();
             while(isTag("k_ele", line))
             {
@@ -34,9 +35,11 @@ public class JMParser
             }
             while(isTag("r_ele", line))
             {
-                parseKanaSpellings(br, spellings);
+                parseKanaSpellings(br, spellings, readings);
                 line = br.readLine();
             }
+            bindReadings(spellings, readings);
+            spellings.addAll(readings);
             List<Sense> senses = new LinkedList<>();
             while(isTag("sense", line))
             {
@@ -143,6 +146,30 @@ public class JMParser
                 readingRestrictions == null?null:readingRestrictions.toArray(new Spelling[readingRestrictions.size()]),
                 tags));
     }
+    
+    private static void bindReadings(List<Spelling> spellings, List<Spelling> readings)
+    {
+        for(Spelling spelling:spellings)
+        {
+            for(Spelling reading:readings)
+            {
+                if(reading.isKanji())continue;//Kanji can't be furigana
+                if(reading.getDependencies() == null)
+                    spelling.addReading(reading);
+                else //reading depends on context - check if this context meets the criteria
+                {
+                    for(Spelling dependsOn:reading.getDependencies())
+                    {
+                        if(dependsOn.getText().equals(spelling.getText())) 
+                        {
+                            spelling.addReading(reading);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     private static void parseKanjiSpellings(BufferedReader br, List<Spelling> spellings)throws IOException
     {
         String line = br.readLine();
@@ -164,7 +191,7 @@ public class JMParser
         }
     }
 
-    private static void parseKanaSpellings(BufferedReader br, List<Spelling> spellings)throws IOException
+    private static void parseKanaSpellings(BufferedReader br, List<Spelling> spellings, List<Spelling> readings)throws IOException
     {
         String line = br.readLine();
         while(!isTag("/r_ele", line))
@@ -205,10 +232,11 @@ public class JMParser
                     {
                         if(check.getText().equals(readingRestrictions.get(i)))reqSpellings[i] = check;
                     }
+                    assert(reqSpellings[i] != null);
                 }
                 newSpelling.setDependencies(reqSpellings);
             }
-            spellings.add(newSpelling);
+            readings.add(newSpelling);
         }
     }
 
