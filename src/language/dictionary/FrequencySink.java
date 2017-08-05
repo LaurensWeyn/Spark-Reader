@@ -1,5 +1,6 @@
 package language.dictionary;
 
+import language.deconjugator.ValidWord;
 import language.dictionary.JMDict.JMDictDefinition;
 import language.dictionary.JMDict.Spelling;
 import language.splitter.FoundDef;
@@ -58,12 +59,19 @@ public class FrequencySink
     
     public static FreqData get(FoundDef def) 
     {
+        return get(def, def.getFurigana());
+    }
+    
+    public static FreqData get(FoundDef def, String forcereading) 
+    {
+        ValidWord foundForm = def.getFoundForm();
         for(Spelling spelling : def.getDefinition().getSpellings()) // Handles kanji spellings first, then readings
         {
             String spellingtext = spelling.getText();
             if(spelling.getReadings().size() == 0)
             {
                 String readingtext = Japanese.toKatakana(spellingtext, false);
+                if(!Japanese.toKatakana(forcereading, false).equals(readingtext)) continue;
                 String text = spellingtext + "-" + readingtext;
                 // Fast lane: easy successful lookup
                 if(mapping.containsKey(text))
@@ -75,7 +83,9 @@ public class FrequencySink
             {
                 for(Spelling reading : spelling.getReadings())
                 {
+                    if(!foundForm.getWord().equals(spelling.getText())) continue; // fixes 赤金
                     String readingtext = Japanese.toKatakana(reading.getText(), false);
+                    if(!Japanese.toKatakana(forcereading, false).equals(readingtext)) continue;
                     
                     String text = spellingtext + "-" + readingtext;
                     // Fast lane: easy successful lookup
