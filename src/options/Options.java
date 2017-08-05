@@ -142,7 +142,7 @@ public class Options
 
         options.put("menubarOptionSpacing", "7");
 
-
+        options.put("showReadingFreqs", "false");
     }
     public Options(File file)throws IOException
     {

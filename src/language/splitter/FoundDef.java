@@ -66,7 +66,6 @@ public class FoundDef implements Comparable<FoundDef>
         if(options.getOptionBool("showDefID"))
             defText.addText(String.valueOf(foundDef.getID()), options.getColor("defTagCol"), options.getColor("defBackCol"));
         //frequency data
-        // TODO: make FrequencySink.get take a FoundDef or something so it can check all possible furigana/spelling
         FrequencySink.FreqData freqdata = FrequencySink.get(this);
         if(freqdata != null)
             defText.addText(freqdata.toString(), options.getColor("defTagCol"), options.getColor("defBackCol"));
@@ -77,7 +76,14 @@ public class FoundDef implements Comparable<FoundDef>
             //output readings if not in this form already
             if(!reading.getText().equals(foundForm.getWord()))
             {
-                defText.addText(reading.getText(), options.getColor("defReadingCol"), options.getColor("defBackCol"));
+                String freqString = "";
+                if(options.getOptionBool("showReadingFreqs"))
+                {
+                    FrequencySink.FreqData specificFreqdata = FrequencySink.get(this, reading.getText());
+                    if(specificFreqdata != null)
+                        freqString = " " + specificFreqdata.toString();
+                }
+                defText.addText(reading.getText() + freqString, options.getColor("defReadingCol"), options.getColor("defBackCol"));
             }
         }
         if(!(foundDef instanceof KanjiDefinition))
