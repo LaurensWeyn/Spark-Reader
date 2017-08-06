@@ -8,13 +8,14 @@ import java.util.*;
  * Holds both Kanji and Kana versions of a word.
  * Kana readings can depend on certain Kanji readings to be valid.
  */
-public class Spelling
+public class Spelling implements Comparable<Spelling>
 {
     private boolean isKanji;
     private String spelling;
     private Spelling[] dependencies;
     private List<Spelling> readings;
     private Set<DefTag> tags;
+    private short commonness;
 
     public Spelling(boolean isKanji, String spelling)
     {
@@ -23,6 +24,16 @@ public class Spelling
         dependencies = null;
         readings = null;
         tags = null;
+    }
+
+    public void addCommonScore(int extra)
+    {
+        commonness += extra;
+    }
+
+    public int getCommonScore()
+    {
+        return commonness;
     }
 
     public void setDependencies(Spelling[] dependencies)
@@ -66,5 +77,11 @@ public class Spelling
     public Set<DefTag> getTags()
     {
         return tags;
+    }
+
+    @Override
+    public int compareTo(Spelling o)
+    {
+        return o.commonness - commonness;
     }
 }

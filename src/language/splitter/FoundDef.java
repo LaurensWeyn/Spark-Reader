@@ -214,7 +214,7 @@ public class FoundDef implements Comparable<FoundDef>
             if (tags.contains(DefTag.obs) || tags.contains(DefTag.obsc) || tags.contains(DefTag.rare) || tags.contains(DefTag.arch))
                 score -= 50;//obscure penalty
             if(tags.contains(DefTag.p) || tags.contains(DefTag.P))
-                score += 50;//'common in newspapers etc.' bonus
+                score += 50;//'common in newspapers etc.' bonus (deprecated for JMDict)
 
             if (tags.contains(DefTag.uk) && !Japanese.hasKana(foundForm.getWord())) score -= 10;//usually kana without kana
             if (tags.contains(DefTag.uK) && Japanese.hasOnlyKana(foundForm.getWord())) score -= 10;//usually Kanji, only kana
@@ -225,10 +225,17 @@ public class FoundDef implements Comparable<FoundDef>
             if (tags.contains(DefTag.ctr)) score -= 10;
         }
         score -= foundDef.getSpellings().length;//-1 for every spelling; more likely it's coincidence
+        int maxSpellingScore = 0;
+        int thisSpellingScore = 0;
+        for(Spelling spelling:foundDef.getSpellings())
+        {
+            if(spelling.getText().equals(foundForm.getWord()))
+                thisSpellingScore = spelling.getCommonScore();
+            maxSpellingScore = Math.max(maxSpellingScore, spelling.getCommonScore());
+        }
+        score += maxSpellingScore / 4;
+        score += thisSpellingScore / 4;
         if (foundForm.getNumConjugations() == 0) score += 5 + 50;//prefer words/phrases instead of deviations
-        //'common' words are often marked as such while a conjugated form of a common word would not.
-        //To avoid this, the above has an increased score (since word must be common enough to have it conjugated)
-        //FIXME if the above causes extra side effects.
 
         //System.out.println("score for " + foundDef + " is " + score);
         return score;

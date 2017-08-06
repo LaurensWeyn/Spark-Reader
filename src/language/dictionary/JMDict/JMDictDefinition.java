@@ -133,12 +133,13 @@ public class JMDictDefinition extends Definition
         Set<DefTag> tags = new HashSet<>();
         for(Spelling spelling:spellings)
         {
-            if(spelling.getTags() == null)continue;
-            if(spelling.getTags() != null)tags.addAll(spelling.getTags());
+            if(spelling.getTags() != null)
+                tags.addAll(spelling.getTags());
         }
         for(Sense sense:senses)
         {
-            tags.addAll(sense.getTags());
+            if(sense.getTags() != null)
+                tags.addAll(sense.getTags());
         }
 
         return tags;
@@ -151,6 +152,7 @@ public class JMDictDefinition extends Definition
         //check senses
         for(Sense meaning:senses)
         {
+            if(meaning.getTags() == null)continue;
             if(meaning.getRestrictedSpellings() == null)
             {
                 tags.addAll(meaning.getTags());

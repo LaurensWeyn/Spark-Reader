@@ -25,6 +25,8 @@ public class JMParser
         {
             readSubtag("entry", line);
             long id = Long.parseLong(readCDATA("ent_seq", br.readLine()));
+
+            //spellings
             List<Spelling> spellings = new LinkedList<>();
             List<Spelling> readings = new LinkedList<>();
             line = br.readLine();
@@ -40,6 +42,9 @@ public class JMParser
             }
             bindReadings(spellings, readings);
             spellings.addAll(readings);
+            spellings.sort(null);//sort by priority
+
+            //senses
             List<Sense> senses = new LinkedList<>();
             while(isTag("sense", line))
             {
@@ -64,7 +69,7 @@ public class JMParser
     {
         List<Spelling> readingRestrictions = null;
         List<String> defLines = new LinkedList<>();
-        Set<DefTag> tags = new HashSet<>();
+        Set<DefTag> tags = null;
         String line = br.readLine();
         while(!isTag("/sense", line))
         {
@@ -84,18 +89,22 @@ public class JMParser
             //tag data
             else if(isTag("pos", line))//part of speech tag
             {
+                if(tags == null)tags = new HashSet<>();
                 tags.add(DefTag.toTag(readTagData("pos", line)));
             }
             else if(isTag("field", line))//specialized field tag
             {
+                if(tags == null)tags = new HashSet<>();
                 tags.add(DefTag.toTag(readTagData("field", line)));
             }
             else if(isTag("misc", line))//misc. tag
             {
+                if(tags == null)tags = new HashSet<>();
                 tags.add(DefTag.toTag(readTagData("misc", line)));
             }
             else if(isTag("dial", line))//dialect specific tag
             {
+                if(tags == null)tags = new HashSet<>();
                 tags.add(DefTag.toTag(readTagData("dial", line)));
             }
             //extra notes
@@ -184,7 +193,7 @@ public class JMParser
             }
             while(isTag("ke_pri", line))//commonness data
             {
-                //TODO collect common reading data here
+                newSpelling.addCommonScore(commonScoreOf(readCDATA("ke_pri", line)));
                 line = br.readLine();
             }
             spellings.add(newSpelling);
@@ -220,7 +229,7 @@ public class JMParser
             }
             while(isTag("re_pri", line))//commonness data
             {
-                //TODO collect common reading data here
+                newSpelling.addCommonScore(commonScoreOf(readCDATA("re_pri", line)));
                 line = br.readLine();
             }
             if(readingRestrictions != null)//link up required spellings for reading
@@ -238,6 +247,23 @@ public class JMParser
             }
             readings.add(newSpelling);
         }
+    }
+
+    private static int commonScoreOf(String priTag)
+    {
+        if(priTag.startsWith("nf"))
+        {
+            int value = Integer.parseInt(priTag.substring(2));
+            return (48 - value);
+        }
+        else if(priTag.startsWith("news"))return 0;//ignore these; handled above
+        else if(priTag.equals("ichi1"))return 50;
+        else if(priTag.equals("ichi2"))return 10;
+        else if(priTag.equals("spec1"))return 50;
+        else if(priTag.equals("spec2"))return 30;
+        else if(priTag.equals("gai1"))return 50;
+        else if(priTag.equals("gai2"))return 25;
+        else throw new IllegalArgumentException("Unknown priority tag \"" + priTag + "\"");
     }
 
     /**
