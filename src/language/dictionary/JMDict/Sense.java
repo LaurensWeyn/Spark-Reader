@@ -28,7 +28,14 @@ public class Sense
 
     public String getMeaningAsLine()
     {
-        return String.join("<br>", meaningLines);
+        StringBuilder out = new StringBuilder();
+        for(String line:meaningLines)
+        {
+            //add sep for lines after the first that aren't in brackets
+            if(out.length() > 0 && !(line.startsWith("(") && line.endsWith(")")))out.append("; ");
+            out.append(line);
+        }
+        return out.toString();
     }
 
     public Spelling[] getRestrictedSpellings()

@@ -139,7 +139,7 @@ public class EDICTDefinition extends Definition
     }
     
     @Override
-    public Set<DefTag> getTags(ValidWord context)
+    public Set<DefTag> getTags()
     {
         return tags;
     }

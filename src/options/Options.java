@@ -66,7 +66,7 @@ public class Options
 
         options.put("defReadingCol", "0, 255, 255, 255");
         options.put("defKanjiCol", "255, 255, 255, 255");
-        options.put("defTagCol", "255, 255, 255, 255");
+        options.put("defTagCol", "50, 255, 0, 255");
         options.put("defCol", "255, 255, 0, 255");
         options.put("defBackCol", "0, 0, 0, 128");
         
@@ -94,6 +94,10 @@ public class Options
         options.put("useOpenGL", "true");
 
         options.put("splitLines", "true");
+        options.put("splitDefLines", "false");
+        options.put("showTagsOnDef", "true");
+        options.put("showTagsOnReading", "true");
+        options.put("showAllTags", "false");
         options.put("reflowToFit", "false");
         options.put("defsShowUpwards", "false");
         options.put("expectedLineCount", "4");

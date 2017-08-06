@@ -95,33 +95,28 @@ public abstract class Definition
         }
         return output.toString();
     }
-    
-    public Set<DefTag> getTags(ValidWord context)
+
+    public Set<DefTag> getTags()
     {
         return null;
     }
-
-    /**
-     * Holds tags in a single primitive for faster comparison
-     * @return a long representing the most crucial tags attached to this Definition
-     */
-    public long getQuickTags()
+    
+    public Set<DefTag> getTags(ValidWord context)
     {
-        Set<DefTag> tags = getTags(null);
-        if(tags == null)return 0;
-        else return DefTag.toQuickTag(tags);
+        return getTags();
     }
+
 
     public String getTagLine()
     {
-        Set<DefTag> tags = getTags(null);
+        Set<DefTag> tags = getTags();
         if(tags == null)return null;
 
         StringBuilder tagList = new StringBuilder();
         for(DefTag tag:tags)
         {
             if(tag != null)
-                tagList.append(tag.name()).append(" ");
+                tagList.append(tag).append(" ");
         }
         return tagList.toString().trim();
     }

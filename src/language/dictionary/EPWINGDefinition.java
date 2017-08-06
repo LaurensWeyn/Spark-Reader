@@ -125,7 +125,7 @@ public class EPWINGDefinition extends Definition
     }
 
     @Override
-    public Set<DefTag> getTags(ValidWord context)
+    public Set<DefTag> getTags()
     {
         return tags;
     }

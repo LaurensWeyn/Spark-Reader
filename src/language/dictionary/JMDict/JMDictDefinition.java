@@ -5,13 +5,15 @@ import language.dictionary.DefSource;
 import language.dictionary.DefTag;
 import language.dictionary.Definition;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class JMDictDefinition extends Definition
 {
     private long ID;
-    private long quickTags;
+    //private long quickTags;//planned optimization
     private Sense senses[];
     private Spelling spellings[];
     public static DefSource source;
@@ -22,7 +24,7 @@ public class JMDictDefinition extends Definition
         this.senses = senses;
         this.spellings = spellings;
 
-        quickTags = 0;
+        //quickTags = 0;
         //for(Spelling spelling:spellings)quickTags |= DefTag.toQuickTag(spelling.getTags());
         //for(Sense sense:senses)quickTags |= DefTag.toQuickTag(sense.getTags());
     }
@@ -66,29 +68,129 @@ public class JMDictDefinition extends Definition
     }
 
     @Override
+    public List<Spelling> getSpellings(ValidWord context)
+    {
+        List<Spelling> spellings = new ArrayList<>();
+        for(Spelling spelling:this.spellings)
+        {
+            if(spelling.getDependencies() == null)
+            {
+                spellings.add(spelling);
+            }
+            else
+            {
+                boolean match = false;
+                for(Spelling dependency:spelling.getDependencies())
+                {
+                    if(dependency.getText().equals(context.getWord()))
+                    {
+                        match = true;
+                        break;
+                    }
+                }
+                if(match)spellings.add(spelling);
+            }
+        }
+        return spellings;
+    }
+
+    @Override
     public Sense[] getMeanings()
     {
         return senses;
     }
 
     @Override
-    public long getQuickTags()
+    public List<Sense> getMeanings(ValidWord context)
     {
-        return quickTags;
+        List<Sense> meanings = new ArrayList<>();
+        for(Sense meaning:senses)
+        {
+            if(meaning.getRestrictedSpellings() == null)
+            {
+                meanings.add(meaning);
+            }
+            else
+            {
+                boolean match = false;
+                for(Spelling dependency:meaning.getRestrictedSpellings())
+                {
+                    if(dependency.getText().equals(context.getWord()))
+                    {
+                        match = true;
+                        break;
+                    }
+                }
+                if(match)meanings.add(meaning);
+            }
+        }
+        return meanings;
+    }
+
+    @Override
+    public Set<DefTag> getTags()
+    {
+        Set<DefTag> tags = new HashSet<>();
+        for(Spelling spelling:spellings)
+        {
+            if(spelling.getTags() == null)continue;
+            if(spelling.getTags() != null)tags.addAll(spelling.getTags());
+        }
+        for(Sense sense:senses)
+        {
+            tags.addAll(sense.getTags());
+        }
+
+        return tags;
     }
 
     @Override
     public Set<DefTag> getTags(ValidWord context)
     {
         Set<DefTag> tags = new HashSet<>();
-        //TODO take context into account
-        for(Spelling spelling:spellings)
+        //check senses
+        for(Sense meaning:senses)
         {
-            if(spelling.getTags() != null)tags.addAll(spelling.getTags());
+            if(meaning.getRestrictedSpellings() == null)
+            {
+                tags.addAll(meaning.getTags());
+            }
+            else
+            {
+                boolean match = false;
+                for(Spelling dependency:meaning.getRestrictedSpellings())
+                {
+                    if(dependency.getText().equals(context.getWord()))
+                    {
+                        match = true;
+                        break;
+                    }
+                }
+                if(match)tags.addAll(meaning.getTags());
+            }
         }
-        for(Sense sense:senses)
+
+        //check spellings
+        for(Spelling spelling:this.spellings)
         {
-            tags.addAll(sense.getTags());
+            if(spelling.getTags() == null)continue;
+            if(spelling.getDependencies() == null)
+            {
+                tags.addAll(spelling.getTags());
+            }
+            else
+            {
+                boolean match = false;
+                for(Spelling dependency:spelling.getDependencies())
+                {
+                    if(dependency.getText().equals(context.getWord()))
+                    {
+                        match = true;
+                        break;
+                    }
+                }
+                if(match)tags.addAll(spelling.getTags());
+            }
         }
 
         return tags;

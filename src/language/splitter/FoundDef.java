@@ -18,12 +18,14 @@ package language.splitter;
 
 import language.deconjugator.ValidWord;
 import language.dictionary.*;
+import language.dictionary.JMDict.JMDictDefinition;
 import language.dictionary.JMDict.Sense;
 import language.dictionary.JMDict.Spelling;
 import main.Main;
 import ui.TextBlockRenderer;
 
 import java.awt.*;
+import java.util.List;
 import java.util.Set;
 
 import static main.Main.options;
@@ -61,31 +63,46 @@ public class FoundDef implements Comparable<FoundDef>
         }
 
         //output tags
-        defText.addText(foundDef.getTagLine(), options.getColor("defTagCol"), options.getColor("defBackCol"));
+        if(options.getOptionBool("showAllTags") || !(foundDef instanceof JMDictDefinition))
+            defText.addText(foundDef.getTagLine(), options.getColor("defTagCol"), options.getColor("defBackCol"));
         //output ID (debug)
         if(options.getOptionBool("showDefID"))
             defText.addText(String.valueOf(foundDef.getID()), options.getColor("defTagCol"), options.getColor("defBackCol"));
-        //frequency data
+        //output frequency data
         FrequencySink.FreqData freqdata = FrequencySink.get(this);
         if(freqdata != null)
             defText.addText(freqdata.toString(), options.getColor("defTagCol"), options.getColor("defBackCol"));
-        
+
+        //output readings
         for(Spelling reading:foundDef.getSpellings(foundForm))
         {
             if(reading.isKanji() && !options.getOptionBool("showAllKanji"))continue; // note: showAllKanji currently broken
             //output readings if not in this form already
             if(!reading.getText().equals(foundForm.getWord()))
             {
-                String freqString = "";
+                StringBuilder extraData = new StringBuilder("");
+                //add frequency
                 if(options.getOptionBool("showReadingFreqs"))
                 {
                     FrequencySink.FreqData specificFreqdata = FrequencySink.get(this, reading.getText());
                     if(specificFreqdata != null)
-                        freqString = " " + specificFreqdata.toString();
+                        extraData.append(' ').append(specificFreqdata);
                 }
-                defText.addText(reading.getText() + freqString, options.getColor("defReadingCol"), options.getColor("defBackCol"));
+                //add tags
+                boolean firstTag = true;
+                if(options.getOptionBool("showTagsOnReading") && reading.getTags() != null)
+                {
+                    for(DefTag tag:reading.getTags())
+                    {
+                        extraData.append(firstTag?" ":", ").append(tag);
+                        firstTag = false;
+                    }
+                }
+                defText.addText(reading.getText() + extraData, options.getColor("defReadingCol"), options.getColor("defBackCol"));
             }
         }
+
+        //output kanji
         if(!(foundDef instanceof KanjiDefinition))
         {
             for (int i = 0; i < foundForm.getWord().length(); i++)
@@ -99,11 +116,36 @@ public class FoundDef implements Comparable<FoundDef>
                 }
             }
         }
-        for(Sense def:foundDef.getMeanings(foundForm))
+
+        //output definition text
+        List<Sense> defs = foundDef.getMeanings(foundForm);
+        for(int i = 0; i < defs.size(); i++)
         {
-            for(String defLine:def.getMeaningLines())
+
+            String startText = "";
+            if(defs.size() > 1)startText = (i + 1) + ") ";//number definitions
+            if(options.getOptionBool("showTagsOnDef") && defs.get(i).getTags() != null)
             {
-                defText.addText(defLine, options.getColor("defCol"), options.getColor("defBackCol"));
+                StringBuilder tags = new StringBuilder();
+                for(DefTag tag:defs.get(i).getTags())
+                {
+                    if(tags.length() > 0)tags.append(", ");
+                    tags.append(tag);
+                }
+                defText.addText(startText + tags, options.getColor("defTagCol"), options.getColor("defBackCol"));
+                startText = "";
+            }
+            if(foundDef instanceof JMDictDefinition && !options.getOptionBool("splitDefLines"))
+            {
+                defText.addText(startText + defs.get(i).getMeaningAsLine(), options.getColor("defCol"), options.getColor("defBackCol"));
+            }
+            else
+            {
+                for(String defLine : defs.get(i).getMeaningLines())
+                {
+                    defText.addText(startText + defLine, options.getColor("defCol"), options.getColor("defBackCol"));
+                    startText = "";
+                }
             }
         }
         resetScroll();

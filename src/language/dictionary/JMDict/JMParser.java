@@ -179,7 +179,7 @@ public class JMParser
             line = br.readLine();
             while(isTag("ke_inf", line))//writing-specific tags
             {
-                newSpelling.addTag(DefTag.toTag(readCDATA("ke_inf", line)));
+                newSpelling.addTag(DefTag.toTag(readTagData("ke_inf", line)));
                 line = br.readLine();
             }
             while(isTag("ke_pri", line))//commonness data
@@ -215,7 +215,7 @@ public class JMParser
             }
             while(isTag("re_inf", line))//writing-specific tags
             {
-                newSpelling.addTag(DefTag.toTag(readCDATA("re_inf", line)));
+                newSpelling.addTag(DefTag.toTag(readTagData("re_inf", line)));
                 line = br.readLine();
             }
             while(isTag("re_pri", line))//commonness data

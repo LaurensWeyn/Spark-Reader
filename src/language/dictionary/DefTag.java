@@ -39,17 +39,18 @@ public enum DefTag
     stem_adj_base(-1, "adjective stem"),
     
     // non-custom
-    adj_i(0, "adjective (keiyoushi)", 0),
-    adj_na(0, "adjectival nouns or quasi_adjectives (keiyodoshi)", 1),
-    adj_no(0, "nouns which may take the genitive case particle `no'", 2),
+    adj_i(0, "adjective (keiyoushi)", 0, "i-adjective"),
+    adj_ix(0, "adjective (keiyoushi) - yoi/ii class", 0, "i-adj"),
+    adj_na(0, "adjectival nouns or quasi_adjectives (keiyodoshi)", 1, "na-adj"),
+    adj_no(0, "nouns which may take the genitive case particle `no'", 2, "no-adj"),
     adj_pn(0, "pre_noun adjectival (rentaishi)"),
-    adj_t(0, "`taru' adjective"),
+    adj_t(0, "'taru' adjective"),
     adj_f(0, "noun or verb acting prenominally (other than the above)"),
     
     adj(0, "former adjective classification (being removed)"),
-    adv(0, "adverb (fukushi)"),
+    adv(0, "adverb (fukushi)", "adverb"),
     adv_n(0, "adverbial noun"),
-    adv_to(0, "adverb taking the `to' particle", 3),
+    adv_to(0, "adverb taking the 'to' particle", 3, "to-adj"),
     aux(0, "auxiliary", 4),
     aux_v(0, "auxiliary verb"),
     aux_adj(0, "auxiliary adjective", 5),
@@ -58,74 +59,89 @@ public enum DefTag
     exp(0, "Expressions (phrases, clauses, etc.)"),
     INT(0, "interjection (kandoushi)"),
     iv(0, "irregular verb"),
-    n(0, "noun (common) (futsuumeishi)", 6),
+    n(0, "noun (common) (futsuumeishi)", 6, "noun"),
     n_pr(0, "proper noun"),
     n_adv(0, "adverbial noun (fukushitekimeishi)"),
-    n_pref(0, "noun, used as a prefix"),
-    n_suf(0, "noun, used as a suffix"),
-    n_t(0, "noun (temporal) (jisoumeishi)"),
+    n_pref(0, "noun, used as a prefix", "prefix"),
+    n_suf(0, "noun, used as a suffix", "suffix"),
+    n_t(0, "noun (temporal) (jisoumeishi)", "temp. noun"),
     num(0, "numeric"),
     pn(0, "pronoun"),
     pref(0, "prefix", 7),
     prt(0, "particle"),
     suf(0, "suffix", 8),
 
-    v1(0, "Ichidan verb", 9),
-    v5b(0, "Godan verb with `bu' ending", 10),
-    v5g(0, "Godan verb with `gu' ending", 11),
-    v5k(0, "Godan verb with `ku' ending", 12),
-    v5m(0, "Godan verb with `mu' ending", 13),
-    v5n(0, "Godan verb with `nu' ending", 14),
-    v5r(0, "Godan verb with `ru' ending", 15),
-    v5s(0, "Godan verb with `su' ending", 16),
-    v5t(0, "Godan verb with `tsu' ending", 17),
-    v5u(0, "Godan verb with `u' ending", 18),
-    v5z(0, "Godan verb with `zu' ending", 19),
+    v1(0, "Ichidan verb", 9, "Ichidan"),
+    v5b(0, "Godan verb with `bu' ending", 10, "Godan"),
+    v5g(0, "Godan verb with `gu' ending", 11, "Godan"),
+    v5k(0, "Godan verb with `ku' ending", 12, "Godan"),
+    v5m(0, "Godan verb with `mu' ending", 13, "Godan"),
+    v5n(0, "Godan verb with `nu' ending", 14, "Godan"),
+    v5r(0, "Godan verb with `ru' ending", 15, "Godan"),
+    v5s(0, "Godan verb with `su' ending", 16, "Godan"),
+    v5t(0, "Godan verb with `tsu' ending", 17, "Godan"),
+    v5u(0, "Godan verb with `u' ending", 18, "Godan"),
+    v5z(0, "Godan verb with `zu' ending", 19, "Godan"),
     
-    v2a_s(0, "Nidan verb with 'u' ending (archaic)"),
-    v4h(0, "Yodan verb with `hu/fu' ending (archaic)"),
-    v4r(0, "Yodan verb with `ru' ending (archaic)", 20),
-    v5(0, "Godan verb (not completely classified)"),
-    v5aru(0, "Godan verb - -aru special class", 21),
-    v5k_s(0, "Godan verb - iku/yuku special class", 22),
-    v5r_i(0, "Godan verb with `ru' ending (irregular verb)", 23),
-    v5u_s(0, "Godan verb with `u' ending (special class)", 24),
-    v5uru(0, "Godan verb - uru old class verb (old form of Eru)"),
+    v2a_s(0, "Nidan verb with 'u' ending (archaic)", "Nidan"),
+    v4h(0, "Yodan verb with `hu/fu' ending (archaic)", "Yodan"),
+    v4r(0, "Yodan verb with `ru' ending (archaic)", 20, "Yodan"),
+    v5(0, "Godan verb (not completely classified)", "Godan special"),
+    v5aru(0, "Godan verb - -aru special class", 21, "Godan special"),
+    v5k_s(0, "Godan verb - iku/yuku special class", 22, "Godan special"),
+    v5r_i(0, "Godan verb with `ru' ending (irregular verb)", 23, "Godan special"),
+    v5u_s(0, "Godan verb with `u' ending (special class)", 24, "Godan special"),
+    v5uru(0, "Godan verb - uru old class verb (old form of Eru)", "Godan special"),
     
     vz(0, "Ichidan verb - zuru verb - (alternative form of -jiru verbs)"),
     
-    vi(0, "intransitive verb"),
-    vk(0, "kuru verb - special class", 25),
+    vi(0, "intransitive verb", "intrans"),
+    vk(0, "kuru verb - special class", 25, "kuru verb"),
     vn(0, "irregular nu verb"),
-    vs(0, "noun or participle which takes the aux. verb suru"),
-    vs_c(0, "su verb - precursor to the modern suru"),
-    vs_i(0, "suru verb - irregular", 26),
-    vs_s(0, "suru verb - special class"),
-    vt(0, "transitive verb"),
-    
+    vs(0, "noun or participle which takes the aux. verb suru", "suru verb"),
+    vr(0, "irregular ru verb, plain form ends with -ri", "ru verb"),
+    vs_c(0, "su verb - precursor to the modern suru", "su verb"),
+    vs_i(0, "suru verb - irregular", 26, "suru special"),
+    vs_s(0, "suru verb - special class", "suru special"),
+    vt(0, "transitive verb", "trans"),
+
+    unc(0, "unclassified"),
+    other(0, "not classified"),
+
     //////////////
     //term types//
     //////////////
     Buddh(1, "Buddhist term"),
     MA(1, "martial arts term"),
-    comp(1, "computer terminology"),
-    food(1, "food term"),
-    geom(1, "geometry term"),
-    gram(1, "grammatical term"),
+    sumo(1, "sumo term"),
+    shogi(1, "shogi term"),
+    music(1, "music term"),
+    Shinto(1, "Shinto term"),
+    mahj(1, "mahjong term", "mahjong"),
+    archit(1, "architecture term"),
+    anat(1, "anatomical term", "anatomical"),
+    bus(1, "business term", "business"),
+    econ(1, "economics term", "economics"),
+    zool(1, "zoology term", "zoology"),
+    engr(1, "engineering term", "engineering"),
+    comp(1, "computer terminology", "computer"),
+    food(1, "food term", "food term"),
+    geom(1, "geometry term", "geometry"),
+    gram(1, "grammatical term", "grammar term"),
     joc(1, "jocular, humorous term"),
-    sports(1, "sports term"),
-    law(1, "law, etc. term"),
-    geol(1, "geology, etc. term"),
+    sports(1, "sports term", "sports term"),
+    law(1, "law, etc. term", "law"),
+    geol(1, "geology, etc. term", "geology"),
     proverb(1, "proverb"),
     yoji(1, "yojijukugo"),
     intr(1, "interjection (kandoushi)"),
-    finc(1, "finance term"),
+    finc(1, "finance term", "finance"),
     med(1, "medicine, etc. term"),
-    biol(1, "biology term"),
+    biol(1, "biology term", "biology"),
     chem(1, "chemistry term"),
-    astron(1, "astronomy, etc. term"),
-    bot(1, "botany term"),
-    baseb(1, "baseball term"),
+    astron(1, "astronomy, etc. term", "astronomy"),
+    bot(1, "botany term", "botany"),
+    baseb(1, "baseball term", "baseball"),
     ling(1, "linguistics terminology"),
     math(1, "mathematics"),
     mil(1, "military"),
@@ -154,34 +170,43 @@ public enum DefTag
     oK(2, "word containing out_dated kanji"),
     obs(2, "obsolete term"),
     obsc(2, "obscure term"),
-    ok(2, "out_dated or obsolete kana usage"),
-    on_mim(2, "onomatopoeic or mimetic word"),
-    poet(2, "poetical term"),
-    pol(2, "polite (teineigo) language"),
+    ok(2, "out-dated or obsolete kana usage", "outdated Kana"),
+    oik(2, "old or irregular kana form", "old/irregular Kana"),
+    on_mim(2, "onomatopoeic or mimetic word", "onomatopoeia"),
+    poet(2, "poetical term", "poetical"),
+    pol(2, "polite (teineigo) language", "polite"),
     rare(2, "rare"),
-    sens(2, "sensitive word"),
-    sl(2, "slang"),
-    uK(2, "word usually written using kanji alone"),
-    uk(2, "word usually written using kana alone"),
+    sens(2, "sensitive word", "sensitive"),
+    sl(2, "slang", "slang"),
+    uK(2, "word usually written using kanji alone", "usu. Kanji"),
+    uk(2, "word usually written using kana alone", "usu. Kana"),
     vulg(2, "vulgar expression or word"),
-    kyb(3, "Kyoto-ben"),
-    osb(3, "Osaka-ben"),
-    ksb(3, "Kansai-ben"),
-    ktb(3, "Kantou-ben"),
-    tsb(3, "Tosa-ben"),
-    thb(3, "Touhoku-ben"),
-    tsug(3, "Tsugaru-ben"),
-    kyu(3, "Kyuushuu-ben"),
-    rkb(3, "Ryuukyuu-ben"),
-    
+    kyb(3, "Kyoto-ben", "Kyoto-ben"),
+    osb(3, "Osaka-ben", "Osaka-ben"),
+    ksb(3, "Kansai-ben", "Kansai-ben"),
+    ktb(3, "Kantou-ben", "Kantou-ben"),
+    tsb(3, "Tosa-ben", "Tosa-ben"),
+    thb(3, "Touhoku-ben", "Touhoku-ben"),
+    tsug(3, "Touhoku-ben", "Touhoku-ben"),
+    kyu(3, "Kyuushuu-ben", "Kyuushuu-ben"),
+    rkb(3, "Ryuukyuu-ben", "Ryuukyuu-ben"),
+    hob(3, "Ryuukyuu-ben", "Ryuukyuu-ben"),
+
     p(4, ""), P(4, "");
     private int group;
     private String name;
+    private String shortName;
     private int shortBit = -1;
     DefTag(int group, String name)
     {
         this.group = group;
         this.name = name;
+        this.shortName = null;
+    }
+    DefTag(int group, String name, String shortName)
+    {
+        this(group, name);
+        this.shortName = shortName;
     }
     DefTag(int group, String name, int bitNum)
     {
@@ -189,7 +214,16 @@ public enum DefTag
         this.name = name;
         this.shortBit = 1 << bitNum;
     }
+    DefTag(int group, String name, int bitNum, String shortName)
+    {
+        this(group, name, bitNum);
+        this.shortName = shortName;
+    }
     public String toString()
+    {
+        return shortName == null? name():shortName;
+    }
+    public String getFullName()
     {
         return name;
     }
@@ -206,10 +240,11 @@ public enum DefTag
         }
         try
         {
-            return valueOf(text.toLowerCase().replace('-', '_'));
+            return valueOf(text.replace('-', '_'));
         }catch(IllegalArgumentException e)
         {
-            return null;
+            //System.out.println("WARN: unknown tag " + text);
+            return other;//tag used for rare archaic entries I can't be bothered to add since we don't deal with them (yet)
         }
     }
 

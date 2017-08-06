@@ -75,7 +75,7 @@ public class UserDefPage implements Page
                     userDefs.append(" ["); 
                     userDefs.append(String.join(";",def.getReadings()));
                     userDefs.append("] /");
-                    for(DefTag tag:def.getTags(null))
+                    for(DefTag tag:def.getTags())
                     {
                         if(tag == null) continue;
                         userDefs.append("(");
