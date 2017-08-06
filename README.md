@@ -6,7 +6,7 @@ Looking to download the latest version?
 Feedback is greatly appreciated.
 
 EDICT2 file included for convenience, see [this page](http://www.edrdg.org/jmdict/edict.html)
-for more information and its licence.  All other code is released under the included licence.
+for more information and its licence.  All other code is released under [the included licence](https://github.com/thatdude624/Spark-Reader/blob/master/LICENSE).
 
 ## What this is
 Spark Reader is intended as an alternative to things like Rikaisama and Chiitrans.
@@ -25,18 +25,17 @@ It's mainly designed for use with Visual Novels, but anything that will let you 
 - Multiplayer: Read along with your friends over voice chat and Spark Reader will tell you if you're ahead or behind the others.
 
 ## Features still in development
-- An improved, recursive deconjugator
 - Powerful and customisable word splitter: Choose between Kuromoji, 'assisted rikaikun' mode or disable word splitting entirely.
-- Import character names and their readings from VNDB
+- Import character names and their readings from VNDB.
 - A built-in, memory based texthooker for programs and games that don't work with tools like ITH.
 
 ---
 
 # Build requirements
-- Compiled using IntelliJ and Java 8. NetBeans project files present as well.
-- Uses eb4j (original, not the one on Github) for Epwing support
-- Uses JNA for the memory based text hook and other native features
-- Uses JUnit and Hamcrest for tests
+- Compiled using IntelliJ and Java 8.
+- Uses eb4j (original, not the one on Github) for Epwing support.
+- Uses JNA for the memory based text hook and other native features.
+- Uses JUnit and Hamcrest for tests.
 
 ## Building
 
