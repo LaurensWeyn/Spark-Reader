@@ -95,7 +95,7 @@ public class EPWINGDefinition extends Definition
     {
         for(Spelling spelling:spellings)
         {
-            if(spelling.isKanji())return spelling.getText();
+            if(!spelling.isKanji())return spelling.getText();
         }
         return "";
     }

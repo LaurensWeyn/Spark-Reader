@@ -29,11 +29,14 @@ public class Sense
     public String getMeaningAsLine()
     {
         StringBuilder out = new StringBuilder();
+        boolean lastHadBraces = false;
         for(String line:meaningLines)
         {
             //add sep for lines after the first that aren't in brackets
-            if(out.length() > 0 && !(line.startsWith("(") && line.endsWith(")")))out.append("; ");
+            if(out.length() > 0 && !lastHadBraces)out.append(';');
+            if(out.length() > 0)out.append(' ');//have space even after braces though
             out.append(line);
+            lastHadBraces = line.startsWith("(") && line.endsWith(")");
         }
         return out.toString();
     }
