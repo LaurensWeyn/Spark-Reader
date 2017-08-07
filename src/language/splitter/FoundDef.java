@@ -233,8 +233,8 @@ public class FoundDef implements Comparable<FoundDef>
                 thisSpellingScore = spelling.getCommonScore();
             maxSpellingScore = Math.max(maxSpellingScore, spelling.getCommonScore());
         }
-        score += maxSpellingScore / 4;
-        score += thisSpellingScore / 4;
+        score += maxSpellingScore / 2;
+        score += thisSpellingScore / 2;
         if (foundForm.getNumConjugations() == 0) score += 5 + 50;//prefer words/phrases instead of deviations
 
         //System.out.println("score for " + foundDef + " is " + score);

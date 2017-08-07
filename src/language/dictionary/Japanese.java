@@ -133,6 +133,7 @@ public class Japanese
     }
     public static String toKatakana(String input, boolean stripOthers)
     {
+        if(input == null)return null;
         StringBuilder output = new StringBuilder();
         for (int i = 0; i < input.length(); i++)
         {

@@ -85,7 +85,7 @@ public class FrequencySink
                 {
                     if(!foundForm.getWord().equals(spelling.getText())) continue; // fixes 赤金
                     String readingtext = Japanese.toKatakana(reading.getText(), false);
-                    if(!Japanese.toKatakana(forcereading, false).equals(readingtext)) continue;
+                    if(!readingtext.equals(Japanese.toKatakana(forcereading, false))) continue;
                     
                     String text = spellingtext + "-" + readingtext;
                     // Fast lane: easy successful lookup
