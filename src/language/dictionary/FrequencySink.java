@@ -62,35 +62,52 @@ public class FrequencySink
         return get(def, def.getFurigana());
     }
     
-    public static FreqData get(FoundDef def, String forcereading) 
+    public static FreqData get(FoundDef def, String forceReading) 
     {
         ValidWord foundForm = def.getFoundForm();
+        String forceReadingKatakana = Japanese.toKatakana(forceReading, false);
+        
+        // Make sure right frequency is used for words that are easy to look up
+        if(!foundForm.getWord().equals(forceReading))
+        {
+            String asintext = foundForm.getWord() + "-" + forceReadingKatakana;
+            if(mapping.containsKey(asintext))
+            {
+                System.out.println("A: "+asintext);
+                return mapping.get(asintext);
+            }
+        }
+        
+        // Otherwise find the first match the definition wants to give us
+        boolean noKanjiAvailable = true; // We don't want to check reading-reading from the JMDict definition if there were kanji-reading pairs available that failed
         for(Spelling spelling : def.getDefinition().getSpellings()) // Handles kanji spellings first, then readings
         {
             String spellingtext = spelling.getText();
-            if(spelling.getReadings().size() == 0)
+            if(spelling.getReadings().size() > 0 && spelling.getReadings().get(0) != spelling)
             {
-                String readingtext = Japanese.toKatakana(spellingtext, false);
-                if(!Japanese.toKatakana(forcereading, false).equals(readingtext)) continue;
-                String text = spellingtext + "-" + readingtext;
-                // Fast lane: easy successful lookup
-                if(mapping.containsKey(text))
-                {
-                    return mapping.get(text);
-                }
-            }
-            else
-            {
+                noKanjiAvailable = false;
                 for(Spelling reading : spelling.getReadings())
                 {
-                    if(!foundForm.getWord().equals(spelling.getText())) continue; // fixes 赤金
                     String readingtext = Japanese.toKatakana(reading.getText(), false);
-                    if(!readingtext.equals(Japanese.toKatakana(forcereading, false))) continue;
+                    if(!forceReadingKatakana.equals(readingtext)) continue;
                     
                     String text = spellingtext + "-" + readingtext;
-                    // Fast lane: easy successful lookup
                     if(mapping.containsKey(text))
+                    {
+                        System.out.println("B: "+text);
                         return mapping.get(text);
+                    }
+                }
+            }
+            else if(noKanjiAvailable)
+            {
+                String readingtext = Japanese.toKatakana(spellingtext, false);
+                if(!forceReadingKatakana.equals(readingtext)) continue;
+                String text = spellingtext + "-" + readingtext;
+                if(mapping.containsKey(text))
+                {
+                    System.out.println("C: "+text);
+                    return mapping.get(text);
                 }
             }
         }
