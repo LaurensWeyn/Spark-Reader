@@ -3,7 +3,7 @@
  * All rights reserved and stuff.
  * Not my fault if anything blows up.
  */
-package language.dictionary;
+package language.dictionary.Epwing;
 
 import fuku.eb4j.EBException;
 import fuku.eb4j.SubAppendix;

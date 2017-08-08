@@ -14,11 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package multiplayer;
+package network;
 
 import main.Main;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -26,22 +25,24 @@ import java.net.Socket;
 import java.nio.charset.Charset;
 
 /**
- * Manages a client to a Spark Reader MP server
+ * Manages clients connecting to a MP server
  * @author Laurens Weyn
  */
-public class Client extends MPController
+public class ClientManager extends Thread
 {
     private final Socket socket;
-    private int position = 0;
+    private final Host host;
+    private final int clientNum;
     private final static Charset encoding = Charset.forName("UTF-8");
     private String lastText;
-
-    public Client(Socket socket)
+    public ClientManager(Host host, Socket socket, int clientNum)
     {
         this.socket = socket;
-        lastText = currentLine();
+        this.host = host;
+        this.clientNum = clientNum;
+        lastText = Main.currPage.getText();
     }
-
+    
     @Override
     public void run()
     {
@@ -49,23 +50,23 @@ public class Client extends MPController
         {
             PacketReader in = new PacketReader(new InputStreamReader(socket.getInputStream(), encoding));
             OutputStream out = socket.getOutputStream();
-            out.write(("C\t" + currentLine() + "\n").getBytes(encoding));//start by telling server where we are
-            while(running)
+            out.write(("C\t" + MPController.currentLine()+ "\n").getBytes(encoding));//start by telling client where we are
+            while(host.running)
             {
                 String bits[] = in.getPacket();
                 if(bits != null)switch(bits[0])
                 {
                     case "U"://send C (what's your text?)
-                        out.write(("C\t" + currentLine() + "\n").getBytes(encoding));
+                        out.write(("C\t" + MPController.currentLine() + "\n").getBytes(encoding));
                         break;
                     case "C"://text is now [arg] for me, send R
                         {
-                            int pos = positionOf(bits[1]);
+                            int pos = MPController.positionOf(bits[1]);
                             out.write(("R\t" + pos + "\n").getBytes(encoding));
                             //client is behind (in our logs)
                             if(pos >= 0)
                             {
-                                position = -pos;
+                                host.updateClient(clientNum, -pos);
                             }
                         }
                         break;
@@ -73,8 +74,8 @@ public class Client extends MPController
                         {
                             int pos = Integer.parseInt(bits[1]);
                             //client is ahead (in our logs)
-                            if(pos >= 0)position = pos;
-                            else//line unknown, request line (client behind)
+                            if(pos >= 0)host.updateClient(clientNum, pos);
+                            else//line unknown, request line (client ahead)
                             {
                                 out.write("U\n".getBytes(encoding));
                             }
@@ -84,40 +85,30 @@ public class Client extends MPController
                         out.write("v 1.0\n".getBytes(encoding));
                         break;
                 }
-                
                 //check for updates on our text
-                String text = currentLine();
+                String text = MPController.currentLine();
                 if(!text.equals(lastText))
                 {
                     out.write(("C\t" + text + "\n").getBytes(encoding));
                     lastText = text;
-                    position = Integer.MIN_VALUE;//unknown until response
+                    host.updateClient(clientNum, Integer.MIN_VALUE);//unknown until response
                 }
-                //check if server is still connected (will throw Exception if disconnected)
-                out.write(ALIVE_CODE);
+                //check if client is still connected (will throw Exception if disconnected)
+                out.write(MPController.ALIVE_CODE);
                 //wait a bit before we run again
                 try
                 {
                     Thread.sleep(300);
                 }catch(InterruptedException e){}
-                
             }
             out.close();
             in.close();
         }catch(IOException e)
         {
-            //disconnect from server
-            JOptionPane.showMessageDialog(Main.ui.disp.getFrame(), "Disconnected from server:\n" + e);
+            //client disconnect, drop it from the list
+            System.out.println(clientNum + " disconnected: " + e);
         }
-        running = false;
-    }
 
-    @Override
-    public String getStatusText()
-    {
-        if(position == Integer.MIN_VALUE)return "Waiting for server";
-        else if(position == 0)return "in sync";
-        if(position < 0)return (position * -1) + " lines ahead";
-        else return position + " lines behind";
+        host.removeClient(clientNum);
     }
 }

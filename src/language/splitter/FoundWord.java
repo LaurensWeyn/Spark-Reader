@@ -19,15 +19,17 @@ package language.splitter;
 import language.deconjugator.DeconRule;
 import language.deconjugator.ValidWord;
 import language.dictionary.Dictionary;
-import language.dictionary.EPWINGDefinition;
+import language.dictionary.Epwing.EPWINGDefinition;
 import language.dictionary.Japanese;
 import main.Main;
 import ui.UI;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static java.awt.BasicStroke.CAP_ROUND;
 import static java.awt.BasicStroke.JOIN_ROUND;

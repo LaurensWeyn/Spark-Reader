@@ -1,6 +1,7 @@
 package language.dictionary.JMDict;
 
 import language.dictionary.DefTag;
+import language.dictionary.Japanese;
 
 import java.util.*;
 
@@ -24,6 +25,10 @@ public class Spelling implements Comparable<Spelling>
         dependencies = null;
         readings = null;
         tags = null;
+    }
+    public Spelling(String spelling)
+    {
+        this(Japanese.hasKanji(spelling), spelling);
     }
 
     public void addCommonScore(int extra)

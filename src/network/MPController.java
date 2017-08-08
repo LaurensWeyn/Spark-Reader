@@ -1,4 +1,4 @@
-package multiplayer;
+package network;
 
 import main.Main;
 

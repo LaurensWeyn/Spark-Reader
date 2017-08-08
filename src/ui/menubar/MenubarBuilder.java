@@ -1,10 +1,9 @@
 package ui.menubar;
 
 import hooker.ClipboardHook;
-import hooker.WindowHook;
 import main.Main;
-import multiplayer.Client;
-import multiplayer.Host;
+import network.Client;
+import network.Host;
 import options.OptionsUI;
 import ui.UI;
 import ui.WindowHookUI;

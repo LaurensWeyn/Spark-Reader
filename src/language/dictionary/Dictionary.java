@@ -17,6 +17,7 @@
 package language.dictionary;
 
 import fuku.eb4j.*;
+import language.dictionary.Epwing.EPWINGDefinition;
 import language.dictionary.JMDict.JMParser;
 import language.dictionary.JMDict.Spelling;
 import main.Main;

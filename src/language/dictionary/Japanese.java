@@ -24,6 +24,7 @@ import java.util.ArrayList;
  */
 public class Japanese
 {
+    private static WanaKana wanaInstance = new WanaKana(false);
     //disallow instances of class
     private Japanese(){}
 
@@ -229,5 +230,25 @@ public class Japanese
             }
         }
         return strings.toArray(new String[strings.size()]);
+    }
+
+    /**
+     * Uses WanaKana to convert Romaji to Kana.
+     * @param romaji The Romaji text input
+     * @return the Kana equivalent
+     */
+    public static String romajiToKana(String romaji)
+    {
+        return wanaInstance.toKana(romaji);
+    }
+
+    /**
+     * Uses WanaKana to convert Kana to Romaji
+     * @param kana The Kana text input
+     * @return the Romaji equivalent
+     */
+    public static String kanaToRomaji(String kana)
+    {
+        return wanaInstance.toRomaji(kana);
     }
 }
