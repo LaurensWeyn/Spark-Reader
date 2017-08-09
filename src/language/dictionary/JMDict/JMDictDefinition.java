@@ -46,7 +46,7 @@ public class JMDictDefinition extends Definition
             }
             return spelling.getText();
         }
-        return null;
+        return "";
     }
 
     @Override
