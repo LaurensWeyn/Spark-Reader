@@ -42,7 +42,7 @@ public class JMParser
             }
             bindReadings(spellings, readings);
             spellings.addAll(readings);
-            spellings.sort(null);//sort by priority
+            //spellings.sort(null);//sort by priority
 
             //senses
             List<Sense> senses = new LinkedList<>();

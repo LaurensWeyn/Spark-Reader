@@ -19,27 +19,15 @@ package ui;
 import hooker.WindowHook;
 import language.splitter.FoundWord;
 import main.Main;
-import options.Options;
-import hooker.ClipboardHook;
-import language.dictionary.Japanese;
-import language.splitter.FoundWord;
-import main.Main;
-import options.OptionsUI;
 import ui.input.JNativeKeyHandler;
 import ui.input.KeyHandler;
 import ui.input.MouseHandler;
 import ui.input.SwingMouseHandler;
 import ui.menubar.Menubar;
 import ui.menubar.MenubarBuilder;
-import ui.menubar.MenubarItem;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
-import java.awt.event.ActionEvent;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import static main.Main.*;
 
@@ -276,7 +264,7 @@ public class UI
 
         Main.doneLoading();
         //update loop
-        while(true)
+        Timer mainLoop = new Timer(Main.options.getOptionInt("uiThrottleMilliseconds"), e ->
         {
             if(stickToWindow != null)
             {
@@ -324,10 +312,6 @@ public class UI
                 }
             }
             else mpStatusText = null;
-            try
-            {
-                Thread.sleep(Main.options.getOptionInt("uiThrottleMilliseconds"));
-            }catch(InterruptedException ignored){}
 
             //UI has become inaccessible (most likely closed via alt+f4)
             if(!ui.disp.getFrame().isVisible() && !ui.tray.isShowing())
@@ -338,7 +322,9 @@ public class UI
 
             //check persist update
             if(!hidden)persist.checkForSave();
-        }
+        });
+        mainLoop.setRepeats(true);
+        mainLoop.start();
         
     }
 
