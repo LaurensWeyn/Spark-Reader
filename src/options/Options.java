@@ -73,6 +73,7 @@ public class Options
 
         options.put("dictionaryPath", "dictionaries/");
         options.put("customSourcePriority", "1");
+        options.put("importedSourcePriority", "1");
         options.put("edictSourcePriority", "0");
         options.put("epwingSourcePriority", "-1");
         options.put("kanjideckSourcePriority", "-2");

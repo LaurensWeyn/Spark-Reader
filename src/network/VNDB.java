@@ -1,9 +1,10 @@
 package network;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.Socket;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gson.Gson;
 import language.dictionary.Japanese;
@@ -63,34 +64,62 @@ public class VNDB
         VNEntry items[];
     }
 
-    public VNCharacter[] getCharacters(VNEntry vn)throws IOException
+    public List<VNCharacter> getCharacters(int vnID)throws IOException
     {
-        sendMessage("get character basic (vn= " + vn.id + ")");
-        return gson.fromJson(readResponse(), VNCharacterResult.class).items;
-        //TODO if there's more than 10, loop to read all pages
+        String query = "get character basic,details (vn= " + vnID + ") {\"page\":";
+        int pageNum = 1;
+        ArrayList<VNCharacter> characters = new ArrayList<>();
+        while(true)
+        {
+            sendMessage(query + pageNum + "}");
+            VNCharacterResult result = gson.fromJson(readResponse(), VNCharacterResult.class);
+            characters.addAll(result.items);
+
+            if(!result.more)break;
+            pageNum++;
+        }
+
+        return characters;
     }
 
     private class VNCharacterResult
     {
         int num;
         boolean more;
-        VNCharacter items[];
+        List<VNCharacter> items;
     }
 
     public static void main(String[] args)throws Exception
     {
         VNDB vndb = new VNDB();
-        VNEntry[] results = vndb.getVNs("miagete goran");
+        /*VNEntry[] results = vndb.getVNs("miagete goran");
         System.out.println("result count: " + results.length);
         VNEntry chosenVN = results[0];
         System.out.println("First VN: " + chosenVN);
-        VNCharacter[] characters = vndb.getCharacters(chosenVN);
-        System.out.println("Character count: " + characters.length);
+        List<VNCharacter> characters = vndb.getCharacters(chosenVN.id);
+        System.out.println("Character count: " + characters.size());
         System.out.println("Character list:");
         for(VNCharacter character:characters)
         {
-            System.out.println(character);
+            System.out.println(character.toSimpleDefinitionLines());
+        }*/
+        vndb.generateCharacterDictionary(new File("dictionaries/vnCharacters/MiageteGoran.tsv"), 16560, "Miagete Goran");
+        vndb.generateCharacterDictionary(new File("dictionaries/vnCharacters/dracuRiot.tsv"), 8213, "Dracu Riot");
+    }
+
+    public void generateCharacterDictionary(File output, int vnID, String vnName)throws IOException
+    {
+        //noinspection ResultOfMethodCallIgnored
+        output.getParentFile().mkdirs();
+
+        Writer fr = new OutputStreamWriter(new FileOutputStream(output, false), Charset.forName("UTF-8"));
+        fr.write("Imported\n");//DefSource name on first line
+        List<VNCharacter> characters = getCharacters(vnID);
+        for(VNCharacter character:characters)
+        {
+            fr.append(character.toSimpleDefinitionLines(vnName));
         }
+        fr.close();
     }
 
     public void close()throws IOException
@@ -126,11 +155,96 @@ public class VNDB
         String gender;
         String bloodt;
         String birthday[];
+        //details
+        String aliases;
+        String description;
+        String image;
+
+        public String getFirstDescLine()
+        {
+            if(description == null)return "";
+            int lastPos = Math.min( (description + ".").indexOf(".") + 1,
+                                    (description + "[spoiler]").indexOf("[spoiler]"));//first sentence or before first spoiler tag
+            return description.substring(0, lastPos)//relevant text
+                    .replaceAll("\\[(?:.|\\n)*?]", "")//remove formatting
+                    .replace("\n", "\t");//format to def
+        }
+
+        private String vnName = null;
+        /**
+         * Generates simple definitions for every name associated with this character.
+         * With the new sense system, this could be improved upon to tag things like first name and nickname to specific senses of a single definition entry.
+         * @return a String with lines of text for looking up this character
+         */
+        public String toSimpleDefinitionLines(String vnName)
+        {
+            this.vnName = vnName;
+            int firstNameIndex = 1;
+            int surnameIndex = 0;
+
+            StringBuilder out = new StringBuilder();
+            //find all names for this character
+            String[] names = null;
+            String[] readings = null;
+            String[] others = null;
+            readings = name.split("[　 ・]");//fullwidth space, normal space, dot for katakana names
+            if(original != null)names = original.split("[　 ・]");
+            if(aliases != null)others = aliases.split("\n");//split by newline
+
+
+            if(others != null)//aliases available
+                for(String other:others)
+                    addDef(out, toKana(other), null, "nickname");
+
+            if(names == null)//only kana available
+            {
+                if(readings.length == 2)
+                {
+                    addDef(out, toKana(readings[firstNameIndex]), null, "first name");
+                    addDef(out, toKana(readings[surnameIndex]), null, "surname");
+                } else for(String reading:readings)
+                    addDef(out, toKana(reading), null, "name");
+            }
+            else//Kanji and reading available
+            {
+                if(names.length != readings.length)throw new IllegalStateException("Names and readings do not match - please fix VNDB entry");
+                if(names.length == 2)
+                {
+                    addDef(out, names[firstNameIndex], toKana(readings[firstNameIndex]), "first name");
+                    addDef(out, names[surnameIndex], toKana(readings[surnameIndex]), "surname");
+                }
+                else for(int i = 0; i < names.length; i++)
+                {
+                    addDef(out, names[i], toKana(readings[i]), "name");
+                }
+            }
+
+
+            return out.toString();
+        }
+        private String toKana(String text)
+        {
+            String convert = Japanese.romajiToKana(text.toLowerCase());
+            if(!Japanese.hasOnlyKana(convert))return text;//cannot be written as Kana
+            else return convert;
+        }
+        private void addDef(StringBuilder line, String name, String reading, String comment)
+        {
+            line.append(name);//name first
+            if(reading != null && !reading.equals(name))line.append(':').append(reading);//optional reading
+            line.append("\tn\t");//tag as noun
+            line.append((int)(7000000 + Math.random()*700000));//ID
+            line.append('\t').append(getFirstDescLine());//description text
+            if(comment != null)line.append('\t').append(comment);//comment on name type
+            if(vnName != null) line.append('\t').append("from ").append(vnName);//comment on origin
+            //TODO append some attributes (red hair, etc)
+            line.append('\n');
+        }
 
         @Override
         public String toString()
         {
-            return original != null? (original + " [" + Japanese.romajiToKana(name.toLowerCase()) + "]"):name;
+            return original != null? (original + " [" + name + "]"):name;
         }
     }
 }

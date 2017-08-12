@@ -167,6 +167,7 @@ public class OptionsUI extends JFrame
             defSources.add(new ToggleOption("addKanjiAsDef", "Add Kanji to definitions", "<html>If you have a heisig Kanji file in the dictionary folder, this will also add those individual characters as 'definitions'<br>If disabled but kanji.txt is found, they will still display up on other definitions."));
             defSources.add(new OptionLabel("Priority:", "Higher numbers will appear at the top when displaying definitions."));
             defSources.add(new NumberOption("customSourcePriority", "Custom dictionary" ,"<html>The priority of the custom dictionary.<br>Set this higher than the rest to have your definitions appear at the top.", NumberOption.NumberPreset.posNeg));
+            defSources.add(new NumberOption("importedSourcePriority", "Imported character names" ,"<html>The priority of names imported from VNDB.", NumberOption.NumberPreset.posNeg));
             defSources.add(new NumberOption("edictSourcePriority", "Edict" ,"<html>The priority of the 'stock' dictionary.<br>Default is 0 (neutral)", NumberOption.NumberPreset.posNeg));
             defSources.add(new NumberOption("epwingSourcePriority", "Epwing (if available)" ,"<html>The priority of all epwing dictionaries.<br>Ignored if none are present.", NumberOption.NumberPreset.posNeg));
             defSources.add(new NumberOption("kanjideckSourcePriority", "Kanji deck (if enabled)" ,"<html>The priority of kanji definitions.<br>Ignored if there is no kanji file or if disabled above.", NumberOption.NumberPreset.posNeg));

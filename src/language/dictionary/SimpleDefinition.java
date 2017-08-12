@@ -11,7 +11,6 @@ import java.util.HashSet;
  */
 public class SimpleDefinition extends Definition
 {
-    private Spelling reading;
     private Spelling[] spellingList;
     private long id;
     private DefSource source;
@@ -62,7 +61,7 @@ public class SimpleDefinition extends Definition
     @Override
     public long getID()
     {
-        return 0;
+        return id;
     }
 
     @Override
