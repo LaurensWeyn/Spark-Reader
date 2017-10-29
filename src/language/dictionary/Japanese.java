@@ -251,4 +251,15 @@ public class Japanese
     {
         return wanaInstance.toRomaji(kana);
     }
+
+    public static boolean isOnlyRoman(String word)
+    {
+        for(int i = 0; i < word.length(); i++)
+        {
+            char c = word.charAt(i);
+            if(!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9')))
+                return false;
+        }
+        return true;
+    }
 }

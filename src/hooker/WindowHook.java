@@ -57,8 +57,17 @@ public class WindowHook
         List<String> names = new ArrayList<String>();
         libuser32.EnumWindows((Pointer hWnd, Pointer userData) ->
         {
-            long exStyle = libuser32.GetWindowLongPtr(hWnd, -20).longValue();
-            long style   = libuser32.GetWindowLongPtr(hWnd, -16).longValue();
+            long exStyle, style;
+            if(KernelController.is64Bit())
+            {
+                exStyle = libuser32.GetWindowLongPtr(hWnd, -20).longValue();
+                style   = libuser32.GetWindowLongPtr(hWnd, -16).longValue();
+            }
+            else //32 bit mode
+            {
+                exStyle = libuser32.GetWindowLong(hWnd, -20).longValue();
+                style   = libuser32.GetWindowLong(hWnd, -16).longValue();
+            }
             boolean mustBeAppwindow = (exStyle & 0x00040000) != 0;
             boolean notAppWindow = (exStyle & 0x00000080) != 0 || (style & WS_CHILD) != 0 || (style & WS_VISIBLE) == 0;
             if(notAppWindow && !mustBeAppwindow) return true;

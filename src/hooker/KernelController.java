@@ -169,4 +169,21 @@ public class KernelController
         user32.PostMessage(hWnd, WM_KEYDOWN, VK_RETURN, 0);
         user32.PostMessage(hWnd, WM_KEYUP, VK_RETURN, 0);
     }
+
+    private static Boolean is64Bit = null;
+    public static boolean is64Bit()
+    {
+        if(is64Bit == null)
+        {
+            //source: https://stackoverflow.com/questions/1856565/how-do-you-determine-32-or-64-bit-architecture-of-windows-using-java
+            if (System.getProperty("os.name").contains("Windows")) {
+                is64Bit = (System.getenv("ProgramFiles(x86)") != null);
+            } else {
+                //Linux not supported by KernelController so this is useless right now, but, future proofing I guess...
+                is64Bit = (System.getProperty("os.arch").contains("64"));
+            }
+        }
+        return is64Bit;
+
+    }
 }

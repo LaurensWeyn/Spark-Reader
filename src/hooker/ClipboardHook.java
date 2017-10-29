@@ -34,6 +34,7 @@ public class ClipboardHook implements Hook
 {
     private static String lastClip = "";
     public static boolean ignoreNextLine = false;
+    private static String forceUpdateText = null;
 
     public ClipboardHook()
     {
@@ -50,6 +51,13 @@ public class ClipboardHook implements Hook
     //to call every 100ms or so
     public String check()
     {
+        if(forceUpdateText != null)
+        {
+            String update = forceUpdateText;
+            forceUpdateText = null;
+            return update;
+        }
+
         String clip = getClipboard();
         if(!lastClip.equals(clip))//new line (not word lookup or something)
         {
@@ -119,5 +127,10 @@ public class ClipboardHook implements Hook
 
             setClipBoardAndUpdate(text);//try again later
         }
+    }
+
+    public static void updateTo(String input)
+    {
+        forceUpdateText = input;
     }
 }

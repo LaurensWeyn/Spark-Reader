@@ -51,9 +51,12 @@ public interface User32 extends W32APIOptions {
         {
             return null;
         }
-    }  
-    BaseTSD.LONG_PTR GetWindowLongPtr(Pointer hWnd, int index);  
-    boolean GetWindowInfo(Pointer hWnd, WINDOWINFO pwi);  
+    }
+
+    BaseTSD.LONG_PTR GetWindowLongPtr(Pointer hWnd, int index);
+    BaseTSD.LONG_PTR GetWindowLong(Pointer hWnd, int index);//32 bit equivalent
+
+    boolean GetWindowInfo(Pointer hWnd, WINDOWINFO pwi);
     boolean GetWindowRect(Pointer hWnd, WinDef.RECT rect);  
     boolean ClientToScreen(Pointer hWnd, WinDef.POINT point);  
     int GetWindowTextW(Pointer hWnd, char[] lpString, int nMaxCount);

@@ -85,6 +85,17 @@ public class MenubarBuilder
                 ClipboardHook.setClipboard(currPage.getText());
             }
         }, "CopyLine");
+        item.addMenuItem(new AbstractAction("Set line text")
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                String input = JOptionPane.showInputDialog(Main.getParentFrame(), "Enter new line text", currPage.getText());
+                if(input != null)
+                    ClipboardHook.updateTo(input);
+            }
+        }, "setLine");
+
         item.addSpacer();
         item.addMenuItem(new AbstractAction("Add new word")
         {
@@ -115,8 +126,7 @@ public class MenubarBuilder
                 JMenuItem thisItem = (JMenuItem)ui.menubar.getMenuItem(item.getName(), "Stick").getComponent();
                 if(UI.stickToWindow == null)
                 {
-                    new WindowHookUI();//enable
-                    thisItem.setText("Stop sticking to window");//rename option
+                    WindowHookUI.display();//allow user to enable
                 }
                 else
                 {

@@ -88,4 +88,14 @@ public class JapaneseTest
         assertEquals("", stripOkurigana("", "にち"));
         assertEquals("", stripOkurigana("日", ""));
     }
+
+    @Test
+    public void onlyRomanTest()
+    {
+        assertTrue(isOnlyRoman("hello"));
+        assertTrue(isOnlyRoman("World"));
+        assertFalse(isOnlyRoman("ignore space"));
+        assertFalse(isOnlyRoman("日"));
+        assertFalse(isOnlyRoman("にち"));
+    }
 }

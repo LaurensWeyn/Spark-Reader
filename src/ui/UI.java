@@ -285,8 +285,11 @@ public class UI
                     hidden = false;//force visibility on new line if needed
                     ui.tray.hideTray();
                 }
-                
+
+                //preprocessing
                 //clip = Japanese.toFullWidth(clip);
+                clip = clip.replace('●', '○')
+                           .replace('◯', '○');//Needed this for a scene - don't judge me
 
                 log.addLine(clip);//add line to log
                 if(!options.getOptionBool("splitLines"))clip = clip.replace("\n", "");//all on one line if not splitting
