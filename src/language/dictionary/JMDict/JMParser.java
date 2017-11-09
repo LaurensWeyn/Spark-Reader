@@ -150,10 +150,13 @@ public class JMParser
             line = br.readLine();
         }
 
-        senses.add(new Sense(
-                defLines.toArray(new String[defLines.size()]),
-                readingRestrictions == null?null:readingRestrictions.toArray(new Spelling[readingRestrictions.size()]),
-                tags));
+        if(!defLines.isEmpty())
+        {
+            senses.add(new Sense(
+                    defLines.toArray(new String[defLines.size()]),
+                    readingRestrictions == null ? null : readingRestrictions.toArray(new Spelling[readingRestrictions.size()]),
+                    tags));
+        }
     }
     
     private static void bindReadings(List<Spelling> spellings, List<Spelling> readings)
