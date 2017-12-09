@@ -4,6 +4,7 @@ import language.deconjugator.ValidWord;
 import language.dictionary.DefSource;
 import language.dictionary.DefTag;
 import language.dictionary.Definition;
+import language.dictionary.Japanese;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -104,6 +105,7 @@ public class JMDictDefinition extends Definition
     public List<Sense> getMeanings(ValidWord context)
     {
         List<Sense> meanings = new ArrayList<>();
+        boolean isKanji = Japanese.hasKanji(context.getWord());
         for(Sense meaning:senses)
         {
             if(meaning.getRestrictedSpellings() == null)
@@ -113,15 +115,21 @@ public class JMDictDefinition extends Definition
             else
             {
                 boolean match = false;
+                int checks = 0;
                 for(Spelling dependency:meaning.getRestrictedSpellings())
                 {
+                    if(isKanji != dependency.isKanji())
+                        continue;//can't check dependency in wrong writing system
+                    else
+                        checks++;
                     if(dependency.getText().equals(context.getWord()))
                     {
                         match = true;
                         break;
                     }
                 }
-                if(match)meanings.add(meaning);
+                if(match || checks == 0)
+                    meanings.add(meaning);
             }
         }
         return meanings;

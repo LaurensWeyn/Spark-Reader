@@ -152,7 +152,7 @@ public class OptionsUI extends JFrame
             defFormat.add(new OptionLabel("Edict tags:", null));
             defFormat.add(new ToggleOption("showAllTags", "show tag summary", "Show a summary of all tags at the top of the word. Not recommended if the options below are used."));
             defFormat.add(new ToggleOption("showTagsOnDef", "show tags on definition points", "Tags for each definition are shown on a line before the definition text."));
-            defFormat.add(new ToggleOption("showTagsOnReading", "show tags readings", "Reading specific tags are listed next to each reading."));
+            defFormat.add(new ToggleOption("showTagsOnReading", "show tags for readings", "Reading specific tags are listed next to each reading."));
             defs.add(defFormat);
         OptionPage defTheme = new OptionPage("Theme");
             defTheme.add(new ColourOption("defBackCol", "Background colour", "Colour for overlay background."));

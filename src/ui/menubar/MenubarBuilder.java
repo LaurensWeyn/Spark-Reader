@@ -34,7 +34,7 @@ public class MenubarBuilder
         Menubar menubar = new Menubar();
         menubar.addItem(buildFileMenu());
         menubar.addItem(buildEditMenu());
-        menubar.addItem(buildConnectMenu());
+        menubar.addItem(buildConnectMenu(menubar));
         menubar.addItem(buildHelpMenu());
         return menubar;
     }
@@ -114,7 +114,7 @@ public class MenubarBuilder
         return item;
     }
 
-    private static MenubarItem buildConnectMenu()
+    private static MenubarItem buildConnectMenu(Menubar menubar)
     {
         MenubarItem item = new MenubarItem("Connect");
 
@@ -137,8 +137,9 @@ public class MenubarBuilder
         }, "Stick");
 
         item.addSpacer();
-        item.addMenuItem(buildSourceSubMenu());
-        item.addMenuItem(buildMPSubMenu());
+        //removed for now since it's currently useless
+        //item.addMenuItem(buildSourceSubMenu());
+        item.addMenuItem(buildMPSubMenu(menubar));
         return item;
     }
 
@@ -178,7 +179,7 @@ public class MenubarBuilder
         return item;
     }
 
-    private static JMenu buildMPSubMenu()
+    private static JMenu buildMPSubMenu(Menubar menubar)
     {
         JMenuItem mpHost = new JMenuItem(new AbstractAction("Host")
         {
@@ -197,6 +198,7 @@ public class MenubarBuilder
                 Main.mpManager = new Host(port);
                 Main.mpThread = new Thread(Main.mpManager);
                 Main.mpThread.start();
+                setMPMenuMode(menubar, true);
                 JOptionPane.showMessageDialog(Main.getParentFrame(), "Server running. Other users with Spark Reader can now connect to your IP.\nIf you want people to connect outside of your LAN, please port forward port " + port);
                 options.setOption("hideOnOtherText", oldIgnoreState);
             }
@@ -222,6 +224,7 @@ public class MenubarBuilder
                     Main.mpManager = new Client(s);
                     Main.mpThread = new Thread(Main.mpManager);
                     Main.mpThread.start();
+                    setMPMenuMode(menubar, true);
                 } catch (IOException ex)
                 {
                     JOptionPane.showMessageDialog(Main.getParentFrame(), "Error connecting to host: " + ex, "Error", JOptionPane.ERROR_MESSAGE);
@@ -239,6 +242,7 @@ public class MenubarBuilder
                     Main.mpManager.running = false;
                 }
                 Main.mpThread = null;
+                setMPMenuMode(menubar, false);
                 Main.ui.render();//remove MP text from screen on disconnect
             }
         });
@@ -252,13 +256,21 @@ public class MenubarBuilder
             mpHost.setEnabled(false);
         }
         
-        
-        
+        mpHost.setName("mpHost");
+        mpJoin.setName("mpJoin");
+        mpDisconnect.setName("mpDisconnect");
+
         JMenu mp = new JMenu("Multiplayer");
         mp.add(mpHost);
         mp.add(mpJoin);
         mp.add(mpDisconnect);
         return mp;
+    }
+    public static void setMPMenuMode(Menubar menubar, boolean connected)
+    {
+        menubar.getMenuItem("Connect", "mpHost").getComponent().setEnabled(!connected);
+        menubar.getMenuItem("Connect", "mpJoin").getComponent().setEnabled(!connected);
+        menubar.getMenuItem("Connect", "mpDisconnect").getComponent().setEnabled(connected);
     }
 
     private static JMenu buildSourceSubMenu()

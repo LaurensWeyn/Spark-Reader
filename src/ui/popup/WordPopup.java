@@ -125,8 +125,10 @@ public class WordPopup extends JPopupMenu
         
         add(addBreak);
         add(exportLine);
-        if(Main.options.getOptionBool("enableKnown"))add(markKnown);
-        add(makeDefinition);
+        if(Main.options.getOptionBool("enableKnown"))
+            add(markKnown);
+        //FIXME disabled for now as it causes problems
+        //add(makeDefinition);
         add(new Separator());
         add(copy);
         if(Main.currPage.getText().contains(clipboard) && Main.currPage.getText().contains(clipboard + word.getText()))add(append);

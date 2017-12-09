@@ -14,6 +14,5 @@
       <root url="file://$USER_HOME$/java libs/eb4j-1.0.5/xml2eb/src/main/java" />
     </SOURCES>
     <jarDirectory url="file://$USER_HOME$/java libs/eb4j-1.0.5/lib" recursive="false" />
-    <jarDirectory url="file://$USER_HOME$/Java libs/eb4j-1.0.5/lib" recursive="false" />
   </library>
 </component>

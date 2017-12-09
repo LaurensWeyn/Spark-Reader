@@ -103,7 +103,8 @@ public class UserDefPage implements Page
 
         mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(defScroll, BorderLayout.CENTER);
-        mainPanel.add(buttonPanel, BorderLayout.NORTH);
+        //FIXME disabled for now as it causes problems
+        //mainPanel.add(buttonPanel, BorderLayout.NORTH);
     }
     @Override
     public JComponent getComponent()
