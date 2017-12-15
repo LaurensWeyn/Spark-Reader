@@ -32,7 +32,7 @@ public class Log
 
     public Log(int maxLen)
     {
-        this.maxLen = maxLen;
+        this.maxLen = maxLen + 1;
         log = new LinkedList<>();
     }
     

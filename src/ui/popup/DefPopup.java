@@ -34,7 +34,6 @@ import java.nio.charset.Charset;
 import java.util.Set;
 
 import static language.dictionary.Japanese.isJapanese;
-import static main.Main.options;
 
 /**
  * When right clicking on the definition window
@@ -114,7 +113,7 @@ public class DefPopup extends JPopupMenu
             }
         });
 
-        anki.setText("Add as flashcard (" + getExportedCount() + ")");
+        anki.setText("Add as flashcard (" + getDefExportCount() + ")");
 
         add(anki);
         add(setDef);
@@ -141,7 +140,7 @@ public class DefPopup extends JPopupMenu
 
     private static int exportedThisSession = 0;
     private static int exportedBeforeSession = -1;
-    private int getExportedCount()
+    public static int getDefExportCount()
     {
         if(exportedBeforeSession != -1)return exportedBeforeSession + exportedThisSession;
         //calculate on first call

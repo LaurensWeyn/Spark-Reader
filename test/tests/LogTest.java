@@ -23,7 +23,7 @@ public class LogTest
     @Test
     public void testLinePointer()
     {
-        Log l = new Log(4);
+        Log l = new Log(3);
         l.addLine("A");
         l.addLine("B");
         l.addLine("C");
@@ -51,7 +51,7 @@ public class LogTest
     @Test
     public void testLogPosition()
     {
-        Log l = new Log(4);
+        Log l = new Log(3);
         l.addLine("A");
         l.addLine("B");
         l.addLine("C");

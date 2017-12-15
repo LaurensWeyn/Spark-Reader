@@ -2,6 +2,7 @@ package ui.menubar;
 
 import hooker.ClipboardHook;
 import main.Main;
+import main.Persist;
 import network.Client;
 import network.Host;
 import options.OptionsUI;
@@ -85,6 +86,15 @@ public class MenubarBuilder
                 ClipboardHook.setClipboard(currPage.getText());
             }
         }, "CopyLine");
+        item.addMenuItem(new AbstractAction("Add line as flashcard (" + Persist.getLineExportCount() + ")")
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                item.hide();//ensure this menu's already gone for the screenshot
+                Persist.exportLine();
+            }
+        }, "ExportLine");
         item.addMenuItem(new AbstractAction("Set line text")
         {
             @Override
@@ -340,5 +350,14 @@ public class MenubarBuilder
         }
 
         Main.ui.render();//redraw known words on current text
+    }
+
+    public static void updateExportCount()
+    {
+        if(Main.ui == null || Main.ui.menubar == null)
+            return;
+
+        ((JMenuItem)Main.ui.menubar.getMenuItem("Edit", "ExportLine").getComponent())
+                .setText("Add line as flashcard (" + Persist.getLineExportCount() + ")");
     }
 }

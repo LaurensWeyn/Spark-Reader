@@ -69,4 +69,9 @@ public class MenubarItem
     {
         menu.add(new JSeparator());
     }
+
+    public void hide()
+    {
+        menu.setVisible(false);
+    }
 }

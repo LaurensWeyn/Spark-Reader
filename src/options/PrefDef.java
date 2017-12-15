@@ -56,9 +56,9 @@ public class PrefDef
             String bits[] = line.split("=");
             if(bits.length == 2)
             {
-                if(bits[1].startsWith("-"))//negative numbers: files from 0.6 and below
+                if(bits[1].startsWith("-"))//negative numbers: files from 0.7 and below
                 {
-                    int option = JOptionPane.showConfirmDialog(Main.getParentFrame(), "Warning: Spark Reader 0.7 and up's preferred definition files are not backwards compatible with older versions.\n" +
+                    int option = JOptionPane.showConfirmDialog(Main.getParentFrame(), "Warning: Spark Reader 0.8 and up's preferred definition files are not backwards compatible with older versions.\n" +
                             "Select yes to reset your preferred definitions. Pressing no will close the program.");
                     if(option == JOptionPane.YES_OPTION)
                     {

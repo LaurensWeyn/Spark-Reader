@@ -3,9 +3,17 @@ package main;
 
 import ui.Line;
 import ui.Page;
+import ui.UI;
+import ui.menubar.MenubarBuilder;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.charset.Charset;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -13,6 +21,11 @@ import java.util.Date;
  */
 public class Persist implements Serializable
 {
+
+    public static int exportedThisSession = 0;
+    public static int exportedBeforeSession = -1;
+
+
     //useless statistics
     public Date firstStartup;
     public long startupCount;
@@ -29,7 +42,7 @@ public class Persist implements Serializable
     public String lastWindowHookName;
 
     //non persist data (but persist specific settings)
-    private static long serialVersionUID = 1L;
+    private static final long serialVersionUID = 4155401967378296134L;
     private transient long lastSyncTime;
     private static long syncPeriod = 600000L;//10 minutes
 
@@ -61,6 +74,114 @@ public class Persist implements Serializable
             e.printStackTrace();
         }
         return new Persist();
+    }
+
+    public static int getLineExportCount()
+    {
+        if(exportedBeforeSession != -1)return exportedBeforeSession + exportedThisSession;
+        //calculate on first call
+        if(Main.options.getOption("exportDisplay").equals("external"))
+        {
+            exportedBeforeSession = Utils.countLines(Main.options.getFile("lineExportPath"));
+        }
+        else exportedBeforeSession = 0;
+
+        return exportedBeforeSession + exportedThisSession;
+    }
+
+    public static void exportLine()
+    {
+        JFrame frame = Main.ui.disp.getFrame();
+        try
+        {
+            Date date = new Date();
+            DateFormat df = new SimpleDateFormat(Main.options.getOption("timeStampFormat"));
+            File textFile = new File(Main.options.getOption("lineExportPath"));
+            String note = "";
+
+            if(Main.options.getOptionBool("commentOnExportLine"))
+            {
+                note = (String)JOptionPane.showInputDialog(frame,
+                                                           "Enter comment\n(You may also leave this blank)",
+                                                           "Exporting line",
+                                                           JOptionPane.PLAIN_MESSAGE,
+                                                           null,
+                                                           null,
+                                                           UI.userComment);
+                if(note == null)return;//cancelled
+
+                UI.userComment = note;//update for next time
+                Thread.sleep(500);//give the popup time to disappear
+            }
+
+            Writer fr = new OutputStreamWriter(new FileOutputStream(textFile, true), Charset.forName("UTF-8"));
+            fr.append(df.format(date))
+                    .append("\t")
+                    .append(Main.currPage.getText().replace("\n", "<br>"))
+                    .append("\t")
+                    .append(note)
+                    .append("\n");
+            fr.close();
+            exportedThisSession++;
+            Main.persist.exportCount++;
+
+            //take a screenshot with the exported line
+            if(Main.options.getOptionBool("exportImage"))
+            {
+                File imageFolder = Main.options.getFile("screenshotExportPath");
+                if (!imageFolder.exists())
+                {
+                    boolean success = imageFolder.mkdirs();
+                    if (!success) throw new IOException("Failed to create folder(s) for screenshots: directory"
+                                                                + Main.options.getOption("screenshotExportPath"));
+                }
+                Robot robot = new Robot();
+                Point pos = frame.getLocationOnScreen();
+                Rectangle area;
+                if(Main.options.getOptionBool("fullscreenScreenshot"))
+                {
+                    //whole screen
+                    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                    area = new Rectangle(0, 0, screenSize.width, screenSize.height);
+                }
+                else
+                {
+                    //game area
+                    if(Main.options.getOptionBool("defsShowUpwards"))
+                    {
+                        area = new Rectangle(pos.x, pos.y + UI.furiganaStartY - Main.options.getOptionInt("maxHeight"),
+                                Main.options.getOptionInt("windowWidth"),
+                                Main.options.getOptionInt("maxHeight"));
+                    }
+                    else
+                    {
+                        area = new Rectangle(pos.x, pos.y + UI.defStartY,
+                                Main.options.getOptionInt("windowWidth"),
+                                Main.options.getOptionInt("maxHeight"));
+                    }
+                }
+
+                //hide Spark Reader and take the screenshot
+                UI.hidden = true;
+                Main.ui.render();
+                BufferedImage screenshot = robot.createScreenCapture(area);
+                UI.hidden = false;
+                Main.ui.render();
+
+                String fileName = imageFolder.getAbsolutePath();
+                if(!fileName.endsWith("/") && !fileName.endsWith("\\"))fileName += "/";
+                fileName += df.format(date) + ".png";
+
+                System.out.println("saving screenshot as " + fileName);
+                ImageIO.write(screenshot, "png", new File(fileName));
+            }
+
+        }catch(IOException | AWTException | InterruptedException err)
+        {
+            JOptionPane.showInputDialog(frame, "Error while exporting line:\n" + err);
+        }
+
+        MenubarBuilder.updateExportCount();
     }
 
     public void checkForSave()
