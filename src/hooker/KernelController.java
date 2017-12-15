@@ -175,15 +175,17 @@ public class KernelController
     {
         if(is64Bit == null)
         {
-            //source: https://stackoverflow.com/questions/1856565/how-do-you-determine-32-or-64-bit-architecture-of-windows-using-java
-            if (System.getProperty("os.name").contains("Windows")) {
-                is64Bit = (System.getenv("ProgramFiles(x86)") != null);
-            } else {
-                //Linux not supported by KernelController so this is useless right now, but, future proofing I guess...
-                is64Bit = (System.getProperty("os.arch").contains("64"));
+            switch(System.getProperty("sun.arch.data.model"))
+            {
+                case "32":
+                    is64Bit = false;
+                    break;
+                case "64":
+                    is64Bit = true;
+                    break;
             }
+            System.out.println("64 bit: " + is64Bit);
         }
         return is64Bit;
-
     }
 }

@@ -278,7 +278,7 @@ public class OptionsUI extends JFrame
 
     public void initComponents()
     {
-        setSize(720, 480);
+        setSize(760, 480);
 
         setLayout(new BorderLayout(SPACING, SPACING));
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
