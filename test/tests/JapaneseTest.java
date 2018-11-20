@@ -7,7 +7,7 @@ package tests;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static language.dictionary.Japanese.*;
+import static com.lweyn.sparkreader.language.dictionary.Japanese.*;
 /**
  *
  * @author Laurens Weyn

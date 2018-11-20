@@ -5,7 +5,7 @@
  */
 package tests;
 
-import hooker.Log;
+import com.lweyn.sparkreader.hooker.Log;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

@@ -1,9 +1,7 @@
 package tests.dictionary;
 
-import language.deconjugator.ValidWord;
-import language.dictionary.Definition;
-import language.dictionary.JMDict.Spelling;
-import language.dictionary.Japanese;
+import com.lweyn.sparkreader.language.deconjugator.ValidWord;
+import com.lweyn.sparkreader.language.dictionary.Definition;
 import org.junit.Assert;
 import org.junit.Test;
 

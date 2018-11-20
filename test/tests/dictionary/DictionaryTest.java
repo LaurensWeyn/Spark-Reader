@@ -1,8 +1,8 @@
 package tests.dictionary;
 
-import language.dictionary.DefSource;
-import language.dictionary.Dictionary;
-import language.dictionary.JMDict.JMParser;
+import com.lweyn.sparkreader.language.dictionary.DefSource;
+import com.lweyn.sparkreader.language.dictionary.Dictionary;
+import com.lweyn.sparkreader.language.dictionary.JMDict.JMParser;
 import org.junit.Assert;
 import org.junit.Before;
 
