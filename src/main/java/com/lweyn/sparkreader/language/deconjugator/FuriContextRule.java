@@ -1,12 +1,15 @@
 package com.lweyn.sparkreader.language.deconjugator;
 
 import com.lweyn.sparkreader.language.dictionary.DefTag;
+import org.apache.log4j.Logger;
 
 /**
  * Deconjugation rule with arbitrary access to context to invalidate itself.
  */
 public class FuriContextRule extends ContextRule
 {
+    private static Logger logger = Logger.getLogger(FuriContextRule.class);
+
     String kana_ending, kana_replace;
     public FuriContextRule(String ending, String kana_ending, String replace, String kana_replace, String change, DefTag neededTag, DefTag impliedTag, ContextChecker checker)
     {
@@ -25,12 +28,12 @@ public class FuriContextRule extends ContextRule
             return word.substring(0, word.length() - kana_replace.length()) + kana_ending;
         else
         {
-            System.out.println("Problem!");
-            System.out.println(word);
-            System.out.println(ending);
-            System.out.println(replace);
-            System.out.println(kana_ending);
-            System.out.println(kana_replace);
+            logger.error("Problem!");
+            logger.error(word);
+            logger.error(ending);
+            logger.error(replace);
+            logger.error(kana_ending);
+            logger.error(kana_replace);
             return null;
         }
     }

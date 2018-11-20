@@ -19,6 +19,7 @@ package com.lweyn.sparkreader.language.dictionary;
 import com.lweyn.sparkreader.language.deconjugator.ValidWord;
 import com.lweyn.sparkreader.language.dictionary.JMDict.Sense;
 import com.lweyn.sparkreader.language.dictionary.JMDict.Spelling;
+import org.apache.log4j.Logger;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -31,6 +32,8 @@ import java.util.regex.Pattern;
  */
 public class EDICTDefinition extends Definition
 {
+    private static Logger logger = Logger.getLogger(EDICTDefinition.class);
+
     protected String[] word, reading;
     protected Set<DefTag> tags;
 
@@ -111,7 +114,7 @@ public class EDICTDefinition extends Definition
             ID = Long.parseLong(IDCode);
         }catch(NumberFormatException e)
         {
-            System.out.println("WARN: cannot format EDICT ID " + bits[bits.length - 1]);
+            logger.warn("Cannot format EDICT ID " + bits[bits.length - 1]);
             ID = Math.abs(IDCode.hashCode());
         }
 

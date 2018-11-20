@@ -51,15 +51,11 @@ public class StdRule implements DeconRule
 
         if(word.getWord().length() > word.getOriginalWord().length()+10)
         {   // don't allow the deconjugation to become too much longer than the original text
-            //System.out.println("bogus length");
-            //System.out.println(word.getProcessText());
             return null;
         }
 
         if(word.getNumConjugations() > word.getOriginalWord().length()+6)
         {   // don't allow the deconjugator to make impossibly information-dense conjugations
-            //System.out.println("bogus complexity");
-            //System.out.println(word.getProcessText());
             return null;
         }
 
@@ -98,7 +94,6 @@ public class StdRule implements DeconRule
             return new ValidWord(word.getOriginalWord(), newForm, forms, tags, conjugationTags, newProcess);
         }
         //doesn't match, don't add new word
-        //System.out.println("-Doesn't work");
         return null;
     }
 

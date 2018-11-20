@@ -24,6 +24,7 @@ import com.lweyn.sparkreader.options.page.OptionPage;
 import com.lweyn.sparkreader.options.page.Page;
 import com.lweyn.sparkreader.options.page.PageGroup;
 import com.lweyn.sparkreader.options.page.UserDefPage;
+import org.apache.log4j.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -40,6 +41,8 @@ import java.io.IOException;
  */
 public class OptionsUI extends JFrame
 {
+    private static Logger logger = Logger.getLogger(OptionsUI.class);
+
     private final JTree leftMenu;
     private final JPanel rightOptions;
     private final JScrollPane optionScroll;

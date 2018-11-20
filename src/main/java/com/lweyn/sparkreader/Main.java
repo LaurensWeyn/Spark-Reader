@@ -11,6 +11,7 @@ import com.lweyn.sparkreader.network.MPController;
 import com.lweyn.sparkreader.options.*;
 import com.lweyn.sparkreader.ui.Page;
 import com.lweyn.sparkreader.ui.UI;
+import org.apache.log4j.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -25,6 +26,8 @@ import java.io.IOException;
  */
 public class Main
 {
+
+    private static Logger logger = Logger.getLogger(Main.class);
 
     public static final double VERSION_NUM = 0.8;
     public static final String VERSION = "Beta " + VERSION_NUM;
@@ -69,7 +72,7 @@ public class Main
 
     public static void main(String[] args)throws Exception
     {
-        System.out.println(VERSION);
+        logger.info(VERSION);
         options = new Options(Options.SETTINGS_FILE);
         persist = Persist.load(options.getFile("persistPath"));
         try
@@ -101,7 +104,7 @@ public class Main
         //    JOptionPane.showMessageDialog(null, "Error starting Spark Reader:\n" + err, "Error", JOptionPane.ERROR_MESSAGE);
         //    System.exit(1);
         //}
-        System.out.println("init done");
+        logger.info("Init done");
         persist.startupCount++;
         UI.runUI();
     }
@@ -110,7 +113,7 @@ public class Main
         EPWINGDefinition.loadBlacklist();
 
         dict = new Dictionary(new File(Main.options.getOption("dictionaryPath")), persist.lastDictHashSize);
-        System.out.println("loaded " + Dictionary.getLoadedWordCount() + " in total, HashTable " + dict.getHashSize());
+        logger.info("Loaded " + Dictionary.getLoadedWordCount() + " words in total, HashTable " + dict.getHashSize());
         persist.lastDictSize = Dictionary.getLoadedWordCount();//keep this in mind for next startup estimate
         persist.lastDictHashSize = dict.getHashSize();
         WordScanner.init();
@@ -131,7 +134,7 @@ public class Main
         }catch(IOException err)
         {
             JOptionPane.showMessageDialog(getParentFrame(), "Error while saving changes:\n" + err);
-            err.printStackTrace();
+            logger.error("Error while saving changes:\n" + err, err);
         }
         if(frame != null)frame.setVisible(false);
         System.exit(0);
@@ -181,7 +184,7 @@ public class Main
             {
                 if(!doneLoading)
                 {
-                    System.out.println("Startup aborted");
+                    logger.info("Startup aborted");
                     exit();
                 }
             }

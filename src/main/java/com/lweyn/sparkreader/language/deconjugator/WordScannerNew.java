@@ -209,7 +209,6 @@ public class WordScannerNew extends WordScanner implements WordScanner.SubScanne
         // negative
         // verbs
         ruleList.add(new ContextRule("ない", "", "negative", DefTag.stem_mizenkei, DefTag.adj_i, (rule, word) -> {
-            //System.out.println(word.getConjugationTags());
             if(word.getConjugationTags().size() < 2) return true;
             DefTag tagOfInterest = word.getConjugationTags().get(word.getConjugationTags().size()-2);
             //noinspection RedundantIfStatement
@@ -228,7 +227,6 @@ public class WordScannerNew extends WordScanner implements WordScanner.SubScanne
         
         // i-adjectives
         ruleList.add(new ContextRule("ない", "", "negative", DefTag.stem_ku, DefTag.adj_i, (rule, word) -> {
-            //System.out.println(word.getConjugationTags());
             if(word.getConjugationTags().size() < 2) return true;
             DefTag tagOfInterest = word.getConjugationTags().get(word.getConjugationTags().size()-2);
             //noinspection RedundantIfStatement
@@ -461,19 +459,8 @@ public class WordScannerNew extends WordScanner implements WordScanner.SubScanne
             // the safeguards in process() should be enough, but in case they're not, or they break...
             if(iters > 24)
             {
-                /*System.out.println("bailing out from deconjugation");
-                System.out.println("conjugation tags: " + matches.get(matches.size()-1).getConjugationTags());
-                System.out.println("conjugation path: " + matches.get(matches.size()-1).getProcessText());
-                System.out.println("original: " +  matches.get(matches.size()-1).getOriginalWord());
-                System.out.println("iteration " + Integer.toString(iters));*/
                 break;
             }
-            //System.out.println("Matches: " + matches.size());
-            /*System.out.println("New matches: " + number_of_new_matches);
-            for(int i = matches_before_testing; i < matches.size(); i++)
-            {
-                System.out.println(matches.get(i).getSeenForms());
-            }*/
 
             iters++;
 

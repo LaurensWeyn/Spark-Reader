@@ -1,12 +1,15 @@
 package com.lweyn.sparkreader.language.deconjugator;
 
 import com.lweyn.sparkreader.language.dictionary.DefTag;
+import org.apache.log4j.Logger;
 
 /**
  * Deconjugation rule which may never be the final rule (i.e. the last chronologically, the first one to be deconjugated).
  */
 public class FuriNeverFinalRule extends NeverFinalRule
 {
+    private static Logger logger = Logger.getLogger(FuriNeverFinalRule.class);
+
     String kana_ending, kana_replace;
     public FuriNeverFinalRule(String ending, String kana_ending, String replace, String kana_replace, String change, DefTag neededTag, DefTag impliedTag)
     {
@@ -25,12 +28,12 @@ public class FuriNeverFinalRule extends NeverFinalRule
             return word.substring(0, word.length() - kana_replace.length()) + kana_ending;
         else
         {
-            System.out.println("Problem!");
-            System.out.println(word);
-            System.out.println(ending);
-            System.out.println(replace);
-            System.out.println(kana_ending);
-            System.out.println(kana_replace);
+            logger.error("Problem!");
+            logger.error(word);
+            logger.error(ending);
+            logger.error(replace);
+            logger.error(kana_ending);
+            logger.error(kana_replace);
             return null;
         }
     }

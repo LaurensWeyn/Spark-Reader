@@ -23,6 +23,7 @@ import com.lweyn.sparkreader.language.splitter.FoundWord;
 import com.lweyn.sparkreader.ui.Line;
 import com.lweyn.sparkreader.ui.UI;
 import com.lweyn.sparkreader.ui.WordEditUI;
+import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,6 +35,8 @@ import java.awt.event.ActionEvent;
  */
 public class WordPopup extends JPopupMenu
 {
+    private static Logger logger = Logger.getLogger(WordPopup.class);
+
     FoundWord word;
     
     JMenuItem addBreak;
@@ -96,7 +99,7 @@ public class WordPopup extends JPopupMenu
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                System.out.println("adding break");
+                logger.info("Adding break");
                 //simulate middle button press at window origin (placing a break there)
                 ui.mouseHandler.middleClick(new Point(x, y));
             }

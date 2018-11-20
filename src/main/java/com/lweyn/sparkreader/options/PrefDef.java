@@ -21,6 +21,7 @@ import com.lweyn.sparkreader.Utils;
 import com.lweyn.sparkreader.language.dictionary.Definition;
 import com.lweyn.sparkreader.language.dictionary.JMDict.Spelling;
 import com.lweyn.sparkreader.language.splitter.FoundDef;
+import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import java.io.*;
@@ -34,6 +35,8 @@ import java.util.Map.Entry;
  */
 public class PrefDef
 {
+    private static Logger logger = Logger.getLogger(PrefDef.class);
+
     private HashMap<String, Long> table;
     private int dueChanges = 0;
     private int saveThreshold = 10;
@@ -44,7 +47,7 @@ public class PrefDef
         this.file = file;
         if(!file.exists())
         {
-            System.out.println("WARN: no preferred definition file");
+            logger.warn("No preferred definition file");
             return;
         }
 
@@ -94,7 +97,7 @@ public class PrefDef
     public void setPreferred(FoundDef def)
     {
         String spelling = def.getDictForm();
-        System.out.println(spelling + " for " + def.getDefinition().getID() + " set");
+        logger.info(spelling + " for " + def.getDefinition().getID() + " set");
         table.put(spelling, def.getDefinition().getID());
         dueChanges++;
         
@@ -105,7 +108,7 @@ public class PrefDef
                 save();
             }catch(IOException e)
             {
-                System.out.println("Failed to write changes: " + e);
+                logger.error("Failed to write changes: " + e);
                 //if this fails, we'll try again on the next change
             }
         }

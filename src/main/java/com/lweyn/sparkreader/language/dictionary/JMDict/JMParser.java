@@ -4,6 +4,7 @@ import com.lweyn.sparkreader.Utils;
 import com.lweyn.sparkreader.language.dictionary.DefSource;
 import com.lweyn.sparkreader.language.dictionary.DefTag;
 import com.lweyn.sparkreader.language.dictionary.Dictionary;
+import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,6 +13,8 @@ import java.util.*;
 
 public class JMParser
 {
+    private static Logger logger = Logger.getLogger(JMParser.class);
+
     public static void parseJMDict(File file, Dictionary target, DefSource source)throws IOException
     {
         JMDictDefinition.source = source;
@@ -57,13 +60,12 @@ public class JMParser
                     senses.toArray(new Sense[senses.size()]),
                     spellings.toArray(new Spelling[spellings.size()]));
 
-            //System.out.println("loaded " + newDef.getID());
             target.insertDefinition(newDef);
             count++;
 
             line = br.readLine();
         }
-        System.out.println("Loaded " + count + " JMDict entries.");
+        logger.info("Loaded " + count + " JMDict entries.");
     }
     private static void parseSense(BufferedReader br, List<Spelling> spellings, List<Sense> senses)throws IOException
     {

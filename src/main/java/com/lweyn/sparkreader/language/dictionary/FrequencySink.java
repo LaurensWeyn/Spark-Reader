@@ -4,11 +4,15 @@ import com.lweyn.sparkreader.Utils;
 import com.lweyn.sparkreader.language.deconjugator.ValidWord;
 import com.lweyn.sparkreader.language.dictionary.JMDict.Spelling;
 import com.lweyn.sparkreader.language.splitter.FoundDef;
+import org.apache.log4j.Logger;
+
 import java.io.*;
 import java.util.HashMap;
 
 public class FrequencySink
 {
+    private static Logger logger = Logger.getLogger(FrequencySink.class);
+
     public static class FreqData
     {
         public double ppm;
@@ -40,8 +44,8 @@ public class FrequencySink
                 // e.g. ベッド-bed
                 if(fields[spelling_column].equals("ベッド-bed"))
                 {
-                    System.out.println(fields[spelling_column]);
-                    System.out.println(fields[spelling_column].split("\\-")[0]);
+                    logger.trace(fields[spelling_column]);
+                    logger.trace(fields[spelling_column].split("\\-")[0]);
                 }
                 String key = fields[spelling_column].split("\\-")[0]+"-"+fields[reading_column];
                 if(!mapping.containsKey(key))
@@ -51,7 +55,7 @@ public class FrequencySink
         }
         catch (IOException e)
         {
-            System.out.println("ioexception loading freq data"); 
+            logger.warn("IOException loading freq data");
         }
     }
     
@@ -71,7 +75,7 @@ public class FrequencySink
             String asintext = foundForm.getWord() + "-" + forceReadingKatakana;
             if(mapping.containsKey(asintext))
             {
-                System.out.println("A: "+asintext);
+                logger.trace("A: "+asintext);
                 return mapping.get(asintext);
             }
         }
@@ -92,7 +96,7 @@ public class FrequencySink
                     String text = spellingtext + "-" + readingtext;
                     if(mapping.containsKey(text))
                     {
-                        System.out.println("B: "+text);
+                        logger.trace("B: "+text);
                         return mapping.get(text);
                     }
                 }
@@ -104,7 +108,7 @@ public class FrequencySink
                 String text = spellingtext + "-" + readingtext;
                 if(mapping.containsKey(text))
                 {
-                    System.out.println("C: "+text);
+                    logger.trace("C: "+text);
                     return mapping.get(text);
                 }
             }

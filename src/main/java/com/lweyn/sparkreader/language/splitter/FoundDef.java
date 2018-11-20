@@ -236,7 +236,6 @@ public class FoundDef implements Comparable<FoundDef>
         score += thisSpellingScore / 2;
         if (foundForm.getNumConjugations() == 0) score += 5 + 50;//prefer words/phrases instead of deviations
 
-        //System.out.println("score for " + foundDef + " is " + score);
         return score;
     }
 

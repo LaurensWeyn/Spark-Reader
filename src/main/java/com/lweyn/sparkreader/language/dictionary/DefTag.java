@@ -233,7 +233,6 @@ public enum DefTag
     }
     public static DefTag toTag(String text)
     {
-        //System.out.println("tagging " + text);
         switch(text)
         {
             case "int":return intr;

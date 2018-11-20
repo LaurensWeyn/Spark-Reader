@@ -17,6 +17,7 @@
 package com.lweyn.sparkreader.ui;
 
 import com.lweyn.sparkreader.ui.popup.TrayPopup;
+import org.apache.log4j.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -32,6 +33,8 @@ import java.io.IOException;
  */
 public class Tray
 {
+    private static Logger logger = Logger.getLogger(Tray.class);
+
     private boolean showing = false;
     private UI parent;
     TrayIcon icon;
@@ -71,7 +74,7 @@ public class Tray
             });
         }catch (IOException ex)
         {
-            System.out.println("error loading icon: " + ex);
+            logger.error("error loading icon: " + ex);
         }
     }
 
@@ -89,7 +92,7 @@ public class Tray
             tray.add(icon);
         }catch (AWTException ex)
         {
-            System.out.println("error displaying icon: " + ex);
+            logger.error("error displaying icon: " + ex);
         } 
         
         

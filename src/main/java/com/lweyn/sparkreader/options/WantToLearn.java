@@ -3,6 +3,7 @@ package com.lweyn.sparkreader.options;
 import com.lweyn.sparkreader.Utils;
 import com.lweyn.sparkreader.language.splitter.FoundDef;
 import com.lweyn.sparkreader.language.splitter.FoundWord;
+import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,6 +14,8 @@ import java.util.HashSet;
  */
 public class WantToLearn
 {
+    private static Logger logger = Logger.getLogger(WantToLearn.class);
+
     Known knownWords;
     HashSet<String> table;
 
@@ -48,7 +51,7 @@ public class WantToLearn
             }
             line = br.readLine();
         }
-        System.out.println("Loaded " + loadCount + " target words from " + file.getName());
+        logger.info("Loaded " + loadCount + " target words from " + file.getName());
     }
 
 

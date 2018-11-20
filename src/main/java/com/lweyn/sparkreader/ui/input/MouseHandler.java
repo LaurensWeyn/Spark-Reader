@@ -7,6 +7,7 @@ import com.lweyn.sparkreader.ui.UI;
 import com.lweyn.sparkreader.ui.menubar.Menubar;
 import com.lweyn.sparkreader.ui.popup.DefPopup;
 import com.lweyn.sparkreader.ui.popup.WordPopup;
+import org.apache.log4j.Logger;
 
 import java.awt.*;
 import java.util.Set;
@@ -20,6 +21,8 @@ import static com.lweyn.sparkreader.ui.UI.*;
  */
 public abstract class MouseHandler
 {
+    private static Logger logger = Logger.getLogger(MouseHandler.class);
+
     protected UI ui;
     protected Point mousePos;
     protected int mouseLine = -1;
@@ -196,7 +199,6 @@ public abstract class MouseHandler
     
                 if(mousedWord != null)
                 {
-                    //System.out.println("mouseover'd word changed to " + mousedWord.getText());
                     mousedWord.setMouseover(true);
                     if(mousedWord.updateOnMouse())reRender = true;
                 }
@@ -302,7 +304,7 @@ public abstract class MouseHandler
                 historyLine = Main.log.forward();
             }
             if(!Main.options.getOptionBool("splitLines"))historyLine = historyLine.replace("\n", "");//all on one line if not splitting
-            System.out.println("loading line " + historyLine);
+            logger.info("loading line " + historyLine + " from log");
             Main.currPage.clearMarkers();//markers not relevant for this text
             ui.updateText(historyLine);//flow new text
             ui.xOffset = 0;//scroll back to front

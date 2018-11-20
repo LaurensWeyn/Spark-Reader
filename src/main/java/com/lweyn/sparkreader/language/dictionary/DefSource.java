@@ -2,6 +2,7 @@ package com.lweyn.sparkreader.language.dictionary;
 
 
 import com.lweyn.sparkreader.Main;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -13,6 +14,8 @@ import java.util.List;
  */
 public class DefSource
 {
+    private static Logger logger = Logger.getLogger(DefSource.class);
+
     private int priority;
     private String name;
     private List<Definition> definitions;
@@ -40,7 +43,7 @@ public class DefSource
             priority = Main.options.getOptionInt(sourceName.toLowerCase().replace(" ", "") + "SourcePriority");
         }catch(IllegalArgumentException | NullPointerException ignored)
         {
-            System.out.println("WARN: source priority for " + sourceName + " not known, assuming 0");
+            logger.warn("Source priority for " + sourceName + " unknown; assuming 0");
         }
         DefSource newSource = new DefSource(priority, sourceName, storeDefs);
         sources.add(newSource);

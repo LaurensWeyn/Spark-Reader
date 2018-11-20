@@ -19,6 +19,7 @@ package com.lweyn.sparkreader.hooker;
 import com.lweyn.sparkreader.Main;
 import com.lweyn.sparkreader.language.dictionary.Japanese;
 import com.lweyn.sparkreader.ui.UI;
+import org.apache.log4j.Logger;
 
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
@@ -32,6 +33,8 @@ import java.io.IOException;
  */
 public class ClipboardHook implements Hook
 {
+    private static Logger logger = Logger.getLogger(ClipboardHook.class);
+
     private static String lastClip = "";
     public static boolean ignoreNextLine = false;
     private static String forceUpdateText = null;
@@ -62,7 +65,7 @@ public class ClipboardHook implements Hook
         if(!lastClip.equals(clip))//new line (not word lookup or something)
         {
             lastClip = clip;
-            System.out.println("clipboard updated to " + clip);
+            logger.info("Clipboard updated to " + clip);
             boolean isJapanese = Japanese.isJapaneseWriting(clip);
             if(isJapanese && !ignoreNextLine)
             {
@@ -101,9 +104,8 @@ public class ClipboardHook implements Hook
             //ignore these, it happens sometimes, trying later doesn't help
         } catch(IOException ex)
         {
-            System.out.println("clipboard IO error: " + ex);
+            logger.error("Clipboard I/O error: " + ex);
         }
-        //System.out.println("clipboard: " + clipboard);
         return clipboard;
     }
     public static void setClipboard(String text)

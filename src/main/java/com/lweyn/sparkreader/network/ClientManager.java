@@ -18,6 +18,7 @@ package com.lweyn.sparkreader.network;
 
 
 import com.lweyn.sparkreader.Main;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -31,6 +32,8 @@ import java.nio.charset.Charset;
  */
 public class ClientManager extends Thread
 {
+    private static Logger logger = Logger.getLogger(ClientManager.class);
+
     private final Socket socket;
     private final Host host;
     private final int clientNum;
@@ -107,7 +110,7 @@ public class ClientManager extends Thread
         }catch(IOException e)
         {
             //client disconnect, drop it from the list
-            System.out.println(clientNum + " disconnected: " + e);
+            logger.info(clientNum + " disconnected: " + e);
         }
 
         host.removeClient(clientNum);

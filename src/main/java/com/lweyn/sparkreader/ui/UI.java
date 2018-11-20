@@ -25,6 +25,7 @@ import com.lweyn.sparkreader.ui.input.MouseHandler;
 import com.lweyn.sparkreader.ui.input.SwingMouseHandler;
 import com.lweyn.sparkreader.ui.menubar.Menubar;
 import com.lweyn.sparkreader.ui.menubar.MenubarBuilder;
+import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.*;
@@ -37,7 +38,7 @@ import static com.lweyn.sparkreader.Main.currPage;
  */
 public class UI
 {
-
+    private static Logger logger = Logger.getLogger(UI.class);
 
 
     public static boolean hidden = false;
@@ -252,7 +253,7 @@ public class UI
         Main.ui = new UI();
         Main.ui.registerListeners();
         //random sample text to copy for testing
-        System.out.println("ひかり「暁斗たちと遊んでて夕飯のギョーザを食べ損ねて、\n悔しかったから、星座にしてやったんだよね」");
+        logger.debug("ひかり「暁斗たちと遊んでて夕飯のギョーザを食べ損ねて、\n悔しかったから、星座にしてやったんだよね」");
         
         //center window
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -319,7 +320,7 @@ public class UI
             //UI has become inaccessible (most likely closed via alt+f4)
             if(!Main.ui.disp.getFrame().isVisible() && !Main.ui.tray.isShowing())
             {
-                System.out.println("UI inaccessible");
+                logger.warn("UI has become inaccessible, closing program");
                 Main.exit();
             }
 

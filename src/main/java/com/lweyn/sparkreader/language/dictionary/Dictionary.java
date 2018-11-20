@@ -22,6 +22,7 @@ import fuku.eb4j.*;
 import com.lweyn.sparkreader.language.dictionary.Epwing.EPWINGDefinition;
 import com.lweyn.sparkreader.language.dictionary.JMDict.JMParser;
 import com.lweyn.sparkreader.language.dictionary.JMDict.Spelling;
+import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -33,6 +34,8 @@ import java.util.*;
  */
 public class Dictionary
 {
+    private static Logger logger = Logger.getLogger(Dictionary.class);
+
     //text -> definition
     private HashMap<String, Object> lookup;
     //can query for words
@@ -83,7 +86,7 @@ public class Dictionary
             }
             else if(file.getName().equals("freqlist.tsv"))
             {
-                System.out.println("loading freq data");
+                logger.info("loading freq data");
                 FrequencySink.load(file, 6, 7, 0);
             }
             else if(file.getName().equalsIgnoreCase("edict2"))
@@ -136,7 +139,7 @@ public class Dictionary
             insertDefinition(new EDICTDefinition(line, source));
             line = reader.readLine();
         }
-        System.out.println("loaded " + lookup.keySet().size() + " entries so far");
+        logger.info("Loaded " + lookup.keySet().size() + " entries so far");
     }
     public void loadUserDict(File file, DefSource source)throws IOException
     {
@@ -151,7 +154,7 @@ public class Dictionary
             source.attach(definition);
             line = reader.readLine();
         }
-        System.out.println("loaded " + lookup.keySet().size() + " entries so far");
+        logger.info("Loaded " + lookup.keySet().size() + " entries so far");
     }
     public void loadSimpleDict(File file)throws IOException
     {
@@ -166,7 +169,7 @@ public class Dictionary
             source.attach(definition);
             line = reader.readLine();
         }
-        System.out.println("loaded " + lookup.keySet().size() + " entries so far");
+        logger.info("Loaded " + lookup.keySet().size() + " entries so far");
     }
 
     /**
@@ -267,7 +270,6 @@ public class Dictionary
     }
     public boolean hasEpwingDef(String word)
     {
-        //System.out.println("checking epwing for " + word);
         for(SubBook book:books)
         {
             try

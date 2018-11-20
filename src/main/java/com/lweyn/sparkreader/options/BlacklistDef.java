@@ -20,6 +20,7 @@ import com.lweyn.sparkreader.Main;
 import com.lweyn.sparkreader.language.dictionary.Definition;
 import com.lweyn.sparkreader.language.dictionary.JMDict.Spelling;
 import com.lweyn.sparkreader.language.splitter.FoundDef;
+import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -28,6 +29,8 @@ import java.util.Map.Entry;
 
 public class BlacklistDef
 {
+    private static Logger logger = Logger.getLogger(BlacklistDef.class);
+
     private TreeMap<Long, ArrayList<String>> table;
     private int dueChanges = 0;
     private int saveThreshold = 10;
@@ -40,7 +43,7 @@ public class BlacklistDef
         this.file = file;
         if(!file.exists())
         {
-            System.out.println("WARN: no blacklisted definitions file");
+            logger.warn("No blacklisted definitions file");
             return;
         }
         
@@ -95,7 +98,7 @@ public class BlacklistDef
             if(table.get(id).contains(spelling))
             {
                 //FIXME these print statements seem to contradict the comments
-                System.out.println("BL: adding additional");
+                logger.trace("Adding additional");
                 returnToDict(id, spelling);
                 ArrayList<String> forms = table.get(id);
                 forms.remove(spelling);
@@ -103,7 +106,7 @@ public class BlacklistDef
             // adding
             else
             {
-                System.out.println("BL: removing");
+                logger.trace("Removing");
                 removeFromDict(id, spelling);
                 ArrayList<String> forms = table.get(id);
                 forms.add(spelling);
@@ -112,13 +115,13 @@ public class BlacklistDef
         // adding
         else
         {
-            System.out.println("BL: adding new");
+            logger.trace("Adding new");
             ArrayList<String> forms = new ArrayList<>();
             forms.add(spelling);
             removeFromDict(id, spelling);
             table.put(id, forms);
         }
-        System.out.println("BL: size: " + table.size());
+        logger.trace("Size: " + table.size());
         dueChanges++;
         
         if(dueChanges > saveThreshold || !Main.options.getOptionBool("reduceSave"))
@@ -128,7 +131,7 @@ public class BlacklistDef
                 save();
             }catch(IOException e)
             {
-                System.out.println("Failed to write changes: " + e);
+                logger.error("Failed to write changes: " + e);
                 //if this fails, we'll try again on the next change
             }
         }
@@ -151,7 +154,7 @@ public class BlacklistDef
                 return;
             }
         }
-        System.out.println("WARN: Blacklist did not find " + spelling + " with ID " + id + " loaded in dictionary");
+        logger.warn("Blacklist did not find " + spelling + " with ID " + id + " loaded in dictionary");
     }
     private void returnToDict(long id, String spelling)
     {

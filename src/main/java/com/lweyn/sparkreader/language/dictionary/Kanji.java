@@ -18,6 +18,7 @@ package com.lweyn.sparkreader.language.dictionary;
 
 
 import com.lweyn.sparkreader.Utils;
+import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.util.HashMap;
@@ -28,6 +29,8 @@ import java.util.HashMap;
  */
 public class Kanji
 {
+    private static Logger logger = Logger.getLogger(Kanji.class);
+
     private static HashMap<Character, String> kanjiDefs = new HashMap<>();
 
     /**
@@ -40,7 +43,7 @@ public class Kanji
     {
         if(!file.exists())return;//leave kanjiDefs empty
 
-        System.out.println("loading Kanji");
+        logger.info("loading Kanji");
         //C:\Users\Laurens\Desktop\Databases\KanjiDB\anki.csv
         BufferedReader br = Utils.UTF8Reader(file);
         //kanjiDefs = new HashMap<>();
@@ -55,7 +58,7 @@ public class Kanji
             line = br.readLine();
             count++;
         }
-        System.out.println("loaded " + count + " Kanji");
+        logger.info("Loaded " + count + " Kanji");
     }
     public static String lookup(char kanji)
     {

@@ -50,8 +50,6 @@ public class MemoryBuffer
             IntByReference memoryRead = new IntByReference();
             KernelController.getKernel32().ReadProcessMemory(process, startPoint, memory, buffSize, memoryRead);
             //allRead = memoryRead.getValue() == 0;
-            //System.out.println("read: " + memoryRead.getValue());
-            //System.out.println();
         }
         return (char)memory.getShort(pos - startPoint);
     }

@@ -3,6 +3,8 @@ package com.lweyn.sparkreader.language.dictionary;
 import com.lweyn.sparkreader.language.deconjugator.ValidWord;
 import com.lweyn.sparkreader.language.dictionary.JMDict.Sense;
 import com.lweyn.sparkreader.language.dictionary.JMDict.Spelling;
+import com.sun.xml.internal.bind.v2.model.core.ID;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.regex.Pattern;
@@ -12,6 +14,8 @@ import java.util.regex.Pattern;
  */
 public class KanjiDefinition extends Definition
 {
+    private static Logger logger = Logger.getLogger(KanjiDefinition.class);
+
     private final DefSource source;
     Spelling spellings[];
     Sense meaning;
@@ -28,7 +32,7 @@ public class KanjiDefinition extends Definition
             id = Integer.parseInt(bits[0]);
         }catch(NumberFormatException e)
         {
-            System.out.println("WARN: " + bits[0] + " not an ID!");
+            logger.warn("'" + bits[0] + "' is not an ID !");
             id = bits[0].hashCode();
         }
         constituents = bits[7];

@@ -16,6 +16,8 @@
  */
 package com.lweyn.sparkreader.network;
 
+import org.apache.log4j.Logger;
+
 import java.io.IOException;
 import java.io.Reader;
 
@@ -26,6 +28,8 @@ import java.io.Reader;
  */
 public class PacketReader
 {
+    private static Logger logger = Logger.getLogger(PacketReader.class);
+
     private Reader input;
     private StringBuilder buffer;
 
@@ -50,7 +54,7 @@ public class PacketReader
             {
                 String output = buffer.toString();
                 buffer = new StringBuilder();
-                System.out.println("recieved packet " + output);
+                logger.trace("Received packet " + output);
                 return output.split("\t");
             }
             else if(c != MPController.ALIVE_CODE)buffer.append(c);

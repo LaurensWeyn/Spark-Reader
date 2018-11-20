@@ -63,7 +63,6 @@ public class JNativeKeyHandler extends KeyHandler implements NativeKeyListener
     {
         //FIXME this is a temporary implementation
         //TODO use some user defined lookup table for key mappings
-        //System.out.println("Key pressed: " + nativeKeyEvent.getKeyCode());
         //this seems to do key repeats as well. Convenient
         switch(nativeKeyEvent.getKeyCode())
         {

@@ -19,6 +19,7 @@ package com.lweyn.sparkreader.hooker;
 import com.lweyn.sparkreader.Main;
 import com.sun.jna.Pointer;
 import com.lweyn.sparkreader.ui.LineSelectUI;
+import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,6 +29,7 @@ import java.awt.*;
  */
 public class MemoryHook implements Hook
 {
+    private static Logger logger = Logger.getLogger(MemoryHook.class);
 
     private static final String START_MESSAGE = "Welcome to the memory text hook wizard."
             + "\nPlease enter the process ID (pid) of the game you want to hook. You can get this pid from the task manager."
@@ -85,7 +87,7 @@ public class MemoryHook implements Hook
             String line = lineFinder.scan();
             if(line == null)
             {
-                System.out.println("multiple found, resolving");
+                logger.info("Multiple found, resolving");
                 resolved = false;
                 LineSelectUI.requestSelection(lineFinder, () -> resolved = true);
             }
@@ -94,7 +96,7 @@ public class MemoryHook implements Hook
                 if(!line.equals(lastLine))
                 {
                     lastLine = line;
-                    System.out.println("line updated to " + line);
+                    logger.info("Line updated to " + line);
                     return line;
                 }
             }

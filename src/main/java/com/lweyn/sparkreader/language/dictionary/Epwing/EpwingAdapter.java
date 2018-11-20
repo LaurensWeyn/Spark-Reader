@@ -12,6 +12,7 @@ import fuku.eb4j.hook.HookAdapter;
 import fuku.eb4j.util.ByteUtil;
 import fuku.eb4j.util.HexUtil;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.Set;
  */
 public class EpwingAdapter extends HookAdapter<String[]>
 {
+    private static Logger logger = Logger.getLogger(EpwingAdapter.class);
 
     private int maxLines;
     private int lineNum = 0;
@@ -161,7 +163,7 @@ public class EpwingAdapter extends HookAdapter<String[]>
                         str = "";//ignored
                         break;
                     default:
-                        System.out.println("Epwing adapter: unknown half width character " + HexUtil.toHexString(code));
+                        logger.warn("Unknown half width character " + HexUtil.toHexString(code));
                         str = "?";
                         break;
                 }
@@ -196,7 +198,7 @@ public class EpwingAdapter extends HookAdapter<String[]>
                         str = "";//ignore these
                         break;
                     default:
-                        System.out.println("Epwing adapter: unknown full width character " + HexUtil.toHexString(code));
+                        logger.warn("Unknown full width character " + HexUtil.toHexString(code));
                         str = "?";
                         break;
                 }

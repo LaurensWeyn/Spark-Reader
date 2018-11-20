@@ -18,6 +18,7 @@ package com.lweyn.sparkreader.hooker;
 
 import com.sun.jna.Pointer;
 import com.lweyn.sparkreader.language.dictionary.Japanese;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +31,8 @@ import java.util.Set;
  */
 public class LineFinder implements Runnable
 {
+    private static Logger logger = Logger.getLogger(LineFinder.class);
+
     Pointer process;
     private static final int BUFFSIZE = 1024 * 1024;
     public LineFinder(Pointer process)
@@ -96,7 +99,6 @@ public class LineFinder implements Runnable
         State state = State.waitOpen;
         while(runSearch && pos >= 0)
         {
-            //System.out.println("read");
             char c = buff.getChar(pos);
             pos+= 2;
             switch(state)
@@ -141,9 +143,8 @@ public class LineFinder implements Runnable
                     }
                     break;
             }
-            //System.out.print(buff.getChar(pos++));
         }
-        System.out.println("search done");
+        logger.info("Search complete");
     }
     private void placeFoundLine(StringBuilder sb, int startAddr)
     {

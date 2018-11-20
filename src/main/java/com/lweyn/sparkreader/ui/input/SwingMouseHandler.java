@@ -1,6 +1,7 @@
 package com.lweyn.sparkreader.ui.input;
 
 import com.lweyn.sparkreader.ui.UI;
+import org.apache.log4j.Logger;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -12,6 +13,8 @@ import static com.lweyn.sparkreader.ui.UI.*;
  */
 public class SwingMouseHandler extends MouseHandler implements MouseListener, MouseMotionListener, MouseWheelListener
 {
+    private static Logger logger = Logger.getLogger(SwingMouseHandler.class);
+
     private boolean lMouseClick = false;
     private boolean lMouseState = false;
     private Point dragReference;
@@ -39,7 +42,7 @@ public class SwingMouseHandler extends MouseHandler implements MouseListener, Mo
         long clickTime = System.currentTimeMillis();
         if(clickTime - lastClickTime < MAX_CLICK_DELAY)
         {
-            System.out.println("stop double event");
+            logger.info("Stopped double click event");
             return;//[attempt to]stop accidental double click
         }
         lastClickTime = clickTime;

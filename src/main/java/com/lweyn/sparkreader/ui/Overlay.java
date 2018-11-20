@@ -17,6 +17,7 @@
 package com.lweyn.sparkreader.ui;
 
 import com.lweyn.sparkreader.Main;
+import org.apache.log4j.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -30,6 +31,8 @@ import java.io.IOException;
  */
 public class Overlay
 {
+    private static Logger logger = Logger.getLogger(Overlay.class);
+
     private JFrame frame;
     private BufferedImage front;
     private BufferedImage back;
@@ -45,7 +48,7 @@ public class Overlay
             frame.setIconImage(ImageIO.read(getClass().getResourceAsStream("/com/lweyn/sparkreader/ui/icon.gif")));
         } catch (IOException ex)
         {
-            System.out.println("error loading icon: " + ex);
+            logger.error("error loading icon: " + ex);
         }
         // Without this, the window is draggable from any non transparent
         // point, including points  inside textboxes.

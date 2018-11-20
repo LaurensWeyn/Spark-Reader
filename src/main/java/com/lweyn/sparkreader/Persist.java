@@ -5,6 +5,7 @@ import com.lweyn.sparkreader.ui.Line;
 import com.lweyn.sparkreader.ui.Page;
 import com.lweyn.sparkreader.ui.UI;
 import com.lweyn.sparkreader.ui.menubar.MenubarBuilder;
+import org.apache.log4j.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -21,6 +22,7 @@ import java.util.Date;
  */
 public class Persist implements Serializable
 {
+    private static Logger logger = Logger.getLogger(Persist.class);
 
     public static int exportedThisSession = 0;
     public static int exportedBeforeSession = -1;
@@ -66,12 +68,11 @@ public class Persist implements Serializable
         }
         catch(FileNotFoundException | ClassNotFoundException ignored)
         {
-            System.out.println("No persistence file found, creating a new one");
+            logger.warn("No persistence file found, creating a new one");
         }
         catch(Exception e)
         {
-            System.out.println("error reading persistence data");
-            e.printStackTrace();
+            logger.error("error reading persistence data; rebuilding", e);
         }
         return new Persist();
     }
@@ -172,7 +173,7 @@ public class Persist implements Serializable
                 if(!fileName.endsWith("/") && !fileName.endsWith("\\"))fileName += "/";
                 fileName += df.format(date) + ".png";
 
-                System.out.println("saving screenshot as " + fileName);
+                logger.info("Saving screenshot as " + fileName);
                 ImageIO.write(screenshot, "png", new File(fileName));
             }
 
@@ -196,7 +197,7 @@ public class Persist implements Serializable
     {
         try
         {
-            System.out.println("Writing persistence");
+            logger.info("Writing to persistence file");
             FileOutputStream fos = new FileOutputStream(file);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(this);
@@ -206,8 +207,7 @@ public class Persist implements Serializable
         }
         catch(Exception ex)
         {
-            System.out.println("error writing persistence data");
-            ex.printStackTrace();
+            logger.error("Error writing persistence data", ex);
         }
     }
 

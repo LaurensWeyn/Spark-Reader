@@ -22,6 +22,7 @@ import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.win32.W32APIOptions;
 import com.lweyn.sparkreader.language.dictionary.Japanese;
+import org.apache.log4j.Logger;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -32,6 +33,8 @@ import java.util.Map;
  */
 public class KernelController
 {
+    private static Logger logger = Logger.getLogger(KernelController.class);
+
     private static Kernel32 kernel32;
     private static User32 user32;
     //I/O permissions
@@ -53,7 +56,7 @@ public class KernelController
             user32 = (User32) Native.loadLibrary("user32", User32.class, W32APIOptions.UNICODE_OPTIONS);
         }catch(UnsatisfiedLinkError ignored)
         {
-            System.out.println("Native libraries not available");
+            logger.warn("Native libraries not available");
         }
         attemptedLoad = true;
     }
@@ -181,7 +184,7 @@ public class KernelController
                     is64Bit = true;
                     break;
             }
-            System.out.println("64 bit: " + is64Bit);
+            logger.info("64 bit: " + is64Bit);
         }
         return is64Bit;
     }

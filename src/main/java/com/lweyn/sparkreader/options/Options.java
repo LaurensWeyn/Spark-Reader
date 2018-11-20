@@ -17,6 +17,7 @@
 package com.lweyn.sparkreader.options;
 
 import com.lweyn.sparkreader.Utils;
+import org.apache.log4j.Logger;
 
 import java.awt.*;
 import java.io.*;
@@ -31,6 +32,8 @@ import java.util.Set;
  */
 public class Options
 {
+    private static Logger logger = Logger.getLogger(Options.class);
+
     private HashMap<String, String> options;
     private File file;
     private static Options defaults = new Options();
@@ -203,7 +206,7 @@ public class Options
         //add all leftover keys (or all keys if file does not exist)
         for(String key:keysLeft)
         {
-            System.out.println("appending leftover option " + key);
+            logger.info("Appending leftover option '" + key + "'");
             fr.append(key).append(" = ").append(defaults.options.get(key)).append("\n");
         }
         fr.close();

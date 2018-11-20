@@ -17,6 +17,7 @@
 package com.lweyn.sparkreader.language.deconjugator;
 
 import com.lweyn.sparkreader.Main;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.TreeSet;
@@ -29,6 +30,8 @@ import static com.lweyn.sparkreader.language.dictionary.Japanese.isKana;
  */
 public class WordScanner
 {
+    private static Logger logger = Logger.getLogger(WordScanner.class);
+
     protected static ArrayList<ValidWord> matches;
     protected String word;
 
@@ -40,7 +43,7 @@ public class WordScanner
     {
         if(subscanner == null || parserIsNew == Main.options.getOption("deconMode").equals("legacy"))
         {
-            System.out.println("Reinitializing deconjugator");
+            logger.info("Reinitializing deconjugator");
             parserIsNew = Main.options.getOption("deconMode").equals("recursive");
             ruleList = null;
             if(parserIsNew)
