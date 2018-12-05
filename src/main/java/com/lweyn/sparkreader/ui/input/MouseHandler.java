@@ -2,6 +2,7 @@ package com.lweyn.sparkreader.ui.input;
 
 import com.lweyn.sparkreader.Main;
 import com.lweyn.sparkreader.language.splitter.FoundWord;
+import com.lweyn.sparkreader.ui.DisplayedWord;
 import com.lweyn.sparkreader.ui.Line;
 import com.lweyn.sparkreader.ui.UI;
 import com.lweyn.sparkreader.ui.menubar.Menubar;
@@ -26,7 +27,7 @@ public abstract class MouseHandler
     protected UI ui;
     protected Point mousePos;
     protected int mouseLine = -1;
-    protected FoundWord mousedWord;
+    protected DisplayedWord mousedWord;
 
     protected int resizeEdgeSize = 5;
     protected boolean resizeState = false;//true if cursor is <-> icon
@@ -84,8 +85,8 @@ public abstract class MouseHandler
                 i++;
             }
             //toggle on selected line:
-            FoundWord word = Main.currPage.getLine(lineIndex).getWordAt(pos.x);
-            for(FoundWord word2:Main.currPage.getLine(lineIndex).getWords())
+            DisplayedWord word = Main.currPage.getLine(lineIndex).getWordAt(pos.x);
+            for(DisplayedWord word2:Main.currPage.getLine(lineIndex).getDisplayedWords())
             {
                 if(word2 == word)
                 {
@@ -113,7 +114,7 @@ public abstract class MouseHandler
             WordPopup popup = null;
             int lineIndex = ui.getLineIndex(pos);
             Line line = Main.currPage.getLine(lineIndex);
-            FoundWord word = line.getWordAt(pos.x);
+            DisplayedWord word = line.getWordAt(pos.x);
             
             if(word != null)
                 popup = new WordPopup(line, word, ui);
@@ -184,7 +185,7 @@ public abstract class MouseHandler
         }
         else
         {
-            FoundWord word = Main.currPage.getLine(lineIndex).getWordAt(mousePos.x);
+            DisplayedWord word = Main.currPage.getLine(lineIndex).getWordAt(mousePos.x);
             if(lineIndex != mouseLine || (mousedWord != null && mousedWord != word))
             {
                 if(mousedWord != null)

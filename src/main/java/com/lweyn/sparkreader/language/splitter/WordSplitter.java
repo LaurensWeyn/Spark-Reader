@@ -41,15 +41,7 @@ public class WordSplitter
     {
         this.dict = dict;
     }
-    public static void recalcPositions(List<FoundWord> words)
-    {
-        int x = 0;
-        for(FoundWord word:words)
-        {
-            word.setStartX(x);
-            x = word.endX();
-        }
-    }
+
     
     // not in dictionary, see if adding possible deconjugation match endings to it gives us a dictionary entry (fixes 振り返ります etc)
     private boolean mightBeDeconjugatable(String text, boolean firstSection)
@@ -186,7 +178,6 @@ public class WordSplitter
             String section = text.substring(start, pos);
             words.addAll(splitSection(section, breaks.contains(start)));
         }
-        recalcPositions(words);
         breaks.remove(0);
         return words;
     }

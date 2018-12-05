@@ -32,40 +32,42 @@ import static com.lweyn.sparkreader.ui.UI.*;
 public class Line
 {
     private SortedSet<Integer> markers;
-    private List<FoundWord> words;
+    private List<FoundWord> foundWords;
+    private List<DisplayedWord> displayedWords;
 
     public Line(SortedSet<Integer> markers, ArrayList<FoundWord> words)
     {
+        setWords(words);
         this.markers = markers;
-        this.words = words;
     }
     public Line(List<FoundWord> words)
     {
         markers = new TreeSet<>();
-        this.words = words;
+        setWords(words);
     }
     public Line()
     {
         markers = new TreeSet<>();
-        words = new ArrayList<>();
+        displayedWords = new ArrayList<>();
+        foundWords = new ArrayList<>();
     }
     public void resetSelection()
     {
-        for(FoundWord word:words)
+        for(DisplayedWord word: displayedWords)
         {
             word.showDef(false);
         }
     }
     //TODO check and document this later
     List<Integer> wordLocations = null; // must be stored in ascending order
-    public FoundWord getWordAt(int x)
+    public DisplayedWord getWordAt(int x)
     {
         if(wordLocations == null) return null;
         
         for(int i = 1; i < wordLocations.size(); i++)
         {
-            if(wordLocations.get(i) > x && i-1 < words.size())
-                return words.get(i-1);
+            if(wordLocations.get(i) > x && i-1 < displayedWords.size())
+                return displayedWords.get(i-1);
         }
         return null;
     }
@@ -75,14 +77,14 @@ public class Line
         
         for(int i = 1; i < wordLocations.size(); i++)
         {
-            if(wordLocations.get(i) > x && i-1 < words.size())
+            if(wordLocations.get(i) > x && i-1 < displayedWords.size())
             {
                 int startpoint = wordLocations.get(i-1);
-                FoundWord word = words.get(i-1);
-                if(word.getLength() == 0) return word.startX();
-                for(int j = 0; j < word.getLength(); j++)
+                DisplayedWord word = displayedWords.get(i-1);
+                if(word.getTextLength() == 0) return word.startX();
+                for(int j = 0; j < word.getTextLength(); j++)
                 {
-                    if(word.getCachedWidth(j)/2+word.getCachedWidth(j+1)/2+startpoint > x) return word.startX() + j; 
+                    if(word.getCachedWidth(j) / 2 + word.getCachedWidth(j + 1) / 2 + startpoint > x) return word.startX() + j;
                 }
                 return word.endX();
             }
@@ -93,22 +95,22 @@ public class Line
     {
         //find markers
         Set<Integer> splitPoints = new HashSet<>();
-        for(FoundWord word:words)
+        for(DisplayedWord word: displayedWords)
         {
             splitPoints.add(word.startX());
         }
         g.setClip(0, 0, Main.options.getOptionInt("windowWidth"), Main.options.getOptionInt("maxHeight"));//render only over window
 
-        //render words in three stages to make sure any overlapping text overlaps exactly the way it should (i.e. so clearing doesn't cut off text)
+        //render displayedWords in three stages to make sure any overlapping text overlaps exactly the way it should (i.e. so clearing doesn't cut off text)
         Main.options.getFont("textFont");
 
         int lastX = 0;
         int characters = 0;
-        for(FoundWord word:words)
+        for(DisplayedWord word : displayedWords)
         {
             // render markers first to put them under the text
             int width = word.getAdvancementWidth(g);
-            characters += word.getText().length();
+            characters += word.getTextLength();
             if(markers.contains(characters) || splitPoints.contains(characters))//only draw on actual points
             {
                 g.setColor(markers.contains(characters)? Main.options.getColor("markerCol"): Main.options.getColor("noMarkerCol"));
@@ -120,7 +122,7 @@ public class Line
             lastX = width + lastX + 2;
         }
         lastX = 0;
-        for(FoundWord word:words)
+        for(DisplayedWord word: displayedWords)
         {
             int width = word.getAdvancementWidth(g);
             word.renderBackground(g, lastX, xOff, yOff);
@@ -130,7 +132,7 @@ public class Line
         wordLocations = new ArrayList<>();
         wordLocations.add(0);
         lastX = 0;
-        for(FoundWord word:words)
+        for(DisplayedWord word: displayedWords)
         {
             int width = word.getAdvancementWidth(g);
             word.render(g, lastX, xOff, yOff);
@@ -144,19 +146,19 @@ public class Line
     public String toString()
     {
         StringBuilder text = new StringBuilder();
-        for(FoundWord word:words)
+        for(DisplayedWord word: displayedWords)
         {
             text.append(word.getText());
         }
         return text.toString();
     }
 
-    public int calcLength()
+    public int calcCharLength()
     {
         int charLength = 0;
-        for(FoundWord word:words)
+        for(DisplayedWord word: displayedWords)
         {
-            charLength += word.getLength();
+            charLength += word.getTextLength();
         }
         return charLength;
     }
@@ -166,19 +168,36 @@ public class Line
         return markers;
     }
 
-    public List<FoundWord> getWords()
+    public List<DisplayedWord> getDisplayedWords()
     {
-        return words;
+        return displayedWords;
     }
 
-    public void addWord(FoundWord word)
+    public void addWord(DisplayedWord word)
     {
-        words.add(word);
+        foundWords.add(word.getFoundWord());
+        displayedWords.add(word);
     }
 
     public void setWords(List<FoundWord> words)
     {
-        this.words = words;
+        this.foundWords = words;
+        this.displayedWords = new ArrayList<>();
+        for(FoundWord word:words)
+        {
+            displayedWords.add(new DisplayedWord(word));
+        }
+        recalcPositions(displayedWords);
+    }
+
+    public static void recalcPositions(List<DisplayedWord> words)
+    {
+        int x = 0;
+        for(DisplayedWord word:words)
+        {
+            word.setStartX(x);
+            x = word.endX();
+        }
     }
 
     public void setMarkers(SortedSet<Integer> markers)

@@ -25,6 +25,7 @@ import com.lweyn.sparkreader.language.dictionary.Japanese;
 import com.lweyn.sparkreader.language.dictionary.Kanji;
 import com.lweyn.sparkreader.language.splitter.FoundDef;
 import com.lweyn.sparkreader.language.splitter.FoundWord;
+import com.lweyn.sparkreader.ui.DisplayedWord;
 import com.lweyn.sparkreader.ui.UI;
 
 import javax.swing.*;
@@ -46,7 +47,7 @@ public class DefPopup extends JPopupMenu
     private JMenuItem anki, copy, copyAll, lookup;
     private JCheckBoxMenuItem setDef, setBlacklist;
 
-    public DefPopup(FoundWord word, UI ui, int mouseY)
+    public DefPopup(DisplayedWord word, UI ui, int mouseY)
     {
         this.ui = ui;
         def = word.getCurrentDef();
@@ -58,7 +59,7 @@ public class DefPopup extends JPopupMenu
             public void actionPerformed(ActionEvent e)
             {
                 Main.prefDef.setPreferred(def);
-                word.resortDefs();
+                word.getFoundWord().resortDefs();
                 word.resetScroll();
                 ui.render();
             }
@@ -153,7 +154,7 @@ public class DefPopup extends JPopupMenu
         return exportedBeforeSession + exportedThisSession;
     }
 
-    public static void ankiExport(FoundWord word)
+    public static void ankiExport(DisplayedWord word)
     {
         JFrame UIParent =  null;
         if(Main.ui != null)
@@ -235,7 +236,7 @@ public class DefPopup extends JPopupMenu
 
             if(Main.options.getOptionBool("exportMarksKnown"))
             {
-                Main.known.setKnown(word);
+                Main.known.setKnown(word.getFoundWord());
                 Main.ui.render();//display change
             }
         }catch(IOException err)

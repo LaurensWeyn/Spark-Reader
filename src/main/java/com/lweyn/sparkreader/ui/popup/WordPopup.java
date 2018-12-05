@@ -20,6 +20,7 @@ import com.lweyn.sparkreader.Main;
 import com.lweyn.sparkreader.Persist;
 import com.lweyn.sparkreader.hooker.ClipboardHook;
 import com.lweyn.sparkreader.language.splitter.FoundWord;
+import com.lweyn.sparkreader.ui.DisplayedWord;
 import com.lweyn.sparkreader.ui.Line;
 import com.lweyn.sparkreader.ui.UI;
 import com.lweyn.sparkreader.ui.WordEditUI;
@@ -37,7 +38,7 @@ public class WordPopup extends JPopupMenu
 {
     private static Logger logger = Logger.getLogger(WordPopup.class);
 
-    FoundWord word;
+    DisplayedWord word;
     
     JMenuItem addBreak;
     JMenuItem exportLine;
@@ -48,7 +49,7 @@ public class WordPopup extends JPopupMenu
     JCheckBoxMenuItem markKnown;
     int x, y;
     UI ui;
-    public WordPopup(Line line, FoundWord word, UI ui)
+    public WordPopup(Line line, DisplayedWord word, UI ui)
     {
         this.word = word;
         this.ui = ui;
@@ -112,16 +113,16 @@ public class WordPopup extends JPopupMenu
             {
                 if(markKnown.isSelected())
                 {
-                    Main.known.setKnown(word);
+                    Main.known.setKnown(word.getFoundWord());
                 }
                 else
                 {
-                    Main.known.setUnknown(word);
+                    Main.known.setUnknown(word.getFoundWord());
                 }
                 ui.render();//change color of word
             }
         });
-        markKnown.setSelected(Main.known.isKnown(word));
+        markKnown.setSelected(Main.known.isKnown(word.getFoundWord()));
 
         exportLine.setText("Export whole line (" + Persist.getLineExportCount() + ")");
         exportWord.setText("Add word as flashcard (" + DefPopup.getDefExportCount() + ")");

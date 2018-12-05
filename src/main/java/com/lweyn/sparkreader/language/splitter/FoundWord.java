@@ -42,69 +42,42 @@ public class FoundWord
 {
     private final String text;//text to display
     private List<FoundDef> definitions;//known meanings
-    private int startX;//start point in sentence (for rendering)
-    
-    private int currentDef = 0;//current definition to render
-    
-    private boolean showDef = false;
-    private boolean mouseover;
-
     private final boolean hasKanji;
-    private boolean hasOpened = false;
 
-    public FoundWord(char text, List<FoundDef> definitions, int startX)
-    {
-        this(text + "", definitions, startX);
-    }
-    public FoundWord(String text, List<FoundDef> definitions, int startX)
-    {
-        this.text = text;
-        hasKanji = Japanese.hasKanji(text);
-        this.definitions = definitions;
-        this.startX = startX;
-
-        if(definitions != null)definitions.sort(null);
-    }
     public FoundWord(String text, List<FoundDef> definitions)
     {
         this.text = text;
         hasKanji = Japanese.hasKanji(text);
         this.definitions = definitions;
-        this.startX = 0;
 
         if(definitions != null)definitions.sort(null);
     }
-    public FoundWord(char text, int startX)
-    {
-        this(text + "", startX);
-    }
-    public FoundWord(String text, int startX)
-    {
-        this.text = text;
-        hasKanji = Japanese.hasKanji(text);
-        definitions = null;
-        this.startX = startX;
-    }
+
     public FoundWord(char text)
     {
         this(text + "");
     }
+
     public FoundWord(String text)
     {
         this.text = text;
         hasKanji = Japanese.hasKanji(text);
         definitions = null;
-        this.startX = 0;
     }
+
     public void addDefinition(FoundDef def)
     {
-        if(definitions == null)definitions = new ArrayList<>();
+        if(definitions == null)
+            definitions = new ArrayList<>();
         definitions.add(def);
     }
+
     public void sortDefs()
     {
-        if(definitions != null)definitions.sort(null);
+        if(definitions != null)
+            definitions.sort(null);
     }
+
     public void resortDefs()
     {
         if(definitions != null)
@@ -113,229 +86,26 @@ public class FoundWord
             sortDefs();
         }
     }
+
     public int getDefinitionCount()
     {
         if(definitions == null)return 0;
         return definitions.size();
     }
-    
-    
-    ArrayList<Integer> cachedWidths = null;
-    int rememberedAdvancementWidth = 0;
-    public int getCachedWidth(int numchars)
-    {
-        if(numchars < cachedWidths.size()) return cachedWidths.get(numchars);
-        else return rememberedAdvancementWidth;
-    }
-    public int getAdvancementWidth(Graphics2D g)
-    {
-        Main.options.getFont(g, "textFont");
-        Rectangle2D rect = g.getFontMetrics().getStringBounds(text, g);
-        
-        // Java doesn't give a reasonable way to get the character at a given physical distance into a string so this has to be done manually and it's awful
-        int newAdvancementWidth = (int)Math.round(rect.getWidth());
-        if(newAdvancementWidth != rememberedAdvancementWidth)
-        {
-            cachedWidths = new ArrayList<>();
-            cachedWidths.add(0);
-            for(int i = 1; i < text.length(); i++)
-                cachedWidths.add((int)Math.round(g.getFontMetrics().getStringBounds(text.substring(0,i), g).getWidth()));
-        }
-        rememberedAdvancementWidth = newAdvancementWidth;
-        return rememberedAdvancementWidth;
-    }
-    
-    public void renderClear(Graphics2D g, int xStart, int xOff, int yOff)
-    {
-        g.setClip(0, 0, Main.options.getOptionInt("windowWidth"), Main.options.getOptionInt("maxHeight"));//render only over window
-        Main.options.getFont(g, "textFont");
-        
-        int bgStart = xStart + xOff;
-        int bgEnd = bgStart + getAdvancementWidth(g);
-        
-        g.clearRect(bgStart, yOff + UI.textStartY, bgEnd-bgStart, g.getFontMetrics().getHeight());//remove background
-        
-    }
-    public void renderBackground(Graphics2D g, int xStart, int xOff, int yOff)
-    {
-        g.setClip(0, 0, Main.options.getOptionInt("windowWidth"), Main.options.getOptionInt("maxHeight"));//render only over window
-        int startPos = xStart + xOff;
-        int bgEnd = startPos + getAdvancementWidth(g);
-        
-        boolean known = isKnown();
-        if(Main.options.getOptionBool("unparsedWordsAltColor")) known |= (getDefinitionCount()==0);//TODO see if we can move this to isKnown
-        
-        Color bgColor;
-        
-        if(showDef)
-            bgColor = Main.options.getColor("clickedTextBackCol");
-        else if(known)
-            bgColor = Main.options.getColor("knownTextBackCol");
-        else if(Main.wantToLearn.isWanted(this))
-            bgColor = Main.options.getColor("wantTextBackCol");
-        else
-            bgColor = Main.options.getColor("textBackCol");
-        
-        float textBackVar = 2.0f;
-        try
-        {
-            textBackVar = Float.valueOf(Main.options.getOption("textBackVariable").trim());
-        }
-        catch (NumberFormatException e)
-        { /* */ }
-        
-        // for the Shape outline;-based text rendering mode 
-        boolean aaEnabled = Main.options.getFontAA("textFont");
-        if(aaEnabled)
-        {
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-        }
-        else
-        {
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-            g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
-        }
-        
-        if(Main.options.getOption("textBackMode").equals("outline"))
-        {
-            Shape outline = g.getFont().createGlyphVector(g.getFontRenderContext(), text).getOutline(startPos, yOff + UI.textStartY + g.getFontMetrics().getMaxAscent());
-            // We need it to be not 100% transparent to allow the word to be clicked.
-            Color fakeBgColor = new Color(bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue(), 1);
-            g.setColor(fakeBgColor);
-            g.fillRect(startPos, yOff + UI.textStartY, bgEnd-startPos, g.getFontMetrics().getHeight());
-            
-            
-            // Render it
-            g.setColor(bgColor);
-            g.setStroke(new BasicStroke(textBackVar*2.0f, CAP_ROUND, JOIN_ROUND));
-            g.draw(outline);
-        }
-        else if(Main.options.getOption("textBackMode").equals("dropshadow"))
-        {
-            // We need it to be not 100% transparent to allow the word to be clicked
-            Color fakeBgColor = new Color(bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue(), 1);
-            g.setColor(fakeBgColor);
-            g.fillRect(startPos, yOff + UI.textStartY, bgEnd-startPos, g.getFontMetrics().getHeight());
-            
-            // Now draw the dropshadow text
-            g.setColor(bgColor);
-            g.drawString(text, startPos + textBackVar, yOff + UI.textStartY + textBackVar + g.getFontMetrics().getMaxAscent());
-        }
-        else
-        {
-            g.setColor(bgColor);
-            g.fillRect(startPos, yOff + UI.textStartY, bgEnd-startPos, g.getFontMetrics().getHeight());//set to new color
-        }
-    }
-    
-    public void render(Graphics2D g, int xStart, int xOff, int yOff)
-    {
-        g.setClip(0, 0, Main.options.getOptionInt("windowWidth"), Main.options.getOptionInt("maxHeight"));//render only over window
-        int startPos = xStart + xOff;
-        
-        boolean known = isKnown();
-        
-        int width = getAdvancementWidth(g);
-        
-        g.setColor((known ? Main.options.getColor("knownTextCol") : Main.options.getColor("textCol")));
-        if(!Main.options.getOptionBool("textFontUnhinted"))
-            g.drawString(text, startPos, yOff + UI.textStartY + g.getFontMetrics().getMaxAscent());
-        else
-        {
-            Shape outline = g.getFont().createGlyphVector(g.getFontRenderContext(), text).getOutline(startPos, yOff + UI.textStartY + g.getFontMetrics().getMaxAscent());
-            g.fill(outline);
-        }
-        
-        if(showDef && !hasOpened)
-        {
-            attachEpwingDefinitions(Main.dict);//load these in only when needed
-            sortDefs();
-            hasOpened = true;
-        }
 
-        //find furigana
-        if(definitions == null)return;//don't bother rendering furigana/defs if we don't know it
-        String furiText = "";
-        if(showDef)
-        {
-            if(!UI.showMenubar)furiText = (currentDef + 1) + "/" + definitions.size();
-        }
-        else if(showFurigana(known))
-        {
-            furiText = definitions.get(currentDef).getFurigana();
-            if(!Main.options.getOption("furiMode").equals("original"))
-            {
-                //convert dictionary form to displayed form
-                for(DeconRule rule : definitions.get(currentDef).getFoundForm().getProcess())
-                {
-                    furiText = rule.conjugate(furiText);
-                }
-            }
-            if(Main.options.getOption("furiMode").equals("stripKana"))
-            {
-                furiText = Japanese.stripOkurigana(definitions.get(currentDef).getFoundForm().getOriginalWord(), furiText);
-            }
-        }
-        //render furigana
+    public boolean hasKanji()
+    {
+        return hasKanji;
+    }
 
-        Main.options.getFont(g, "furiFont");
-        g.setColor(Main.options.getColor("furiCol"));
-        int furiX = startPos + width/2 - g.getFontMetrics().stringWidth(furiText)/2;
-        if(furiX < 0 &&Main.ui.xOffset == 0)furiX = 0;//ensure it's visible if scrolled to front
-        g.drawString(furiText, furiX, UI.furiganaStartY + g.getFontMetrics().getAscent() + yOff);
-        
-        //not effected by Y offset
-        if(showDef)
-        {
-            g.setClip(null);//render this anywhere
-            Main.options.getFont(g, "defFont");
-            int y = UI.defStartY + g.getFontMetrics().getAscent();
-            int defPosition = startPos;
-            if(Main.options.getOptionBool("defConstrainPosition"))
-                defPosition = Math.max(0, Math.min(startPos, Main.options.getOptionInt("windowWidth")- Main.options.getOptionInt("defWidth")));
-            
-            definitions.get(currentDef).render(g, defPosition, Math.max(width, Main.options.getOptionInt("defWidth")), y);
-        }
-        
-        return;
-    }
-    private boolean showFurigana(boolean known)
-    {
-        if(!hasKanji)return false;//no point
-        if(UI.showMenubar)return false;//furigana disabled when menubar visible
 
-        switch(Main.options.getOption(known?"knownFuriMode":"unknownFuriMode"))
-        {
-            case "always":return true;
-            case "mouseover":return mouseover;
-            case "never":return false;
 
-            default:return false;
-        }
-    }
-    public void toggleWindow()
-    {
-        showDef(!showDef);
-    }
-    public void showDef(boolean mode)
-    {
-        showDef = mode;
-        if(definitions == null)return;//no point if there's no definition
-        if(!mode && Main.options.getOptionBool("resetDefScroll"))
-        {
-            definitions.get(currentDef).resetScroll();
-        }
-    }
-    public boolean inBounds(int xPos)
-    {
-        return xPos >= startX && xPos < startX + getLength();
-    }
     public String getText()
     {
         return text;
     }
-    public int getLength()
+
+    public int getTextLength()
     {
         return text.length();
     }
@@ -343,79 +113,35 @@ public class FoundWord
     @Override
     public String toString()
     {
-        if(definitions == null)return text;
-        else return "" + definitions.get(currentDef);
+        if(definitions == null || definitions.size() == 0)return text;
+        else return "" + definitions.get(0);
     }
+
     public boolean isKnown()
     {
         return Main.known.isKnown(this);
     }
-    public boolean isShowingDef()
-    {
-        return showDef;
-    }
-    public FoundDef getCurrentDef()
-    {
-        if(definitions == null)return null;
-        return definitions.get(currentDef);
-    }
-    public void scrollDown()
-    {
-        if(definitions == null)return;
-        currentDef = Math.min(currentDef + 1, definitions.size() - 1);
-    }
-    public void scrollUp()
-    {
-        if(definitions == null)return;
-        currentDef = Math.max(currentDef - 1, 0);
-    }
-    
-    public void resetScroll()
-    {
-        currentDef = 0;
-    }
+
+
     
     public List<FoundDef> getFoundDefs()
     {
         return definitions;
     }
 
-    public int startX()
+
+    public boolean hasDefinitions()
     {
-        return startX;
+        return definitions != null;
     }
-    public int endX()
+
+    public FoundDef getFoundDef(int index)
     {
-        return startX + getLength();
+        return definitions.get(index);
     }
 
-    public boolean isShowingFirstDef()
-    {
-        return currentDef == 0;
-    }
 
-    public void setMouseover(boolean mouseover) {
-        this.mouseover = mouseover;
-
-        if(!isKnown() && Main.options.getOptionBool("showDefOnMouseover"))
-        {
-            showDef = mouseover;
-        }
-    }
-
-    public boolean updateOnMouse()
-    {
-        if(!hasKanji)return false;
-
-        return ( isKnown() && Main.options.getOption("knownFuriMode").equals("mouseover"))
-            || (!isKnown() && Main.options.getOption("unknownFuriMode").equals("mouseover"));
-    }
-
-    public void setStartX(int startX) {
-        this.startX = startX;
-    }
-
-    private void attachEpwingDefinitions(Dictionary dict)
+    public void attachEpwingDefinitions(Dictionary dict)
     {
         Set<String> alreadyQueried = new HashSet<>();
         //for each known valid reading, find a dictionary equivalent

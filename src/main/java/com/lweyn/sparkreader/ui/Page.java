@@ -61,16 +61,16 @@ public class Page implements Iterable<Line>
             for(Line line:lines)
             {
                 Line newLine = new Line();
-                for(FoundWord word:line.getWords())
+                for(FoundWord word:line.getDisplayedWords())
                 {
-                    if(newLine.calcLength() + word.getLength() > maxLineLength)
+                    if(newLine.calcCharLength() + word.getTextLength() > maxLineLength)
                     {
                         newLines.add(newLine);
                         newLine = new Line();
                     }
                     addWord(line, newLine, word);
                 }
-                if(newLine.calcLength() != 0)newLines.add(newLine);
+                if(newLine.calcCharLength() != 0)newLines.add(newLine);
             }
             lines = newLines;
         }*/

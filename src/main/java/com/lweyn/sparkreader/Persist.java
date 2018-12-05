@@ -216,7 +216,7 @@ public class Persist implements Serializable
         for(int i = 0; i < currPage.getLineCount(); i++)
         {
             Line line = currPage.getLine(i);
-            wordsEncountered += line.getWords().size();
+            wordsEncountered += line.getDisplayedWords().size();
             //more stat collecting stuff would go here
         }
     }

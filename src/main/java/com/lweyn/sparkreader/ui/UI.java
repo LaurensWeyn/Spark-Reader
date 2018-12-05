@@ -59,7 +59,7 @@ public class UI
     // for scrolling
     public static int widestLineWidth = -1;
     
-    public FoundWord selectedWord = null;
+    public DisplayedWord selectedWord = null;
     
     public static int furiganaStartY = 0;
     public static int textStartY = 0;
@@ -240,9 +240,9 @@ public class UI
      * @param newLine line being copied to
      * @param word word to copy over
      */
-    private void addWord(Line oldLine, Line newLine, FoundWord word)
+    private void addWord(Line oldLine, Line newLine, DisplayedWord word)
     {
-        int newStartX = newLine.calcLength();
+        int newStartX = newLine.calcCharLength();
         if(oldLine.getMarkers().contains(word.startX()))newLine.getMarkers().add(newStartX);
         word.setStartX(newStartX);
         newLine.addWord(word);
