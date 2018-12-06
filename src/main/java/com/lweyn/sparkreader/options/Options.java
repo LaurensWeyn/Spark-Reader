@@ -17,6 +17,7 @@
 package com.lweyn.sparkreader.options;
 
 import com.lweyn.sparkreader.Utils;
+import com.lweyn.sparkreader.ui.Overlay;
 import org.apache.log4j.Logger;
 
 import java.awt.*;
@@ -256,7 +257,10 @@ public class Options
             }
             
         }
-        return new Font(bits[0].trim(), mods, Integer.parseInt(bits[2].trim()));
+        //experimental: automatically scale founts based on DPI
+        int fontSize = Integer.parseInt(bits[2].trim());
+        fontSize = (int)(fontSize * Overlay.getFoundScale());
+        return new Font(bits[0].trim(), mods, fontSize);
     }
     public boolean getFontAA(String tag)
     {

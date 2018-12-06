@@ -62,7 +62,7 @@ public class OptionsUI extends JFrame
 
     public OptionsUI() throws HeadlessException
     {
-        super("Spark Reader Main.options");
+        super("Spark Reader Options");
         root = new PageGroup("Root", "");
         //TODO load this mess from an XML file or something instead of hardcoding it all
 

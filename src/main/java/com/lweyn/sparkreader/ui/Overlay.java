@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -35,8 +36,9 @@ public class Overlay
 
     private JFrame frame;
     private BufferedImage front;
-    private BufferedImage back;
-    private ImageIcon display;
+
+    private CustomPanel display;
+
     public Overlay(int width, int height)
     {
         frame = new JFrame("Spark Reader overlay");
@@ -67,37 +69,62 @@ public class Overlay
     public void setSize(int width, int height)
     {
         front = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        display = new ImageIcon(front);
+        display = new CustomPanel();
         frame.getContentPane().removeAll();
-        frame.getContentPane().add(new JLabel(display));
+        frame.getContentPane().add(display);
         frame.setSize(width, height);
     }
+
     public JFrame getFrame()
     {
         return frame;
     }
+
     public void refresh()
     {
-        //swap buffers
-        //*
-        //BufferedImage temp = front;
-        //front = back;
-        //back = temp;
-        //display front buffer
-        //display.setImage(front);
-        //clear back buffer
-        //Graphics2D f = back.createGraphics();
-        //f.setBackground(new Color(0,0,0,0));
-        //f.clearRect(0, 0, back.getWidth(), back.getHeight());
-        //*/
-        //update
         frame.repaint();
     }
+
     public Graphics2D getGraphics()
     {
         Graphics2D f = front.createGraphics();
         f.setBackground(new Color(0,0,0,0));
         f.clearRect(0, 0, front.getWidth(), front.getHeight());
         return front.createGraphics();
+    }
+
+    private static double foundScale = 1.0;
+    private Overlay superThis = this;
+
+    private class CustomPanel extends JPanel
+    {
+        @Override
+        protected void paintComponent(Graphics g1)
+        {
+            Graphics2D g = (Graphics2D)g1;
+            AffineTransform t = g.getTransform();
+            double scaling = t.getScaleX();
+            if(scaling != foundScale)
+            {
+                foundScale = scaling;
+                logger.info("Scaling set to " + scaling);
+                //compensate for non-1.0 DPI settings
+                superThis.setSize((int)(frame.getWidth() * scaling), (int)(frame.getHeight() * scaling));
+            }
+            t.setToScale(1, 1);
+            g.setTransform(t);
+
+            g.drawImage(front, 0, 0, null);
+        }
+    }
+
+    public static double getFoundScale()
+    {
+        return foundScale;
+    }
+
+    public static double getFoundScaleInverse()
+    {
+        return 1.0 / foundScale;
     }
 }

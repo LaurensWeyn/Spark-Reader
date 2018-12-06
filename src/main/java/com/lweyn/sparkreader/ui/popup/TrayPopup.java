@@ -18,6 +18,7 @@ package com.lweyn.sparkreader.ui.popup;
 
 import com.lweyn.sparkreader.Main;
 import com.lweyn.sparkreader.options.OptionsUI;
+import com.lweyn.sparkreader.ui.Overlay;
 import com.lweyn.sparkreader.ui.UI;
 
 import javax.swing.*;
@@ -79,9 +80,9 @@ public class TrayPopup extends JPopupMenu
     }
     public void show(int x, int y)
     {
-        this.x = x;
-        this.y = y;
-        setLocation(x, y);
+        this.x = (int)(x * Overlay.getFoundScaleInverse());
+        this.y = (int)(y * Overlay.getFoundScaleInverse());
+        setLocation(this.x, this.y);
         setInvoker(this);
         setVisible(true);
     }

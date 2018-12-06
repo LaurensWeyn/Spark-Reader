@@ -20,10 +20,7 @@ import com.lweyn.sparkreader.Main;
 import com.lweyn.sparkreader.Persist;
 import com.lweyn.sparkreader.hooker.ClipboardHook;
 import com.lweyn.sparkreader.language.splitter.FoundWord;
-import com.lweyn.sparkreader.ui.DisplayedWord;
-import com.lweyn.sparkreader.ui.Line;
-import com.lweyn.sparkreader.ui.UI;
-import com.lweyn.sparkreader.ui.WordEditUI;
+import com.lweyn.sparkreader.ui.*;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -142,9 +139,9 @@ public class WordPopup extends JPopupMenu
     }
     public void show(int x, int y)
     {
-        this.x = x;
-        this.y = y;
-        show(ui.disp.getFrame(), x, y);
+        this.x = (int)(x * Overlay.getFoundScaleInverse());
+        this.y = (int)(y * Overlay.getFoundScaleInverse());
+        show(ui.disp.getFrame(), this.x, this.y);
     }
 
     public static void makeDefPopup(Line line)

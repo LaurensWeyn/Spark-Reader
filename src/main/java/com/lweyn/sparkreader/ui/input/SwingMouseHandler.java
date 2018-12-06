@@ -39,6 +39,7 @@ public class SwingMouseHandler extends MouseHandler implements MouseListener, Mo
     @Override
     public void mouseClicked(MouseEvent e)
     {
+        Point p = scaleDPI(e.getPoint());
         long clickTime = System.currentTimeMillis();
         if(clickTime - lastClickTime < MAX_CLICK_DELAY)
         {
@@ -51,27 +52,28 @@ public class SwingMouseHandler extends MouseHandler implements MouseListener, Mo
 
         if(e.getButton() == 1 && lMouseClick)//if left click (and wasn't drag)
         {
-            leftClick(e.getPoint());
+            leftClick(p);
             lMouseClick = false;
         }
         else if(e.getButton() == 2)//middle click: place marker
         {
-            middleClick(e.getPoint());
+            middleClick(p);
         }
         else if(e.getButton() == 3)//right click: extra option menu
         {
-            rightClick(e.getPoint());
+            rightClick(p);
         }
     }
 
     @Override
     public void mousePressed(MouseEvent e)
     {
-        dragReference = e.getPoint();
+        Point p = scaleDPI(e.getPoint());
+        dragReference = p;
         if(e.getButton() == 1)
         {
             lMouseClick = true;
-            if(e.getY() >= furiganaStartY && e.getY() <= textStartY)//only furigana bar draggable
+            if(p.y >= furiganaStartY && p.y <= textStartY)//only furigana bar draggable
             {
                 movingWindow = true;
             }
@@ -81,8 +83,8 @@ public class SwingMouseHandler extends MouseHandler implements MouseListener, Mo
     @Override
     public void mouseReleased(MouseEvent e)
     {
-
-        double dist = dragReference.distanceSq(e.getPoint());
+        Point p = scaleDPI(e.getPoint());
+        double dist = dragReference.distanceSq(p);
         if((dist != 0 || movingWindow) && dist < MIN_DRAG_DIST)//only moved a little
         {
             if(e.getButton() == 1)
@@ -90,9 +92,9 @@ public class SwingMouseHandler extends MouseHandler implements MouseListener, Mo
             movingWindow = false;
             mouseClicked(e);//pass this over as a click
         }
-        else if (!movingWindow)//long drag, not on Furigana bar
+        else if (!movingWindow && dist >= MIN_DRAG_DIST)//long drag, not on Furigana bar
         {
-            dragComplete(dragReference, e.getPoint());
+            dragComplete(dragReference, p);
         }
         movingWindow = false;
     }
@@ -121,7 +123,7 @@ public class SwingMouseHandler extends MouseHandler implements MouseListener, Mo
         }
         else if(dragReference.distanceSq(e.getPoint()) >= MIN_DRAG_DIST)
         {
-            mouseDrag(dragReference, e.getPoint());
+            mouseDrag(dragReference, scaleDPI(e.getPoint()));
         }
     }
 
@@ -129,7 +131,7 @@ public class SwingMouseHandler extends MouseHandler implements MouseListener, Mo
     @Override
     public void mouseMoved(MouseEvent e)
     {
-        mouseMove(e.getPoint());
+        mouseMove(scaleDPI(e.getPoint()));
     }
 
     @Override
@@ -137,6 +139,12 @@ public class SwingMouseHandler extends MouseHandler implements MouseListener, Mo
     {
         if(hidden)
             return;
-        mouseScroll(e.getWheelRotation(), e.getPoint());
+        mouseScroll(e.getWheelRotation(), scaleDPI(e.getPoint()));
+    }
+
+    private Point scaleDPI(Point p)
+    {
+        p.setLocation(ui.disp.getFoundScale() * p.x, ui.disp.getFoundScale() * p.y);
+        return p;
     }
 }

@@ -26,6 +26,7 @@ import com.lweyn.sparkreader.language.dictionary.Kanji;
 import com.lweyn.sparkreader.language.splitter.FoundDef;
 import com.lweyn.sparkreader.language.splitter.FoundWord;
 import com.lweyn.sparkreader.ui.DisplayedWord;
+import com.lweyn.sparkreader.ui.Overlay;
 import com.lweyn.sparkreader.ui.UI;
 
 import javax.swing.*;
@@ -136,7 +137,7 @@ public class DefPopup extends JPopupMenu
 
     public void show(int x, int y)
     {
-        show(Main.getParentFrame(), x, y);
+        show(Main.getParentFrame(), (int)(x * Overlay.getFoundScaleInverse()), (int)(y * Overlay.getFoundScaleInverse()));
     }
 
     private static int exportedThisSession = 0;
