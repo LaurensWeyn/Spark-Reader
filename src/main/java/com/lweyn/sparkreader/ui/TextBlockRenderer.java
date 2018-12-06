@@ -24,6 +24,8 @@ public class TextBlockRenderer
 
     private Deque<TextBlock> blocks;
 
+    private static int lastFontHeight = 1;
+
     public TextBlockRenderer(boolean displayUpwards, int width)
     {
         this.displayUpwards = displayUpwards;
@@ -61,7 +63,9 @@ public class TextBlockRenderer
         g.setColor(new Color(0,0,0,1));
         g.fillRect(x, y - g.getFontMetrics().getAscent() + (Main.options.getOptionBool("defsShowUpwards")?1:0), width, 1);//let mouse move through 1 pixel space
         y++;//slight spacer
-        if(!Main.options.getOptionBool("defsShowUpwards"))y -= g.getFontMetrics().getHeight();
+        if(!Main.options.getOptionBool("defsShowUpwards"))
+            y -= g.getFontMetrics().getHeight();
+        lastFontHeight = g.getFontMetrics().getHeight();
 
         for(TextBlock block: blocks)
         {
@@ -210,6 +214,15 @@ public class TextBlockRenderer
     public void scrollUp()
     {
         startLine = Math.max(startLine - 1, 0);
+    }
+
+    /**
+     * Gets the last known font height used by a TextBlockRenderer. Used to calculate pixel-relative scrolling speeds.
+     * @return the last font height used.
+     */
+    public static int getLastFontHeight()
+    {
+        return lastFontHeight;
     }
 
     /**

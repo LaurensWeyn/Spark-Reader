@@ -1,9 +1,9 @@
 package com.lweyn.sparkreader.ui.input;
 
 import com.lweyn.sparkreader.Main;
-import com.lweyn.sparkreader.language.splitter.FoundWord;
 import com.lweyn.sparkreader.ui.DisplayedWord;
 import com.lweyn.sparkreader.ui.Line;
+import com.lweyn.sparkreader.ui.TextBlockRenderer;
 import com.lweyn.sparkreader.ui.UI;
 import com.lweyn.sparkreader.ui.menubar.Menubar;
 import com.lweyn.sparkreader.ui.popup.DefPopup;
@@ -42,15 +42,23 @@ public abstract class MouseHandler
 
     public void leftClick()
     {
-        if(mousePos != null)leftClick(mousePos);
+        if(mousePos != null)
+            leftClick(mousePos);
     }
     public void rightClick()
     {
-        if(mousePos != null)rightClick(mousePos);
+        if(mousePos != null)
+            rightClick(mousePos);
     }
     public void middleClick()
     {
-        if(mousePos != null)middleClick(mousePos);
+        if(mousePos != null)
+            middleClick(mousePos);
+    }
+    public void mouseScroll(int scrollDir)
+    {
+        if(mousePos != null)
+            mouseScroll(scrollDir, mousePos);
     }
 
     public void leftClick(Point pos)
@@ -102,14 +110,8 @@ public abstract class MouseHandler
     }
     public void rightClick(Point pos)
     {
-        //settings button
-        /*if(pos.y > furiganaStartY && pos.y < textStartY)
-        {
-            new MenuPopup(com.lweyn.sparkreader.ui).display(pos);//no longer requires button; right click anywhere on bar works
-        }*/
-
         //word
-        if(pos.y >= textStartY && pos.y <= textEndY)
+        if(onText(pos))
         {
             WordPopup popup = null;
             int lineIndex = ui.getLineIndex(pos);
@@ -123,7 +125,7 @@ public abstract class MouseHandler
                 popup.show(pos.x, pos.y);
         }
         //definition
-        else if(Main.options.getOptionBool("defsShowUpwards") ? (pos.y < defStartY):(pos.y > defStartY))
+        else if(onDefinition(pos))
         {
             DefPopup popup = new DefPopup(ui.selectedWord, ui, pos.y);
             popup.show(pos.x, pos.y);
@@ -131,7 +133,7 @@ public abstract class MouseHandler
     }
     public void middleClick(Point pos)
     {
-        if(pos.y > textStartY && pos.y < textEndY)//place marker
+        if(onText(pos))//place marker
         {
             //int point = toCharPos(pos.x + mainFontSize/2);
             int lineIndex = ui.getLineIndex(pos);
@@ -179,7 +181,7 @@ public abstract class MouseHandler
             }
         }
         
-        if(lineIndex >= Main.currPage.getLineCount() || lineIndex < 0)//over definition text
+        if(onDefinition(pos))//over definition text
         {
             reRender |= clearWordMouseover();//disable any mouseover effects
         }
@@ -224,7 +226,8 @@ public abstract class MouseHandler
                 ui.disp.getFrame().setCursor(Cursor.getDefaultCursor());
             }
         }
-        if(reRender)ui.render();
+        if(reRender)
+            ui.render();
     }
 
     public void mouseExit()
@@ -236,46 +239,46 @@ public abstract class MouseHandler
             rerender = true;
         }
         //temporary ignore loose focus
-        if(tempIgnoreMouseExit)return;
+        if(tempIgnoreMouseExit)
+            return;
 
         //collapse definitions
         if(ui.selectedWord != null && Main.options.getOptionBool("hideDefOnMouseLeave"))
         {
-            ui.selectedWord.showDef(false);
-            ui.selectedWord = null;
-            rerender = true;
+            if(!(isTouchMode() && dragOngoing))//swipes to offscreen shouldn't close the definition panel in touch mode
+            {
+                ui.selectedWord.showDef(false);
+                ui.selectedWord = null;
+                rerender = true;
+            }
         }
         rerender |= clearWordMouseover();
 
-        if(rerender)ui.render();
-    }
-
-    public void mouseScroll(int scrollDir)
-    {
-        if(mousePos == null)return;
-        mouseScroll(scrollDir, mousePos);
+        if(rerender)
+            ui.render();
     }
 
     public void mouseScroll(int scrollDir, Point pos)
     {
-        boolean onTextRange = (pos.y < textEndY && pos.y >= textStartY);
-
         //scroll up/down definition
-        if((Main.options.getOptionBool("defsShowUpwards") ? (pos.y < defStartY):
-                (pos.y > defStartY)) && ui.selectedWord != null)
+        if(onDefinition(pos) && ui.selectedWord != null)
         {
-            if(scrollDir > 0)ui.selectedWord.getCurrentDef().scrollDown();
-            if(scrollDir < 0)ui.selectedWord.getCurrentDef().scrollUp();
+            if(scrollDir > 0)
+                ui.selectedWord.getCurrentDef().scrollDown();
+            if(scrollDir < 0)
+                ui.selectedWord.getCurrentDef().scrollUp();
             ui.render();
         }
 
         //scroll through definitions
-        else if(onTextRange && ui.selectedWord != null)
+        else if(onText(pos) && ui.selectedWord != null)
         {
             if(ui.selectedWord == Main.currPage.getLine(ui.getLineIndex(pos)).getWordAt(pos.x))
             {
-                if(scrollDir > 0)ui.selectedWord.scrollDown();
-                if(scrollDir < 0)ui.selectedWord.scrollUp();
+                if(scrollDir > 0)
+                    ui.selectedWord.scrollDown();
+                if(scrollDir < 0)
+                    ui.selectedWord.scrollUp();
             }
             else//not over this word: close definition and scroll text instead
             {
@@ -286,24 +289,22 @@ public abstract class MouseHandler
             }
             ui.render();
         }
-        else if(onTextRange && ui.selectedWord == null)//scroll text
+        else if(onText(pos) && ui.selectedWord == null)//scroll text
         {
             ui.xOffset += scrollDir * -mainFontSize;
             ui.boundXOff();
             ui.render();
             mouseMove(mousePos);//update highlighted word since text moved (kind of a hack right now)
         }
-        else if(pos.y <= textStartY && pos.y > furiganaStartY)//scroll history
+        else if(onFuriBar(pos))//scroll history
         {
             String historyLine;
+
             if(scrollDir < 0)//scroll up
-            {
                 historyLine = Main.log.back();
-            }
             else
-            {
                 historyLine = Main.log.forward();
-            }
+
             if(!Main.options.getOptionBool("splitLines"))historyLine = historyLine.replace("\n", "");//all on one line if not splitting
             logger.info("loading line " + historyLine + " from log");
             Main.currPage.clearMarkers();//markers not relevant for this text
@@ -320,16 +321,104 @@ public abstract class MouseHandler
             mousedWord.setMouseover(false);
             rerender = mousedWord.updateOnMouse();
             mousedWord = null;
-            if(rerender)ui.render();
+            if(rerender)
+                ui.render();
         }
         mouseLine = -1;
         mousePos = null;
         return rerender;
     }
-    protected int toCharPos(int x)
+
+
+    private int lastDragScrollDistance = 0;
+    private boolean dragOngoing = false;
+    public void mouseDrag(Point start, Point current)
     {
-        x -= ui.xOffset;
-        x /= mainFontSize;
-        return x;
+        dragOngoing = true;
+        if(isTouchMode())
+        {
+            //if dragging left/right from text:
+            if(onText(start) && (angleCloseTo(start, current, ANGLE_LEFT) || angleCloseTo(start, current, ANGLE_RIGHT)))
+            {
+                int dragScrollDistance = (start.x - current.x) / UI.mainFontSize;//units to scroll by
+                //simulate scrolling from start pos (which is on text), AKA scroll through text:
+                mouseScroll(dragScrollDistance - lastDragScrollDistance, start);
+                lastDragScrollDistance = dragScrollDistance;//keep track of how much we've scrolled with this swipe
+            }
+            //if dragging up/down from definition:
+            else if(onDefinition(start) && (angleCloseTo(start, current, ANGLE_UP) || angleCloseTo(start, current, ANGLE_DOWN)))
+            {
+                int dragScrollDistance = (start.y - current.y) / TextBlockRenderer.getLastFontHeight();//units to scroll by
+                //simulate scrolling from start pos (which is on definition), AKA scroll through definition:
+                mouseScroll(dragScrollDistance - lastDragScrollDistance, start);
+                lastDragScrollDistance = dragScrollDistance;//keep track of how much we've scrolled with this swipe
+            }
+        }
+    }
+
+    private static final double ANGLE_UP = 90;
+    private static final double ANGLE_DOWN = -90;
+    private static final double ANGLE_RIGHT = -180;
+    private static final double ANGLE_LEFT = 0;
+    private static final double ANGLE_TOL = 30;
+
+    public void dragComplete(Point start, Point end)
+    {
+        dragOngoing = false;
+        if(isTouchMode())
+        {
+            lastDragScrollDistance = 0;//reset for next drag
+
+            //swipe down from text detected:
+            if(onText(start) && angleCloseTo(start, end, ANGLE_DOWN))
+                middleClick(start);//count that as a middle click on the text: place a marker
+            //swipe left/right on definition:
+            else if(onDefinition(start))
+            {
+                //move to next/previous definition based on direction:
+                if(angleCloseTo(start, end, ANGLE_LEFT))
+                    ui.selectedWord.scrollDown();
+                else if(angleCloseTo(start, end, ANGLE_RIGHT))
+                    ui.selectedWord.scrollUp();
+                ui.render();//update UI after scrolling
+            }
+        }
+        else
+        {
+            //place splits at start and end points of drag
+            //TODO place split points
+            //TODO show first split point when starting the drag
+            //TODO select word on release
+        }
+    }
+
+
+    private static boolean onDefinition(Point point)
+    {
+        return (Main.options.getOptionBool("defsShowUpwards") ? (point.y < defStartY) : (point.y > defStartY));
+    }
+
+    private static boolean onText(Point point)
+    {
+        return point.y >= textStartY && point.y <= textEndY;
+    }
+    private static boolean onFuriBar(Point point)
+    {
+        return point.y <= textStartY && point.y > furiganaStartY;
+    }
+
+    private static double angleBetween(Point start, Point end)
+    {
+        return Math.toDegrees(Math.atan2(start.y - end.y, start.x - end.x));
+    }
+
+    private static boolean angleCloseTo(Point start, Point end, double expectedAngle)
+    {
+        return Math.abs(angleBetween(start, end) - expectedAngle) <= ANGLE_TOL;
+    }
+    
+    private static boolean isTouchMode()
+    {
+        return Main.options.getOptionBool("touchMode");
     }
 }

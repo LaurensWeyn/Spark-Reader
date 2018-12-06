@@ -3,7 +3,6 @@ package com.lweyn.sparkreader.language.dictionary;
 import com.lweyn.sparkreader.language.deconjugator.ValidWord;
 import com.lweyn.sparkreader.language.dictionary.JMDict.Sense;
 import com.lweyn.sparkreader.language.dictionary.JMDict.Spelling;
-import com.sun.xml.internal.bind.v2.model.core.ID;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;

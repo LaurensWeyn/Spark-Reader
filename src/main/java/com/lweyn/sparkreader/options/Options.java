@@ -150,6 +150,7 @@ public class Options
         options.put("ankiExportFreqData", "false");
 
         options.put("menubarOptionSpacing", "7");
+        options.put("touchMode", "false");
 
         options.put("showReadingFreqs", "false");
     }

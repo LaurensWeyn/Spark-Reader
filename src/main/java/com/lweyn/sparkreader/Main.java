@@ -176,7 +176,7 @@ public class Main
         mainPanel.add(loadProgress, BorderLayout.SOUTH);
         loadScreen.setSize(300,100);
         Utils.centerWindow(loadScreen);
-        loadScreen.setIconImage(ImageIO.read(loadScreen.getClass().getResourceAsStream("/com/lweyn/sparkreader/ui/icon.gif")));
+        loadScreen.setIconImage(ImageIO.read(Main.class.getResourceAsStream("/com/lweyn/sparkreader/ui/icon.gif")));
         loadScreen.addWindowListener(new WindowAdapter()
         {
             @Override

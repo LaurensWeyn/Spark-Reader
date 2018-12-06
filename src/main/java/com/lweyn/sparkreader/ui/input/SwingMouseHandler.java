@@ -9,14 +9,14 @@ import java.awt.event.*;
 import static com.lweyn.sparkreader.ui.UI.*;
 
 /**
- * Created by laure on 2017/04/24.
+ * Abstracts implementation details of recognising various 'gestures' from the Swing MouseListeners and forwards it to the MouseHandler it extends.
  */
 public class SwingMouseHandler extends MouseHandler implements MouseListener, MouseMotionListener, MouseWheelListener
 {
     private static Logger logger = Logger.getLogger(SwingMouseHandler.class);
 
     private boolean lMouseClick = false;
-    private boolean lMouseState = false;
+    private boolean movingWindow = false;
     private Point dragReference;
     private long lastClickTime = 0;
 
@@ -47,7 +47,7 @@ public class SwingMouseHandler extends MouseHandler implements MouseListener, Mo
         }
         lastClickTime = clickTime;
 
-        if(e.getButton() == 1)lMouseState = false;
+        if(e.getButton() == 1) movingWindow = false;
 
         if(e.getButton() == 1 && lMouseClick)//if left click (and wasn't drag)
         {
@@ -73,7 +73,7 @@ public class SwingMouseHandler extends MouseHandler implements MouseListener, Mo
             lMouseClick = true;
             if(e.getY() >= furiganaStartY && e.getY() <= textStartY)//only furigana bar draggable
             {
-                lMouseState = true;
+                movingWindow = true;
             }
         }
     }
@@ -83,25 +83,24 @@ public class SwingMouseHandler extends MouseHandler implements MouseListener, Mo
     {
 
         double dist = dragReference.distanceSq(e.getPoint());
-        if((dist != 0 || lMouseState) && dist < MIN_DRAG_DIST)//only moved a little
+        if((dist != 0 || movingWindow) && dist < MIN_DRAG_DIST)//only moved a little
         {
-            if(e.getButton() == 1)lMouseClick = true;
-            lMouseState = false;
+            if(e.getButton() == 1)
+                lMouseClick = true;
+            movingWindow = false;
             mouseClicked(e);//pass this over as a click
         }
-        else if (!lMouseState)//long drag, not on Furigana bar
+        else if (!movingWindow)//long drag, not on Furigana bar
         {
-            //place splits at start and end points of drag
-            //TODO place split points
-            //TODO show first split point when starting the drag
-            //TODO select word on release
+            dragComplete(dragReference, e.getPoint());
         }
-        lMouseState = false;
+        movingWindow = false;
     }
 
     @Override
     public void mouseEntered(MouseEvent e)
     {
+        //detected and handled by 'mouseMoved'
     }
 
     @Override
@@ -113,12 +112,16 @@ public class SwingMouseHandler extends MouseHandler implements MouseListener, Mo
     @Override
     public void mouseDragged(MouseEvent e)
     {
-        if(lMouseState)
+        if(movingWindow)
         {
             Point moveTo = e.getLocationOnScreen();
             moveTo.translate(-dragReference.x, -dragReference.y);
             ui.disp.getFrame().setLocation(moveTo);
             lMouseClick = false;//no longer a click
+        }
+        else if(dragReference.distanceSq(e.getPoint()) >= MIN_DRAG_DIST)
+        {
+            mouseDrag(dragReference, e.getPoint());
         }
     }
 
@@ -132,7 +135,8 @@ public class SwingMouseHandler extends MouseHandler implements MouseListener, Mo
     @Override
     public void mouseWheelMoved(MouseWheelEvent e)
     {
-        if(hidden)return;
+        if(hidden)
+            return;
         mouseScroll(e.getWheelRotation(), e.getPoint());
     }
 }

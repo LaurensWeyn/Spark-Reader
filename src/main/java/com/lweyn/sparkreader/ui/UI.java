@@ -253,7 +253,7 @@ public class UI
         Main.ui = new UI();
         Main.ui.registerListeners();
         //random sample text to copy for testing
-        logger.debug("ひかり「暁斗たちと遊んでて夕飯のギョーザを食べ損ねて、\n悔しかったから、星座にしてやったんだよね」");
+        logger.debug("Sample text:\nひかり「暁斗たちと遊んでて夕飯のギョーザを食べ損ねて、\n悔しかったから、星座にしてやったんだよね」");
         
         //center window
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

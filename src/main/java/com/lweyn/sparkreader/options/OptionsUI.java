@@ -80,6 +80,7 @@ public class OptionsUI extends JFrame
             display.add(new ToggleOption("reduceSave", "Reduce file I/O", "<html>If ticked, writing to files is avoided until the program is closed or a lot of changes have been made.<br>Turning this on will improve performance, but if the program crashes some progress may be lost."));
             display.add(new ToggleOption("hookKeyboard", "Enable keyboard controls", "<html>If enabled, Spark Reader uses a tool to listen for keystrokes while the window is unfocused.<br>Requires restart."));
             display.add(new ToggleOption("forwardKeys", "Forward enter key if focused", "<html>Sends enter presses to the hooked window.<br>Use for games that need Spark Reader to stay focused.<br>Requires 'keyboard controls', 'take focus', and an active window hook to be useful."));
+            display.add(new ToggleOption("touchMode", "Touch screen controls", "<html>Interaction with the main UI is optimised for touch screen input with this enabled. Swipe gestures, etc."));
         root.add(display);
         PageGroup window = new PageGroup("Overlay", "Graphical settings related to the on-screen overlay window");
 
