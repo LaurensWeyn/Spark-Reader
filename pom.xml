@@ -7,27 +7,74 @@
     <groupId>com.lweyn</groupId>
     <artifactId>spark-reader</artifactId>
     <version>0.8-SNAPSHOT</version>
+    <properties>
+        <maven.version>3.3.9</maven.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <jdk.version>1.9</jdk.version>
+        <main.class>com.lweyn.sparkreader.Main</main.class>
+    </properties>
+
+    <!--To build jar: mvn clean compile assembly:single-->
+
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.7.0</version>
+                    <configuration>
+                        <source>${jdk.version}</source>
+                        <target>${jdk.version}</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>3.0.0</version>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <mainClass>${main.class}</mainClass>
+                            </manifest>
+                        </archive>
+                        <descriptorRefs>
+                            <descriptorRef>jar-with-dependencies</descriptorRef>
+                        </descriptorRefs>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>9</source>
-                    <target>9</target>
-                </configuration>
             </plugin>
         </plugins>
     </build>
 
     <dependencies>
 
-        <!--Including this causes a conflict somehow, though it still works if it's commented out-->
-        <!--<dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
-        </dependency>-->
+        <!--eb4j - not on Maven; install these manually-->
+        <!--The code can be found here: https://osdn.net/projects/eb4j/downloads/48492/eb4j-1.0.5-src.tar.bz2/-->
+        <!--Simply run 'mvn install' in the root of the downloaded project. It's fine if web fails, as long as core and tools passed.-->
+        <dependency>
+            <groupId>fuku.eb4j</groupId>
+            <artifactId>eb4j-core</artifactId>
+            <version>1.0.5</version>
+        </dependency>
+        <dependency>
+            <groupId>fuku.eb4j</groupId>
+            <artifactId>eb4j-tools</artifactId>
+            <version>1.0.5</version>
+        </dependency>
+        <!--Commons-lang is used by eb4j and needs to be included manually for some reason-->
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.4</version>
+        </dependency>
 
         <dependency>
             <groupId>net.java.dev.jna</groupId>
@@ -45,6 +92,7 @@
             <artifactId>jnativehook</artifactId>
             <version>2.1.0</version>
         </dependency>
+
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
@@ -56,6 +104,17 @@
             <artifactId>junit</artifactId>
             <version>4.12</version>
             <scope>test</scope>
+        </dependency>
+        <!--Logging:-->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.14</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId><!--Connects eb4j's logging to log4j, if I understand this correctly-->
+            <version>1.5.2</version>
         </dependency>
 
     </dependencies>

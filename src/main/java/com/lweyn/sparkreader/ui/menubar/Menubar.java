@@ -1,6 +1,7 @@
 package com.lweyn.sparkreader.ui.menubar;
 
 import com.lweyn.sparkreader.Main;
+import com.lweyn.sparkreader.ui.Overlay;
 import com.lweyn.sparkreader.ui.UI;
 
 import javax.swing.*;
@@ -104,7 +105,9 @@ public class Menubar
         if(selectedItem != null)
         {
             UI.tempIgnoreMouseExit = true;
-            selectedItem.getMenu().show(Main.getParentFrame(), selectedItem.getStartPos(), UI.textStartY);
+            selectedItem.getMenu().show(Main.getParentFrame(),
+                    Overlay.scaleToReal(selectedItem.getStartPos()),
+                    Overlay.scaleToReal(UI.textStartY));
         }
     }
 

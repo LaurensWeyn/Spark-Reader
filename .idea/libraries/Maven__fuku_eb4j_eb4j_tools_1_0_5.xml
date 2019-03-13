@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: fuku.eb4j:eb4j-tools:1.0.5">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/fuku/eb4j/eb4j-tools/1.0.5/eb4j-tools-1.0.5.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/fuku/eb4j/eb4j-tools/1.0.5/eb4j-tools-1.0.5-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/fuku/eb4j/eb4j-tools/1.0.5/eb4j-tools-1.0.5-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

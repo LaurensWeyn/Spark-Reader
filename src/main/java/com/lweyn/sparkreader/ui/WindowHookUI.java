@@ -1,6 +1,5 @@
 package com.lweyn.sparkreader.ui;
 
-import com.lweyn.sparkreader.Main;
 import com.lweyn.sparkreader.Utils;
 import com.lweyn.sparkreader.hooker.WindowHook;
 
@@ -24,16 +23,13 @@ public class WindowHookUI
         mainPanel.setPreferredSize(new Dimension(500, 35));
         frame.pack();
         
-        JComboBox list = new JComboBox<>(WindowHook.hook.getAvailableWindows());
+        JComboBox list = new JComboBox<>(WindowHook.instance.getAvailableWindows());
         
         JButton select = new JButton();
         select.setText("Select");
         select.addActionListener((ActionEvent e) ->
         {
-            WindowHook.hook.setName((String)list.getSelectedItem());
-            UI.stickToWindow = WindowHook.hook.getCoord();
-            JMenuItem hookUIItem = (JMenuItem) Main.ui.menubar.getMenuItem("Connect", "Stick").getComponent();
-            hookUIItem.setText("Stop sticking to window");//rename option
+            WindowHook.instance.setName((String)list.getSelectedItem());
             frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
         });
         list.setPreferredSize(new Dimension(380, 25));

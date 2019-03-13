@@ -3,10 +3,10 @@ package com.lweyn.sparkreader.ui.menubar;
 import com.lweyn.sparkreader.Main;
 import com.lweyn.sparkreader.Persist;
 import com.lweyn.sparkreader.hooker.ClipboardHook;
+import com.lweyn.sparkreader.hooker.WindowHook;
 import com.lweyn.sparkreader.network.Client;
 import com.lweyn.sparkreader.network.Host;
 import com.lweyn.sparkreader.options.OptionsUI;
-import com.lweyn.sparkreader.ui.UI;
 import com.lweyn.sparkreader.ui.WindowHookUI;
 
 import javax.swing.*;
@@ -130,18 +130,24 @@ public class MenubarBuilder
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                JMenuItem thisItem = (JMenuItem) Main.ui.menubar.getMenuItem(item.getName(), "Stick").getComponent();
-                if(UI.stickToWindow == null)
+                if(WindowHook.instance.getHookMode() == WindowHook.HookMode.disabled)
                 {
                     WindowHookUI.display();//allow user to enable
                 }
                 else
                 {
-                    UI.stickToWindow = null;//disable
-                    thisItem.setText("Stick to window");//rename option
+                    WindowHook.instance.disableTracking();
                 }
             }
         }, "Stick");
+        item.addMenuItem(new AbstractAction("Stick to main display")
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                WindowHook.instance.trackMainScreen();
+            }
+        }, "StickScreen");
 
         item.addSpacer();
         //removed for now since it's currently useless

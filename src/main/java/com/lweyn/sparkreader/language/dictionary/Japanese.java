@@ -36,7 +36,8 @@ public class Japanese
     }
     public static boolean isGrammar(char c)
     {
-        return c == '\n' || c == '。' || c == '…' || c == '？' || c == '　';
+        return c == '\n' || c == '。' || c == '…' || c == '？' || c == '　' || c == '！' || c == '―'
+                || c == '〇' || c == '●' || c == '「' || c == '（' || c == '）' || c == '」';
     }
     public static boolean isJapanese(String text)
     {

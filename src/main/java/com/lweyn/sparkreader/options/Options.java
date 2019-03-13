@@ -152,6 +152,7 @@ public class Options
 
         options.put("menubarOptionSpacing", "7");
         options.put("touchMode", "false");
+        options.put("jpOnly", "false");
 
         options.put("showReadingFreqs", "false");
     }

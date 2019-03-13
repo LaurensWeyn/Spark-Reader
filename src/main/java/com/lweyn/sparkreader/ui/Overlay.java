@@ -123,6 +123,11 @@ public class Overlay
         return foundScale;
     }
 
+    public static int scaleToReal(int val)
+    {
+        return (int)(val / foundScale);
+    }
+
     public static double getFoundScaleInverse()
     {
         return 1.0 / foundScale;

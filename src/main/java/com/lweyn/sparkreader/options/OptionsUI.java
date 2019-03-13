@@ -75,6 +75,7 @@ public class OptionsUI extends JFrame
             display.add(new ToggleOption("takeFocus", "Take focus when clicked (requires restart)", "If the game under the overlay is still receiving clicks, try turning this on."));
             display.add(new ToggleOption("showOnNewLine", "Restore window on new Japanese text", "If on, the window will automatically reappear if new Japanese text is detected."));
             display.add(new ToggleOption("hideOnOtherText", "Minimise window on new non-Japanese text", "If on, the window will automatically minimise if non-Japanese text is put into the clipboard."));
+            display.add(new ToggleOption("jpOnly", "Cut out non-Japanese text", "If on, all non-Japanese characters will be removed before and after a block of Japanese text. Useful for multi-language games."));
             display.add(new ToggleOption("startInTray", "Start in tray if there's no Japanese text on startup", "By default, the window will be visible after startup even if there is no text to display."));
             display.add(new OptionLabel("Other:", null));
             display.add(new ToggleOption("reduceSave", "Reduce file I/O", "<html>If ticked, writing to files is avoided until the program is closed or a lot of changes have been made.<br>Turning this on will improve performance, but if the program crashes some progress may be lost."));
@@ -288,7 +289,7 @@ public class OptionsUI extends JFrame
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         rightOptions.setLayout(new BoxLayout(rightOptions, BoxLayout.Y_AXIS));
         rightOptions.add(new JLabel("Choose an option group on the left to change its settings"));
-        rightOptions.add(new JLabel("Mouseover Main.options to see what they do, or check the manual."));
+        rightOptions.add(new JLabel("Mouseover options to see what they do, or check the manual."));
         add(menuScroll, BorderLayout.WEST);
         add(optionScroll, BorderLayout.CENTER);
         add(lowerButtons, BorderLayout.SOUTH);

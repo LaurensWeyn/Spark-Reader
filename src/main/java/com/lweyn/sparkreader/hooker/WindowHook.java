@@ -1,7 +1,12 @@
 package com.lweyn.sparkreader.hooker;
 
+import com.lweyn.sparkreader.Main;
+import com.lweyn.sparkreader.ui.Overlay;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef;
+import org.apache.log4j.Logger;
+
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,12 +17,15 @@ import static com.sun.jna.platform.win32.WinUser.*;
  */
 public class WindowHook
 {
-    //TODO this could use some work later
-    User32 libuser32 = null;
-    String name;
-    boolean available = true;
+    private static Logger logger = Logger.getLogger(WindowHook.class);
+
+    private User32 libuser32;
+    private String name;
+    private boolean available = true;
     
-    public static WindowHook hook = new WindowHook();
+    public static WindowHook instance = new WindowHook();
+
+    private HookMode mode = HookMode.disabled;
     
     public WindowHook()
     {
@@ -25,25 +33,101 @@ public class WindowHook
         available = libuser32 != null;
     }
     
-    public WindowHook setName(String name) // for chaining like myhook.setName(...).getCoord()
+    public WindowHook setName(String name) // for chaining like myhook.setName(...).update()
     {
         this.name = name;
+        if(!available)
+            return this;
+        mode = HookMode.trackWindow;
+        logger.info("Started tracking window with name '" + name + "'");
+        updateWindowPointer();
+        updateHookMenuItem();
         return this;
     }
-    public List<Integer> getCoord()
+
+
+    private void updateWindowPointer()
     {
-        if(!available || libuser32 == null)
-            return null;
-        WinDef.POINT point = new WinDef.POINT(0,0);
-        if(libuser32.ClientToScreen(libuser32.FindWindowW(null, name.toCharArray()), point))
+        windowPointer = libuser32.FindWindowW(null, name.toCharArray());
+    }
+
+    private WinDef.POINT lastPoint = new POINT(0, 0);
+    private Pointer windowPointer;
+    public void update()
+    {
+        switch(mode)
         {
-            List<Integer> coord = new ArrayList<>(); 
-            coord.add(point.x);
-            coord.add(point.y);
-            return coord;
+            case disabled:
+                break;//no updates when disabled, obv.
+            case MainScreen:
+                lastPoint.x = 0;
+                lastPoint.y = 0;
+                break;
+            case trackWindow:
+                lastPoint.x = 0;
+                lastPoint.y = 0;
+                if(libuser32.ClientToScreen(windowPointer, lastPoint))
+                {
+                    //apply final step if successful: scaling
+                    lastPoint.x = Overlay.scaleToReal(lastPoint.x);
+                    lastPoint.y = Overlay.scaleToReal(lastPoint.y);
+                }
+                else
+                {
+                    //failed: disable tracking since tracked window is likely closed
+                    logger.warn("Window '" + name + "' no longer found. Auto-disabling window tracking");
+                    mode = HookMode.disabled;
+                    updateHookMenuItem();
+                }
+                break;
         }
-        else
-            return null;
+    }
+
+    private void updateHookMenuItem()
+    {
+        if(Main.ui == null || Main.ui.menubar == null)
+            return;
+        JMenuItem hookUIItem = (JMenuItem) Main.ui.menubar.getMenuItem("Connect", "Stick").getComponent();
+        JMenuItem hookScreenItem = (JMenuItem) Main.ui.menubar.getMenuItem("Connect", "StickScreen").getComponent();
+        switch(mode)
+        {
+            case MainScreen:
+                hookUIItem.setText("Stop sticking to screen corner");
+                break;
+            case trackWindow:
+                hookUIItem.setText("Stop sticking to window");
+                break;
+            case disabled:
+                hookUIItem.setText("Stick to window");
+        }
+        hookScreenItem.setEnabled(mode != HookMode.MainScreen);
+    }
+
+    public int getX()
+    {
+        return lastPoint.x;
+    }
+
+    public int getY()
+    {
+        return lastPoint.y;
+    }
+
+    public void trackMainScreen()
+    {
+        mode = HookMode.MainScreen;
+        updateHookMenuItem();
+    }
+
+    public void disableTracking()
+    {
+        mode = HookMode.disabled;
+        updateHookMenuItem();
+    }
+
+    public HookMode getHookMode()
+    {
+        return mode;
     }
 
     public void sendAdvanceKey()
@@ -83,4 +167,12 @@ public class WindowHook
         }, null);
         return names.toArray(new String[0]);
     }
+
+    public enum HookMode
+    {
+        disabled,
+        MainScreen,
+        trackWindow
+    }
+
 }

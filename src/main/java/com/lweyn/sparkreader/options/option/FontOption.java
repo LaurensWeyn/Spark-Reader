@@ -16,6 +16,8 @@
  */
 package com.lweyn.sparkreader.options.option;
 
+import com.lweyn.sparkreader.ui.Overlay;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -47,7 +49,7 @@ public class FontOption extends UIOption
         updater = new Updater();
         
         String tags = options.getOption(tag).split(",")[1].toUpperCase();
-
+        int fontSize = Integer.parseInt(options.getOption(tag).split(",")[2].trim());//get the 'raw' size; font.getSize() will return the DPI compensated value
         
         font = options.getFont(tag);
         nameLabel.setText(name);
@@ -90,15 +92,15 @@ public class FontOption extends UIOption
         chkAA.setSelected(tags.contains("A"));
         chkBold.setSelected(tags.contains("B"));
         chkItalic.setSelected(tags.contains("I"));
-        
+
         cmbFontName.setEditable(true);
         cmbFontName.setSelectedItem(font.getName());
         cmbFontName.setToolTipText("Not all fonts support Unicode or work with Spark Reader!");
         size.addChangeListener(updater);
         cmbFontName.addActionListener(updater);
-        size.setValue(font.getSize());
+        size.setValue(fontSize);
         size.setMaximumSize(size.getPreferredSize());
-        
+
         //settings.add(new JLabel("Font name/size"));
         settings.add(new JLabel(tip));
         settings.add(chkBold);
@@ -106,23 +108,23 @@ public class FontOption extends UIOption
         settings.add(chkItalic);
         settings.add(size);
         settings.add(chkAA);
-        
+
         //mainPanel.add(new JLabel(tip), BorderLayout.NORTH);
         mainPanel.add(settings, BorderLayout.NORTH);
         mainPanel.add(example , BorderLayout.SOUTH);
-        
-        
-        
-        
+
+
+
+
         example.setFont(font);
-        
-        
+
+
         //mainPanel.setPreferredSize(new Dimension(mainPanel.getWidth(),12));
-        
-        
+
+
     }
-    
-    
+
+
     @Override
     public JComponent getComponent()
     {
@@ -153,25 +155,26 @@ public class FontOption extends UIOption
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            update();            
+            update();
         }
-        
+
         public void update()
         {
             int style = 0;
             if(chkBold.isSelected())  style |= Font.BOLD;
             if(chkItalic.isSelected())style |= Font.ITALIC;
-            
+
             AA = chkAA.isSelected();
             font = new Font((String)cmbFontName.getSelectedItem(), style, (Integer)size.getValue());
-            
+
             example.setFont(font);
-            
+
             String styleTags = "";
             if(AA)styleTags += "A";
             if(chkBold.isSelected())styleTags += "B";
             if(chkItalic.isSelected())styleTags += "I";
-            
+
+
             setValue(cmbFontName.getSelectedItem() + ", " + styleTags + ", " + size.getValue());
         }
     }

@@ -18,7 +18,7 @@ package com.lweyn.sparkreader.ui;
 
 import com.lweyn.sparkreader.Main;
 import com.lweyn.sparkreader.hooker.WindowHook;
-import com.lweyn.sparkreader.language.splitter.FoundWord;
+import com.lweyn.sparkreader.language.dictionary.Japanese;
 import com.lweyn.sparkreader.ui.input.JNativeKeyHandler;
 import com.lweyn.sparkreader.ui.input.KeyHandler;
 import com.lweyn.sparkreader.ui.input.MouseHandler;
@@ -267,10 +267,18 @@ public class UI
         //update loop
         Timer mainLoop = new Timer(Main.options.getOptionInt("uiThrottleMilliseconds"), e ->
         {
-            if(stickToWindow != null)
+            try
             {
-                stickToWindow = WindowHook.hook.getCoord();
-                Main.ui.disp.getFrame().setLocation(stickToWindow.get(0), stickToWindow.get(1));
+                WindowHook.instance.update();
+                if(WindowHook.instance.getHookMode() != WindowHook.HookMode.disabled)
+                {
+                    Main.ui.disp.getFrame().setLocation(WindowHook.instance.getX(), WindowHook.instance.getY());
+                }
+            }
+            catch(NullPointerException err)
+            {
+                logger.warn("Window follow failed; assuming window is closed and disabling stickToWindow");
+                stickToWindow = null;
             }
             //check clipboard
             String clip = Main.hook.check();
@@ -287,13 +295,31 @@ public class UI
                     Main.ui.tray.hideTray();
                 }
 
-                //preprocessing
+                //prepossessing
                 //clip = Japanese.toFullWidth(clip);
                 clip = clip.replace('●', '○')
                            .replace('◯', '○');//Needed this for a scene - don't judge me
 
+                if(Main.options.getOptionBool("jpOnly"))
+                {
+                    //cut out all non-JP text at start and end of word
+                    int startIndex = 0;
+                    while(startIndex != clip.length() && !Japanese.isJapanese(clip.charAt(startIndex)))
+                        startIndex++;
+                    int endIndex = clip.length() - 1;//check from end
+                    while(endIndex != 0 && !Japanese.isJapanese(clip.charAt(endIndex)))
+                        endIndex--;
+                    /*int endIndex = startIndex;//check from first (aggressive)
+                    while(endIndex != clip.length() && (Japanese.isJapanese(clip.charAt(endIndex)) || Japanese.isDigit(clip.charAt(endIndex)) || Japanese.isGrammar(clip.charAt(endIndex))))
+                        endIndex++;*/
+                    clip = clip.substring(startIndex, endIndex);
+                }
+
                 Main.log.addLine(clip);//add line to log
-                if(!Main.options.getOptionBool("splitLines"))clip = clip.replace("\n", "");//all on one line if not splitting
+                if(!Main.options.getOptionBool("splitLines"))
+                    clip = clip.replace("\n", "");//all on one line if not splitting
+
+
                 currPage.clearMarkers();
                 Main.ui.updateText(clip);//reflow text on defaults
                 Main.ui.xOffset = 0;//scroll back to front

@@ -46,7 +46,7 @@ public abstract class KeyHandler
             case advanceText:
                 //noinspection ConstantConditions
                 if(Main.options.getOptionBool("forwardKeys") && Main.getParentFrame().isFocused())
-                    WindowHook.hook.sendAdvanceKey();
+                    WindowHook.instance.sendAdvanceKey();
                 break;
         }
     }
